@@ -1,0 +1,56 @@
+{
+  "name": "wge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.sidvind.com:ext/wge.git"
+  },
+  "files": {
+    "css": "main",
+    "js": "main",
+    "libs": "libs"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "foundation-sites": "^6.3.1",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babelify": "^7.3.0",
+    "cssnano": "^3.10.0",
+    "eslint": "^3.19.0",
+    "eslint-config-sidvind": "^1.0.2",
+    "eslint-plugin-jasmine": "^2.5.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-connect": "^1.0.2",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-uglify": "^2.3.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-eslint": "^19.0.0",
+    "grunt-html2js": "^0.3.8",
+    "grunt-karma": "^2.0.0",
+    "grunt-md2html": "^0.3.1",
+    "grunt-nunjucks-2-html": "^3.0.0",
+    "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^2.0.0",
+    "jasmine-core": "^2.6.1",
+    "karma": "^1.7.0",
+    "karma-browserify": "^5.1.1",
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "load-grunt-tasks": "^3.5.2",
+    "phantomjs-prebuilt": "^2.1.14"
+  }
+}

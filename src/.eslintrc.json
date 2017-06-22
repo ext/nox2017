@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    "angular"
+  ],
+  "extends": [
+    "plugin:angular/bestpractices"
+  ],
+  "env": {
+    "angular/angular": true
+  },
+  "rules": {
+    "angular/controller-as-vm": ["error", "$ctrl"],
+    "no-console": "warn"
+  }
+}

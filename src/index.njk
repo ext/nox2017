@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ pkg.name }}</title>
-    <base href="/">
-    <link rel="stylesheet" href="{{ files.css | assetUrl }}" />
-  </head>
-  <body>
-    <script src="{{ files.libs | assetUrl }}"></script>
-    <script src="{{ files.js | assetUrl }}"></script>
-  </body>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{{ pkg.name }}</title>
+		<base href="/">
+		<link rel="stylesheet" href="{{ files.css | assetUrl }}" />
+	</head>
+	<body ng-app="{{ pkg.name }}" ng-strict-di>
+		<main>
+			<canvas ng-controller="MainController as $ctrl"></canvas>
+		</main>
+
+		<script src="{{ files.libs | assetUrl }}"></script>
+		<script src="{{ files.js | assetUrl }}"></script>
+	</body>
 </html>

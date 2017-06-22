@@ -76,7 +76,7 @@ module.exports = function(grunt){
 		html2js: {
 			default: {
 				options: {
-					module: 'internal.templates',
+					module: 'wge.templates',
 					rename: function(name){
 						if (name.match(/^..\/build/)){
 							name = name.replace('../build/', '');
@@ -86,7 +86,6 @@ module.exports = function(grunt){
 					},
 				},
 				src: [
-					'build/docs/**/*.html',
 					'src/**/*.html',
 					'!src/layout/*.html',
 				],
@@ -128,7 +127,16 @@ module.exports = function(grunt){
 			default: {
 				options: {
 					transform: [
-						['babelify', {presets: ['env']}],
+						['babelify', {
+							presets: [
+								['env', {
+									"targets": {
+										"browsers": ["last 2 Chrome versions"],
+									},
+								}],
+							],
+							plugins: ["angularjs-annotate"],
+						}],
 					],
 				},
 				src: 'src/app.js',
@@ -145,6 +153,9 @@ module.exports = function(grunt){
 					'public/assets/js/<%=pkg.files.libs%>.min.js': [
 						'node_modules/jquery/dist/jquery.js',
 						'node_modules/foundation-sites/vendor/modernizr/modernizr.js',
+						'node_modules/angular/angular.js',
+						'node_modules/angular-animate/angular-animate.js',
+						'node_modules/angular-route/angular-route.js',
 					],
 				},
 			},

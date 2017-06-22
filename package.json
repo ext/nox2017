@@ -18,17 +18,23 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "angular": "^1.6.4",
+    "angular-animate": "^1.6.4",
+    "angular-route": "^1.6.4",
     "font-awesome": "^4.7.0",
     "foundation-sites": "^6.3.1",
     "jquery": "^3.2.1"
   },
   "devDependencies": {
+    "angular-mocks": "^1.6.4",
     "babel": "^6.23.0",
+    "babel-plugin-angularjs-annotate": "^0.7.0",
     "babel-preset-env": "^1.4.0",
     "babelify": "^7.3.0",
     "cssnano": "^3.10.0",
     "eslint": "^3.19.0",
     "eslint-config-sidvind": "^1.0.2",
+    "eslint-plugin-angular": "^2.5.0",
     "eslint-plugin-jasmine": "^2.5.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",

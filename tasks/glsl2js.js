@@ -25,11 +25,18 @@ module.exports = function(grunt){
 		parsed.pass = parsed.pass.map((pass) => {
 			['vertex', 'fragment'].forEach((key) => {
 				const filename = path.join(stem, pass[key]);
-				pass[key] = grunt.file.read(filename);
+				pass[key] = read(filename);
 			});
 			return pass;
 		});
 		return parsed;
+	}
+
+	function read(filename){
+		const wd = path.dirname(filename);
+		return grunt.file.read(filename).replace(/#include "(.*)"/, (_, include) => {
+			return read(path.join(wd, include));
+		});
 	}
 
 	function format(module, result){

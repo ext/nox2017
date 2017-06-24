@@ -1,5 +1,8 @@
-varying highp vec4 vColor;
+#include "common.glsl"
+
+in vec4 vColor;
+out vec4 oColor;
 
 void main(void) {
-	gl_FragColor = vColor;
+	oColor = vColor;
 }

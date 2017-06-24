@@ -1,3 +1,29 @@
+class Uniform {
+
+	constructor(shader, name, size, usage){
+		const gl = shader.context;
+
+		this.shader = shader;
+		this.id = gl.createBuffer();
+		this.name = name;
+		this.size = size;
+		this.binding = shader.getUniformLocation(name);
+
+		gl.bindBuffer(gl.UNIFORM_BUFFER, this.id);
+		gl.bufferData(gl.UNIFORM_BUFFER, this.size, usage || gl.DYNAMIC_DRAW);
+		gl.bindBufferRange(gl.UNIFORM_BUFFER, this.binding, this.id, 0, this.size);
+	}
+
+	upload(data){
+		const gl = this.shader.context;
+		gl.bindBuffer(gl.UNIFORM_BUFFER, this.id);
+		for (const [offset, value] of data){
+			gl.bufferSubData(gl.UNIFORM_BUFFER, offset, new Float32Array(value.flatten()));
+		}
+	}
+
+}
+
 export class Shader {
 
 	constructor(gl, data){
@@ -16,6 +42,16 @@ export class Shader {
 		this.uP = this.getUniformLocation('P');
 		this.uMV = this.getUniformLocation('MV');
 
+		this.setupUniformBlocks();
+		this.setupAttributes();
+	}
+
+	setupUniformBlocks(){
+		this.uProjectionView = new Uniform(this, 'projectionViewMatrices', 4*16*3);
+	}
+
+	setupAttributes(){
+		const gl = this.context;
 		this.aPosition = this.getAttribLocation("position");
 		this.aColor = this.getAttribLocation("color");
 		gl.enableVertexAttribArray(this.aPosition);
@@ -24,6 +60,16 @@ export class Shader {
 
 	bind(){
 		this.context.useProgram(this.sp);
+	}
+
+	uploadProjectionView(proj, view){
+		const pv = view.x(proj);
+		const s = 4*16;
+		this.uProjectionView.upload([
+			[0*s, pv],
+			[1*s, proj],
+			[2*s, view],
+		]);
 	}
 
 	getAttribLocation(name){
@@ -55,7 +101,7 @@ function attach(gl, sp, pass){
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
 			const error = gl.getShaderInfoLog(shader);
 			gl.deleteShader(shader);
-			throw new Error(`Failed to compile shader: "${error}"`);
+			throw new Error(`Failed to compile "${type}" shader: "${error}"`);
 		}
 
 		gl.attachShader(sp, shader);

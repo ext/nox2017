@@ -34,7 +34,7 @@ class MainController extends CanvasController {
 		this.clear();
 
 		this.shader.bind();
-		gl.uniformMatrix4fv(this.shader.uP, false, new Float32Array(this.matP.flatten()));
+		this.shader.uploadProjectionView(this.matP, Matrix.I(4));
 
 		this.entity.render(this.shader);
 	}

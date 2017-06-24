@@ -16,7 +16,7 @@ export class CanvasController {
 
 	init(){
 		const canvas = this.$element[0];
-		this.context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+		this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
 		this.matP = Matrix.I(4);
 		this.resize(canvas.clientWidth, canvas.clientHeight);
 	}

@@ -3,8 +3,6 @@
 import { CanvasController } from './canvas';
 import { Vector, Matrix } from 'sylvester';
 
-let mvMatrix;
-
 const FOV = 45.0;
 const zNear = 0.1;
 const zFar = 100.0;
@@ -47,13 +45,15 @@ class MainController extends CanvasController {
 
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-		loadIdentity();
-		mvTranslate([-0.0, 0.0, -6.0]);
+		const matMV = Matrix.Translation(Vector.create([-0.0, 0.0, -6.0])).ensure4x4();
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 7*4, 0);
 		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 7*4, 3*4);
-		setMatrixUniforms(gl, this.shader, this.matP);
+
+		gl.uniformMatrix4fv(this.shader.uP, false, new Float32Array(this.matP.flatten()));
+		gl.uniformMatrix4fv(this.shader.uMV, false, new Float32Array(matMV.flatten()));
+
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 }
@@ -216,23 +216,6 @@ function makeFrustum(left, right,
 						 [0, Y, B, 0],
 						 [0, 0, C, D],
 						 [0, 0, -1, 0]]);
-}
-
-function setMatrixUniforms(gl, shader, perspectiveMatrix){
-	gl.uniformMatrix4fv(shader.uP, false, new Float32Array(perspectiveMatrix.flatten()));
-	gl.uniformMatrix4fv(shader.uMV, false, new Float32Array(mvMatrix.flatten()));
-}
-
-function loadIdentity(){
-	mvMatrix = Matrix.I(4);
-}
-
-function multMatrix(m){
-	mvMatrix = mvMatrix.x(m);
-}
-
-function mvTranslate(v){
-	multMatrix(Matrix.Translation(Vector.create([v[0], v[1], v[2]])).ensure4x4());
 }
 
 MainController.$$ngIsClass = true;

@@ -38,16 +38,10 @@ class MainController extends CanvasController {
 		this.clear();
 
 		this.shader.bind();
-		const vertexPositionAttribute = this.shader.getAttribLocation("position");
-		const vertexColorAttribute = this.shader.getAttribLocation("color");
-		gl.enableVertexAttribArray(vertexPositionAttribute);
-		gl.enableVertexAttribArray(vertexColorAttribute);
 
 		const matMV = Matrix.Translation(Vector.create([-0.0, 0.0, -6.0])).ensure4x4();
 
-		this.model.bind();
-		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 7*4, 0);
-		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 7*4, 3*4);
+		this.model.bind(this.shader);
 
 		gl.uniformMatrix4fv(this.shader.uP, false, new Float32Array(this.matP.flatten()));
 		gl.uniformMatrix4fv(this.shader.uMV, false, new Float32Array(matMV.flatten()));

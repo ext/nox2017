@@ -15,6 +15,11 @@ export class Shader {
 
 		this.uP = this.getUniformLocation('P');
 		this.uMV = this.getUniformLocation('MV');
+
+		this.aPosition = this.getAttribLocation("position");
+		this.aColor = this.getAttribLocation("color");
+		gl.enableVertexAttribArray(this.aPosition);
+		gl.enableVertexAttribArray(this.aColor);
 	}
 
 	bind(){

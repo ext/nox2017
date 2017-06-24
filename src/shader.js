@@ -45,8 +45,9 @@ function attach(gl, sp, pass){
 		gl.compileShader(shader);
 
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
+			const error = gl.getShaderInfoLog(shader);
 			gl.deleteShader(shader);
-			throw new Error(`Failed to compile shader: "${gl.getShaderInfoLog(shader)}"`);
+			throw new Error(`Failed to compile shader: "${error}"`);
 		}
 
 		gl.attachShader(sp, shader);

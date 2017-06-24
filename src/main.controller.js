@@ -14,18 +14,19 @@ class MainController extends CanvasController {
 		this.clear();
 
 		this.shader.bind();
-		const vertexPositionAttribute = this.shader.getAttribLocation("aVertexPosition");
+		const vertexPositionAttribute = this.shader.getAttribLocation("position");
+		const vertexColorAttribute = this.shader.getAttribLocation("color");
 		gl.enableVertexAttribArray(vertexPositionAttribute);
+		gl.enableVertexAttribArray(vertexColorAttribute);
 
-		const horizAspect = 480.0/640.0;
 		const squareVerticesBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 
 		const vertices = [
-			1.0,  1.0,  0.0,
-			-1.0, 1.0,  0.0,
-			1.0,  -1.0, 0.0,
-			-1.0, -1.0, 0.0,
+			1.0,  1.0,  0.0, 1.0, 1.0, 1.0, 1.0,
+			-1.0, 1.0,  0.0, 1.0, 0.0, 1.0, 1.0,
+			1.0,  -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+			-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
 		];
 
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -36,7 +37,8 @@ class MainController extends CanvasController {
 		mvTranslate([-0.0, 0.0, -6.0]);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 7*4, 0);
+		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 7*4, 3*4);
 		setMatrixUniforms(gl, this.shader, perspectiveMatrix);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
@@ -126,22 +128,6 @@ Matrix.prototype.make3x3 = function(){
 Vector.prototype.flatten = function(){
 	return this.elements;
 };
-
-function mht(m){
-	let s = "";
-	if (m.length === 16){
-		for (let i = 0; i < 4; i++){
-			s += "<span style='font-family: monospace'>[" + m[i*4+0].toFixed(4) + "," + m[i*4+1].toFixed(4) + "," + m[i*4+2].toFixed(4) + "," + m[i*4+3].toFixed(4) + "]</span><br>";
-		}
-	} else if (m.length === 9){
-		for (let i = 0; i < 3; i++){
-			s += "<span style='font-family: monospace'>[" + m[i*3+0].toFixed(4) + "," + m[i*3+1].toFixed(4) + "," + m[i*3+2].toFixed(4) + "]</font><br>";
-		}
-	} else {
-		return m.toString();
-	}
-	return s;
-}
 
 //
 // gluLookAt

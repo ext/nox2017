@@ -219,11 +219,8 @@ function makeFrustum(left, right,
 }
 
 function setMatrixUniforms(gl, shader, perspectiveMatrix){
-	let pUniform = shader.getUniformLocation("uPMatrix");
-	gl.uniformMatrix4fv(pUniform, false, new Float32Array(perspectiveMatrix.flatten()));
-
-	let mvUniform = shader.getUniformLocation("uMVMatrix");
-	gl.uniformMatrix4fv(mvUniform, false, new Float32Array(mvMatrix.flatten()));
+	gl.uniformMatrix4fv(shader.uP, false, new Float32Array(perspectiveMatrix.flatten()));
+	gl.uniformMatrix4fv(shader.uMV, false, new Float32Array(mvMatrix.flatten()));
 }
 
 function loadIdentity(){

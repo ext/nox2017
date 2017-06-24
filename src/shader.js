@@ -12,6 +12,9 @@ export class Shader {
 		if (!gl.getProgramParameter(sp, gl.LINK_STATUS)){
 			throw new Error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(sp));
 		}
+
+		this.uP = this.getUniformLocation('P');
+		this.uMV = this.getUniformLocation('MV');
 	}
 
 	bind(){

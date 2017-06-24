@@ -1,6 +1,7 @@
 /* eslint-disable angular/no-controller */
 
 import { CanvasController } from './canvas';
+import { Entity } from './entity';
 import { Model } from './model';
 import { Vector, Matrix } from 'sylvester';
 
@@ -15,13 +16,17 @@ class MainController extends CanvasController {
 		this.init();
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 
-		this.model = new Model(this.context);
-		this.model.upload([
+		const model = new Model(this.context);
+		model.upload([
 			1.0,  1.0,  0.0, 1.0, 1.0, 1.0, 1.0,
 			-1.0, 1.0,  0.0, 1.0, 0.0, 1.0, 1.0,
 			1.0,  -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
 			-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
 		]);
+
+		this.entity = new Entity(this.context, {
+			model,
+		});
 
 		this.render();
 	}
@@ -38,15 +43,9 @@ class MainController extends CanvasController {
 		this.clear();
 
 		this.shader.bind();
-
-		const matMV = Matrix.Translation(Vector.create([-0.0, 0.0, -6.0])).ensure4x4();
-
-		this.model.bind(this.shader);
-
 		gl.uniformMatrix4fv(this.shader.uP, false, new Float32Array(this.matP.flatten()));
-		gl.uniformMatrix4fv(this.shader.uMV, false, new Float32Array(matMV.flatten()));
 
-		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		this.entity.render(this.shader);
 	}
 }
 

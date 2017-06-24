@@ -1,6 +1,7 @@
 /* eslint-disable angular/no-controller */
 
 import { CanvasController } from './canvas';
+import { Model } from './model';
 import { Vector, Matrix } from 'sylvester';
 
 const FOV = 45.0;
@@ -13,6 +14,15 @@ class MainController extends CanvasController {
 
 		this.init();
 		this.shader = this.loadShader('/shaders/test.shader.yml');
+
+		this.model = new Model(this.context);
+		this.model.upload([
+			1.0,  1.0,  0.0, 1.0, 1.0, 1.0, 1.0,
+			-1.0, 1.0,  0.0, 1.0, 0.0, 1.0, 1.0,
+			1.0,  -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+			-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+		]);
+
 		this.render();
 	}
 
@@ -33,21 +43,9 @@ class MainController extends CanvasController {
 		gl.enableVertexAttribArray(vertexPositionAttribute);
 		gl.enableVertexAttribArray(vertexColorAttribute);
 
-		const squareVerticesBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
-
-		const vertices = [
-			1.0,  1.0,  0.0, 1.0, 1.0, 1.0, 1.0,
-			-1.0, 1.0,  0.0, 1.0, 0.0, 1.0, 1.0,
-			1.0,  -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
-			-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
-		];
-
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
 		const matMV = Matrix.Translation(Vector.create([-0.0, 0.0, -6.0])).ensure4x4();
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
+		this.model.bind();
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 7*4, 0);
 		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 7*4, 3*4);
 

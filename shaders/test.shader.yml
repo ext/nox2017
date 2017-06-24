@@ -1,0 +1,4 @@
+name: test
+pass:
+  - vertex: test.vs.glsl
+    fragment: test.fs.glsl

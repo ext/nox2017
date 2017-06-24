@@ -4,6 +4,7 @@ const serveStatic = require('serve-static');
 
 module.exports = function(grunt){
 	require('load-grunt-tasks')(grunt);
+	grunt.loadTasks('tasks');
 
 	grunt.registerTask('serve', [
 		'connect', 'watch',
@@ -18,10 +19,8 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'md2html', 'html2js', 'browserify',
+		'eslint', 'md2html', 'glsl2js', 'html2js', 'browserify',
 	]);
-
-	grunt.registerTask('manifest', 'Create deploy manifest', manifest);
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
@@ -93,6 +92,18 @@ module.exports = function(grunt){
 			},
 		},
 
+		glsl2js: {
+			default: {
+				options: {
+					module: 'wge.shaders',
+				},
+				src: [
+					'shaders/**/*.shader.yml',
+				],
+				dest: 'build/shaders.js',
+			},
+		},
+
 		eslint: {
 			default: {
 				src: [
@@ -107,19 +118,6 @@ module.exports = function(grunt){
 		karma: {
 			default: {
 				configFile: 'karma.conf.js',
-			},
-		},
-
-		protractor: {
-			chrome: {
-				options: {
-					configFile: 'tests/e2e/protractor-chrome.conf.js',
-				},
-			},
-			chromeHeadless: {
-				options: {
-					configFile: 'tests/e2e/protractor-chrome-headless.conf.js',
-				},
 			},
 		},
 
@@ -200,6 +198,10 @@ module.exports = function(grunt){
 				files: ['src/**/*.md'],
 				tasks: ['md2html', 'html2js', 'browserify'],
 			},
+			glsl: {
+				files: ['shaders/**/*.glsl', 'shaders/**/*.shader.yml'],
+				tasks: ['glsl2js', 'browserify'],
+			},
 			html: {
 				files: ['<%=html2js.default.src%>', '!build/docs/**/*.html'],
 				tasks: ['html2js', 'browserify'],
@@ -242,16 +244,6 @@ function assetHash(asset){
 		console.log(`${filename} does not exist when trying to calculate asset hash.`);
 		return `assets/${asset}`;
 	}
-}
-
-function manifest(){
-	fs.writeFileSync('./manifest.json', JSON.stringify({
-		branch: process.env.CI_COMMIT_REF_NAME,
-		slug: process.env.CI_COMMIT_REF_SLUG,
-		env: process.env.CI_ENVIRONMENT_NAME,
-		commit: process.env.CI_COMMIT_SHA,
-		user: process.env.GITLAB_USER_ID,
-	}, undefined, 2));
 }
 
 function serveRewrite(req, res, next){

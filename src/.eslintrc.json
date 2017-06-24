@@ -8,6 +8,9 @@
   "env": {
     "angular/angular": true
   },
+  "globals": {
+    "Float32Array": false
+  },
   "rules": {
     "angular/controller-as-vm": ["error", "$ctrl"],
     "no-console": "warn"

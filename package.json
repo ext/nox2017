@@ -23,7 +23,8 @@
     "angular-route": "^1.6.4",
     "font-awesome": "^4.7.0",
     "foundation-sites": "^6.3.1",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "sylvester": "0.0.21"
   },
   "devDependencies": {
     "angular-mocks": "^1.6.4",
@@ -56,6 +57,7 @@
     "karma-browserify": "^5.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
+    "lapack": "^0.1.0",
     "load-grunt-tasks": "^3.5.2",
     "phantomjs-prebuilt": "^2.1.14"
   }

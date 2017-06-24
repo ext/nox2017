@@ -1,12 +1,17 @@
 export class CanvasController {
-	constructor(){
+	constructor($element, ShaderService){
+		this.$element = $element;
+		this.ShaderService = ShaderService;
 		this.context = null;
 	}
 
-	init($element){
-		const canvas = $element[0];
-		this.context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-		console.log(this.context);
+	init(){
+		const canvas = this.$element[0];
+		return this.context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+	}
+
+	loadShader(filename){
+		return this.ShaderService.load(this.context, filename);
 	}
 
 	clear(){

@@ -1,5 +1,8 @@
+require('../build/shaders.js');
 require('../build/templates.js');
-require('./app.module.js');
-require('./app.config.js');
+
+require('./app.module');
+require('./app.config');
+require('./shader.service');
 
 require('./main.controller');

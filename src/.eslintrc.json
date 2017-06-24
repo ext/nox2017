@@ -13,6 +13,7 @@
   },
   "rules": {
     "angular/controller-as-vm": ["error", "$ctrl"],
+    "new-cap": 0,
     "no-console": "warn"
   }
 }

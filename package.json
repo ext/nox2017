@@ -60,5 +60,8 @@
     "lapack": "^0.1.0",
     "load-grunt-tasks": "^3.5.2",
     "phantomjs-prebuilt": "^2.1.14"
-  }
+  },
+  "browserslist": [
+    "last 2 Chrome versions"
+  ]
 }

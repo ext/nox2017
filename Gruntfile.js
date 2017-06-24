@@ -126,13 +126,7 @@ module.exports = function(grunt){
 				options: {
 					transform: [
 						['babelify', {
-							presets: [
-								['env', {
-									"targets": {
-										"browsers": ["last 2 Chrome versions"],
-									},
-								}],
-							],
+							presets: ['env'],
 							plugins: ["angularjs-annotate"],
 						}],
 					],

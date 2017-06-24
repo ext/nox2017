@@ -1,16 +1,32 @@
-/* eslint-disable angular/no-controller, new-cap */
+/* eslint-disable angular/no-controller */
 
 import { CanvasController } from './canvas';
 import { Vector, Matrix } from 'sylvester';
 
 let mvMatrix;
 
-class MainController extends CanvasController {
-	constructor($element, ShaderService){
-		super($element, ShaderService);
+const FOV = 45.0;
+const zNear = 0.1;
+const zFar = 100.0;
 
-		const gl = this.init();
+class MainController extends CanvasController {
+	constructor($window, $element, ShaderService){
+		super($window, $element, ShaderService);
+
+		this.init();
 		this.shader = this.loadShader('/shaders/test.shader.yml');
+		this.render();
+	}
+
+	resize(width, height){
+		super.resize(width, height);
+		this.matP = makePerspective(FOV, width / height, zNear, zFar);
+		this.context.viewport(0, 0, width, height);
+	}
+
+	render(){
+		const gl = this.context;
+
 		this.clear();
 
 		this.shader.bind();
@@ -31,15 +47,13 @@ class MainController extends CanvasController {
 
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-		const perspectiveMatrix = makePerspective(45, 640.0/480.0, 0.1, 100.0);
-
 		loadIdentity();
 		mvTranslate([-0.0, 0.0, -6.0]);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
 		gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 7*4, 0);
 		gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 7*4, 3*4);
-		setMatrixUniforms(gl, this.shader, perspectiveMatrix);
+		setMatrixUniforms(gl, this.shader, this.matP);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 }
@@ -213,7 +227,7 @@ function setMatrixUniforms(gl, shader, perspectiveMatrix){
 }
 
 function loadIdentity(){
-	mvMatrix = Matrix.I(4); // eslint-disable-line new-cap
+	mvMatrix = Matrix.I(4);
 }
 
 function multMatrix(m){
@@ -221,7 +235,7 @@ function multMatrix(m){
 }
 
 function mvTranslate(v){
-	multMatrix(Matrix.Translation(Vector.create([v[0], v[1], v[2]])).ensure4x4()); // eslint-disable-line new-cap
+	multMatrix(Matrix.Translation(Vector.create([v[0], v[1], v[2]])).ensure4x4());
 }
 
 MainController.$$ngIsClass = true;

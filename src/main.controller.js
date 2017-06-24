@@ -15,17 +15,8 @@ class MainController extends CanvasController {
 
 		this.init();
 		this.shader = this.loadShader('/shaders/test.shader.yml');
-
-		const model = new Model(this.context);
-		model.upload([
-			1.0,  1.0,  0.0, 1.0, 1.0, 1.0, 1.0,
-			-1.0, 1.0,  0.0, 1.0, 0.0, 1.0, 1.0,
-			1.0,  -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
-			-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
-		]);
-
 		this.entity = new Entity(this.context, {
-			model,
+			model: Model.Quad(this.context),
 		});
 
 		this.render();

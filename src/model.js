@@ -1,8 +1,23 @@
+let quad = null;
+
 export class Model {
 
 	constructor(gl){
 		this.context = gl;
 		this.buffer = gl.createBuffer();
+	}
+
+	static Quad(gl){
+		if (!quad){
+			quad = new Model(gl);
+			quad.upload([
+				 1.0,  1.0, 0.0, 1.0, 1.0, 1.0, 1.0,
+				-1.0,  1.0, 0.0, 1.0, 0.0, 1.0, 1.0,
+				 1.0, -1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+				-1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+			]);
+		}
+		return quad;
 	}
 
 	upload(vertices){

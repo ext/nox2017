@@ -8,6 +8,6 @@ layout(std140) uniform projectionViewMatrices {
    mat4 viewMatrix;
 };
 
-// layout(std140) uniform modelMatrices {
-//    mat4 modelMatrix;
-// };
+layout(std140) uniform modelMatrices {
+   mat4 modelMatrix;
+};

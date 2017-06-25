@@ -20,6 +20,10 @@ class ShaderService {
 	uploadProjectionView(gl, proj, view){
 		Shader.uploadProjectionView(gl, proj, view);
 	}
+
+	uploadModel(gl, model){
+		Shader.uploadModel(gl, model);
+	}
 }
 
 ShaderService.$$ngIsClass = true;

@@ -21,6 +21,7 @@ export class Shader {
 
 	static initialize(gl){
 		gl.wgeUniforms.projectionViewMatrices = new Uniform(gl, 'projectionViewMatrices', 4*16*3);
+		gl.wgeUniforms.modelMatrices = new Uniform(gl, 'modelMatrices', 4*16*1);
 	}
 
 	setupUniformBlocks(){
@@ -35,8 +36,8 @@ export class Shader {
 
 	setupAttributes(){
 		const gl = this.context;
-		this.aPosition = this.getAttribLocation("position");
-		this.aColor = this.getAttribLocation("color");
+		this.aPosition = this.getAttribLocation("in_pos");
+		this.aColor = this.getAttribLocation("in_color");
 		gl.enableVertexAttribArray(this.aPosition);
 		gl.enableVertexAttribArray(this.aColor);
 	}
@@ -52,6 +53,12 @@ export class Shader {
 			[0*s, pv],
 			[1*s, proj],
 			[2*s, view],
+		]);
+	}
+
+	static uploadModel(gl, model){
+		gl.wgeUniforms.modelMatrices.upload(gl, [
+			[0, model],
 		]);
 	}
 

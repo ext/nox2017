@@ -1,13 +1,13 @@
 #include "common.glsl"
 
-in vec3 position;
-in vec4 color;
-
-uniform mat4 MV;
+in vec4 in_pos;
+in vec4 in_color;
 
 out vec4 vColor;
+out vec4 w_pos;
 
 void main(void) {
-	gl_Position = projectionMatrix * MV * vec4(position, 1.0);
-	vColor = color;
+	w_pos = modelMatrix * in_pos;
+	gl_Position = projectionViewMatrix * w_pos;
+	vColor = in_color;
 }

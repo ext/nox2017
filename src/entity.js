@@ -10,22 +10,19 @@ export class Entity {
 		this.context = gl;
 		this.model = options.model;
 		this.position = Vector.create([-0.0, 0.0, -6.0]);
-		this.matMV = Matrix.I(4);
+		this.modelMatrix = Matrix.I(4);
 		this.calc();
 	}
 
 	calc(){
-		this.matMV = Matrix.Translation(this.position).ensure4x4();
+		this.modelMatrix = Matrix.Translation(this.position).ensure4x4();
 	}
 
 	render(shader){
 		if (!this.model) return;
 
-		this.model.bind(shader);
-
 		const gl = this.context;
-		const binding = shader.getUniformLocation('MV');
-		gl.uniformMatrix4fv(binding, false, new Float32Array(this.matMV.flatten()));
+		this.model.bind(shader);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 

@@ -13,15 +13,28 @@ const zFar = 100.0;
 class MainController extends CanvasController {
 	constructor($scope, $window, $element, ShaderService){
 		super($window, $element, ShaderService);
+		this.$scope = $scope;
 
 		this.init();
+		this.render();
+	}
+
+	init(){
+		super.init();
+		this.setupWorld();
+		this.setupEventHandlers();
+	}
+
+	setupWorld(){
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 		this.entity = new Entity(this.context, {
 			model: Model.Quad(this.context),
 		});
 		this.camera = new Camera();
+	}
 
-		$scope.$watchGroup([
+	setupEventHandlers(){
+		this.$scope.$watchGroup([
 			'cam.x',
 			'cam.y',
 			'cam.z',
@@ -29,8 +42,6 @@ class MainController extends CanvasController {
 			this.camera.setPosition(Vector.create(pos));
 			this.render();
 		});
-
-		this.render();
 	}
 
 	resize(width, height){

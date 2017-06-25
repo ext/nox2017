@@ -1,3 +1,4 @@
+require('../build/data.js');
 require('../build/shaders.js');
 require('../build/templates.js');
 

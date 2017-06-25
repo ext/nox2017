@@ -19,7 +19,7 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'md2html', 'glsl2js', 'html2js', 'browserify',
+		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'browserify',
 	]);
 
 	grunt.initConfig({
@@ -89,6 +89,18 @@ module.exports = function(grunt){
 					'!src/layout/*.html',
 				],
 				dest: 'build/templates.js',
+			},
+		},
+
+		data2js: {
+			default: {
+				options: {
+					module: 'wge.data',
+				},
+				src: [
+					'src/data/**/*.yml',
+				],
+				dest: 'build/data.js',
 			},
 		},
 
@@ -191,6 +203,10 @@ module.exports = function(grunt){
 			md: {
 				files: ['src/**/*.md'],
 				tasks: ['md2html', 'html2js', 'browserify'],
+			},
+			data: {
+				files: ['src/data/**'],
+				tasks: ['data2js', 'browserify'],
 			},
 			glsl: {
 				files: ['shaders/**/*.glsl', 'shaders/**/*.shader.yml'],

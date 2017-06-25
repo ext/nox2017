@@ -1,7 +1,6 @@
 let quad = null;
 
 export class Model {
-
 	constructor(gl){
 		this.context = gl;
 		this.buffer = gl.createBuffer();
@@ -32,5 +31,4 @@ export class Model {
 		gl.vertexAttribPointer(shader.aPosition, 3, gl.FLOAT, false, 7*4, 0);
 		gl.vertexAttribPointer(shader.aColor, 4, gl.FLOAT, false, 7*4, 3*4);
 	}
-
 }

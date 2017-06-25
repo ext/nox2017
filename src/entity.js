@@ -24,7 +24,8 @@ export class Entity {
 		this.model.bind(shader);
 
 		const gl = this.context;
-		gl.uniformMatrix4fv(shader.uMV, false, new Float32Array(this.matMV.flatten()));
+		const binding = shader.getUniformLocation('MV');
+		gl.uniformMatrix4fv(binding, false, new Float32Array(this.matMV.flatten()));
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 

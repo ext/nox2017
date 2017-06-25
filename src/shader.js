@@ -1,31 +1,6 @@
-class Uniform {
-
-	constructor(shader, name, size, usage){
-		const gl = shader.context;
-
-		this.shader = shader;
-		this.id = gl.createBuffer();
-		this.name = name;
-		this.size = size;
-		this.binding = shader.getUniformLocation(name);
-
-		gl.bindBuffer(gl.UNIFORM_BUFFER, this.id);
-		gl.bufferData(gl.UNIFORM_BUFFER, this.size, usage || gl.DYNAMIC_DRAW);
-		gl.bindBufferRange(gl.UNIFORM_BUFFER, this.binding, this.id, 0, this.size);
-	}
-
-	upload(data){
-		const gl = this.shader.context;
-		gl.bindBuffer(gl.UNIFORM_BUFFER, this.id);
-		for (const [offset, value] of data){
-			gl.bufferSubData(gl.UNIFORM_BUFFER, offset, new Float32Array(value.flatten()));
-		}
-	}
-
-}
+import { Uniform } from './uniform';
 
 export class Shader {
-
 	constructor(gl, data){
 		this.context = gl;
 		const sp = this.sp = gl.createProgram();
@@ -39,15 +14,23 @@ export class Shader {
 			throw new Error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(sp));
 		}
 
-		this.uP = this.getUniformLocation('P');
-		this.uMV = this.getUniformLocation('MV');
-
+		this.bind();
 		this.setupUniformBlocks();
 		this.setupAttributes();
 	}
 
+	static initialize(gl){
+		gl.wgeUniforms.projectionViewMatrices = new Uniform(gl, 'projectionViewMatrices', 4*16*3);
+	}
+
 	setupUniformBlocks(){
-		this.uProjectionView = new Uniform(this, 'projectionViewMatrices', 4*16*3);
+		const gl = this.context;
+		for (const it of Object.values(gl.wgeUniforms)){
+			const id = gl.getUniformBlockIndex(this.sp, it.name);
+			if (id !== -1){
+				gl.uniformBlockBinding(this.sp, id, it.binding);
+			}
+		}
 	}
 
 	setupAttributes(){
@@ -62,10 +45,10 @@ export class Shader {
 		this.context.useProgram(this.sp);
 	}
 
-	uploadProjectionView(proj, view){
+	static uploadProjectionView(gl, proj, view){
 		const pv = view.x(proj);
 		const s = 4*16;
-		this.uProjectionView.upload([
+		gl.wgeUniforms.projectionViewMatrices.upload(gl, [
 			[0*s, pv],
 			[1*s, proj],
 			[2*s, view],

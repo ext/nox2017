@@ -31,11 +31,10 @@ class MainController extends CanvasController {
 	render(){
 		const gl = this.context;
 
+		this.ShaderService.uploadProjectionView(gl, this.matP, Matrix.I(4));
+
 		this.clear();
-
 		this.shader.bind();
-		this.shader.uploadProjectionView(this.matP, Matrix.I(4));
-
 		this.entity.render(this.shader);
 	}
 }

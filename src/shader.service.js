@@ -12,6 +12,14 @@ class ShaderService {
 		}
 		return new Shader(gl, data);
 	}
+
+	initialize(gl){
+		Shader.initialize(gl);
+	}
+
+	uploadProjectionView(gl, proj, view){
+		Shader.uploadProjectionView(gl, proj, view);
+	}
 }
 
 ShaderService.$$ngIsClass = true;

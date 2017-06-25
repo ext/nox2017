@@ -17,6 +17,8 @@ export class CanvasController {
 	init(){
 		const canvas = this.$element[0];
 		this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
+		this.context.wgeUniforms = {}; /* uniform blocks */
+		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);
 		this.resize(canvas.clientWidth, canvas.clientHeight);
 	}

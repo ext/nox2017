@@ -13,6 +13,15 @@
 			<canvas ng-controller="MainController as $ctrl"></canvas>
 		</main>
 
+		<aside>
+			<fieldset ng-init="cam.x = 0; cam.y = 0; cam.z = 0">
+				<legend>Camera</legend>
+				<label>X <input type="number" step="0.1" ng-model="cam.x"/></label>
+				<label>Y <input type="number" step="0.1" ng-model="cam.y"/></label>
+				<label>Z <input type="number" step="0.1" ng-model="cam.z"/></label>
+			</fieldset>
+		</aside>
+
 		<script src="{{ files.libs | assetUrl }}"></script>
 		<script src="{{ files.js | assetUrl }}"></script>
 	</body>

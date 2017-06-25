@@ -47,7 +47,7 @@ export class Shader {
 	}
 
 	static uploadProjectionView(gl, proj, view){
-		const pv = view.x(proj);
+		const pv = proj.x(view);
 		const s = 4*16;
 		gl.wgeUniforms.projectionViewMatrices.upload(gl, [
 			[0*s, pv],

@@ -1,5 +1,6 @@
 /* eslint-disable angular/no-controller */
 
+import { Camera } from './camera';
 import { CanvasController } from './canvas';
 import { Entity } from './entity';
 import { Model } from './model';
@@ -10,13 +11,23 @@ const zNear = 0.1;
 const zFar = 100.0;
 
 class MainController extends CanvasController {
-	constructor($window, $element, ShaderService){
+	constructor($scope, $window, $element, ShaderService){
 		super($window, $element, ShaderService);
 
 		this.init();
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 		this.entity = new Entity(this.context, {
 			model: Model.Quad(this.context),
+		});
+		this.camera = new Camera();
+
+		$scope.$watchGroup([
+			'cam.x',
+			'cam.y',
+			'cam.z',
+		], (pos) => {
+			this.camera.setPosition(Vector.create(pos));
+			this.render();
 		});
 
 		this.render();
@@ -32,7 +43,7 @@ class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.clear();
-		this.ShaderService.uploadProjectionView(gl, this.matP, Matrix.I(4));
+		this.ShaderService.uploadProjectionView(gl, this.matP, this.camera.getViewMatrix());
 
 		{
 			this.shader.bind();

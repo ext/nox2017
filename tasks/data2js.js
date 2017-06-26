@@ -41,6 +41,7 @@ module.exports = function(grunt){
 	}
 
 	function transform(filename){
+		filename = filename.replace(/src\//, '');
 		return `/${filename}`;
 	}
 };

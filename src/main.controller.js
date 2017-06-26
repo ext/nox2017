@@ -11,18 +11,22 @@ const zNear = 0.1;
 const zFar = 100.0;
 
 class MainController extends CanvasController {
-	constructor($scope, $window, $element, ShaderService){
-		super($window, $element, ShaderService);
+	constructor($scope, $window, $element, $templateCache, ShaderService){
+		super($window, $element, $templateCache, ShaderService);
 		this.$scope = $scope;
 
-		this.init();
-		this.render();
+		this.init('/data/game.yml').then(() => {
+			this.render();
+		}).catch((err) => {
+			console.error(err);
+		});
 	}
 
-	init(){
-		super.init();
-		this.setupWorld();
-		this.setupEventHandlers();
+	init(filename){
+		return super.init(filename).then(() => {
+			this.setupWorld();
+			this.setupEventHandlers();
+		});
 	}
 
 	setupWorld(){
@@ -158,8 +162,6 @@ function makeLookAt(ex, ey, ez,
 	let eye = Vector.create([ex, ey, ez]);
 	let center = Vector.create([cx, cy, cz]);
 	let up = Vector.create([ux, uy, uz]);
-
-	let mag;
 
 	let z = eye.subtract(center).toUnitVector();
 	let x = up.cross(z).toUnitVector();

@@ -1,9 +1,11 @@
+import { Texture } from './texture';
 import { Matrix } from 'sylvester';
 
 export class CanvasController {
-	constructor($window, $element, ShaderService){
+	constructor($window, $element, $templateCache, ShaderService){
 		this.$window = $window;
 		this.$element = $element;
+		this.$templateCache = $templateCache;
 		this.ShaderService = ShaderService;
 		this.context = null;
 
@@ -14,13 +16,27 @@ export class CanvasController {
 		});
 	}
 
-	init(){
+	init(filename){
+		const config = this.$templateCache.get(filename);
+		if (!config){
+			throw new Error(`Failed to load game configuration "${filename}".`);
+		}
+
 		const canvas = this.$element[0];
 		this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);
 		this.resize(canvas.clientWidth, canvas.clientHeight);
+
+		return this.preload(config.preload || {});
+	}
+
+	preload(preload){
+		const textures = (preload.texture||[]);
+		return Promise.all(textures.map(cur => {
+			return Texture.preload(this.context, cur);
+		}));
 	}
 
 	loadShader(filename){

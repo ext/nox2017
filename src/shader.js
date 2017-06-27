@@ -37,8 +37,10 @@ export class Shader {
 	setupAttributes(){
 		const gl = this.context;
 		this.aPosition = this.getAttribLocation("in_pos");
+		this.aUV = this.getAttribLocation("in_uv");
 		this.aColor = this.getAttribLocation("in_color");
 		gl.enableVertexAttribArray(this.aPosition);
+		gl.enableVertexAttribArray(this.aUV);
 		gl.enableVertexAttribArray(this.aColor);
 	}
 

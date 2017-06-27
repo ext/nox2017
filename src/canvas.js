@@ -30,7 +30,12 @@ export class CanvasController {
 		}
 
 		const canvas = this.element;
-		this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
+		const gl = this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
+
+		/* enable backface culling */
+		gl.enable(gl.CULL_FACE);
+		gl.cullFace(gl.BACK);
+
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);

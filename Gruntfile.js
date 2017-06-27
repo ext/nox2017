@@ -28,7 +28,8 @@ module.exports = function(grunt){
 		clean: {
 			default: [
 				'build',
-				'public/assets',
+				'public/assets/css',
+				'public/assets/js',
 			],
 		},
 
@@ -188,6 +189,7 @@ module.exports = function(grunt){
 		connect: {
 			options: {
 				port: 1337,
+				livereload: true,
 				middleware: function(){
 					var middlewares = [];
 					middlewares.push(serveRewrite);
@@ -200,6 +202,9 @@ module.exports = function(grunt){
 		},
 
 		watch: {
+			options: {
+				livereload: true,
+			},
 			md: {
 				files: ['src/**/*.md'],
 				tasks: ['md2html', 'html2js', 'browserify'],

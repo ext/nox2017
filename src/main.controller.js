@@ -4,6 +4,7 @@ import { Camera } from './camera';
 import { CanvasController } from './canvas';
 import { Entity } from './entity';
 import { Model } from './model';
+import { Texture } from './texture';
 import { Vector, Matrix } from 'sylvester';
 
 const FOV = 45.0;
@@ -24,8 +25,10 @@ class MainController extends CanvasController {
 
 	init(filename){
 		return super.init(filename).then(() => {
-			this.setupWorld();
-			this.setupEventHandlers();
+			return Promise.all([
+				this.setupEventHandlers(),
+				this.setupWorld(),
+			]);
 		});
 	}
 
@@ -35,6 +38,9 @@ class MainController extends CanvasController {
 			model: Model.Quad(this.context),
 		});
 		this.camera = new Camera();
+		return Texture.load(this.context, '/textures/uvgrid.jpg').then(texture => {
+			this.texture = texture;
+		});
 	}
 
 	setupEventHandlers(){
@@ -46,6 +52,7 @@ class MainController extends CanvasController {
 			this.camera.setPosition(Vector.create(pos));
 			this.render();
 		});
+		return Promise.resolve();
 	}
 
 	resize(width, height){
@@ -62,6 +69,7 @@ class MainController extends CanvasController {
 
 		{
 			this.shader.bind();
+			this.texture.bind();
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(this.shader);
 		}
@@ -145,8 +153,8 @@ Matrix.prototype.make3x3 = function(){
 	}
 
 	return Matrix.create([[this.elements[0][0], this.elements[0][1], this.elements[0][2]],
-												[this.elements[1][0], this.elements[1][1], this.elements[1][2]],
-												[this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
+		[this.elements[1][0], this.elements[1][1], this.elements[1][2]],
+		[this.elements[2][0], this.elements[2][1], this.elements[2][2]]]);
 };
 
 Vector.prototype.flatten = function(){
@@ -157,8 +165,9 @@ Vector.prototype.flatten = function(){
 // gluLookAt
 //
 function makeLookAt(ex, ey, ez,
-										cx, cy, cz,
-										ux, uy, uz){
+	cx, cy, cz,
+	ux, uy, uz){
+
 	let eye = Vector.create([ex, ey, ez]);
 	let center = Vector.create([cx, cy, cz]);
 	let up = Vector.create([ux, uy, uz]);
@@ -168,14 +177,14 @@ function makeLookAt(ex, ey, ez,
 	let y = z.cross(x).toUnitVector();
 
 	let m = Matrix.create([[x.e(1), x.e(2), x.e(3), 0],
-							[y.e(1), y.e(2), y.e(3), 0],
-							[z.e(1), z.e(2), z.e(3), 0],
-							[0, 0, 0, 1]]);
+		[y.e(1), y.e(2), y.e(3), 0],
+		[z.e(1), z.e(2), z.e(3), 0],
+		[0, 0, 0, 1]]);
 
 	let t = Matrix.create([[1, 0, 0, -ex],
-							[0, 1, 0, -ey],
-							[0, 0, 1, -ez],
-							[0, 0, 0, 1]]);
+		[0, 1, 0, -ey],
+		[0, 0, 1, -ez],
+		[0, 0, 0, 1]]);
 	return m.x(t);
 }
 
@@ -190,9 +199,9 @@ function makeOrtho(left, right,
 	let tz = -(zfar+znear)/(zfar-znear);
 
 	return Matrix.create([[2/(right-left), 0, 0, tx],
-						 [0, 2/(top-bottom), 0, ty],
-						 [0, 0, -2/(zfar-znear), tz],
-						 [0, 0, 0, 1]]);
+		[0, 2/(top-bottom), 0, ty],
+		[0, 0, -2/(zfar-znear), tz],
+		[0, 0, 0, 1]]);
 }
 
 //

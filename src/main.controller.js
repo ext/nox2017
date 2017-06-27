@@ -11,8 +11,8 @@ const zNear = 0.1;
 const zFar = 100.0;
 
 class MainController extends CanvasController {
-	constructor($scope, $window, $element, $templateCache, ShaderService){
-		super($window, $element, $templateCache, ShaderService);
+	constructor($scope, $element, $injector){
+		super($element, $injector);
 		this.$scope = $scope;
 
 		this.init('/data/game.yml').then(() => {

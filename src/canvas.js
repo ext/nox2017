@@ -2,17 +2,24 @@ import { Texture } from './texture';
 import { Matrix } from 'sylvester';
 
 export class CanvasController {
-	constructor($window, $element, $templateCache, ShaderService){
-		this.$window = $window;
-		this.$element = $element;
-		this.$templateCache = $templateCache;
-		this.ShaderService = ShaderService;
+	constructor($element, $injector){
+		const $timeout = $injector.get('$timeout');
+		const $window = $injector.get('$window');
+		this.element = $element[0];
+		this.$templateCache = $injector.get('$templateCache');
+		this.ShaderService = $injector.get('ShaderService');
 		this.context = null;
 
 		$window.addEventListener('resize', () => {
-			const canvas = this.$element[0];
-			this.resize(canvas.clientWidth, canvas.clientHeight);
-			this.render();
+			const canvas = this.element;
+			canvas.width = 0;
+			canvas.height = 0;
+			canvas.classList.add('loading');
+			$timeout(() => {
+				this.resize(canvas.clientWidth, canvas.clientHeight);
+				this.render();
+				canvas.classList.remove('loading');
+			});
 		});
 	}
 
@@ -22,7 +29,7 @@ export class CanvasController {
 			throw new Error(`Failed to load game configuration "${filename}".`);
 		}
 
-		const canvas = this.$element[0];
+		const canvas = this.element;
 		this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
@@ -49,7 +56,7 @@ export class CanvasController {
 	}
 
 	resize(width, height){
-		const canvas = this.$element[0];
+		const canvas = this.element;
 		canvas.width = width;
 		canvas.height = height;
 	}

@@ -99,6 +99,7 @@ module.exports = function(grunt){
 					module: 'wge.data',
 				},
 				src: [
+					'src/data/**/*.json',
 					'src/data/**/*.yml',
 				],
 				dest: 'build/data.js',

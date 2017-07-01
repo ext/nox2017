@@ -6,12 +6,13 @@ export class Texture {
 		this.binding = gl.createTexture();
 	}
 
-	static load(gl, filename){
-		if (!cache.hasOwnProperty(filename)){
+	static load(gl, filename, filter){
+		const key = cacheKey(filename, filter);
+		if (!cache.hasOwnProperty(key)){
 			const texture = new Texture(gl);
-			cache[filename] = texture.loadImage(gl, filename);
+			cache[key] = texture.loadImage(gl, filename);
 		}
-		return cache[filename];
+		return cache[key];
 	}
 
 	static preload(gl, filename){
@@ -28,15 +29,16 @@ export class Texture {
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 
-	loadImage(gl, filename){
+	loadImage(gl, filename, filter){
+		filter = filter || gl.LINEAR;
 		return new Promise((resolve, reject) => {
 			// eslint-disable-next-line no-undef
 			const img = new Image();
 			img.onload = () => {
 				this.bind();
 				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
 				resolve(this);
 			};
 			img.onerror = (err) => {
@@ -45,4 +47,8 @@ export class Texture {
 			img.src = `/assets/${filename}`;
 		});
 	}
+}
+
+function cacheKey(filename, filter){
+	return `${filename}#${filter||'default'}`;
 }

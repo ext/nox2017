@@ -9,7 +9,7 @@ export class Entity {
 
 		this.context = gl;
 		this.model = options.model;
-		this.position = Vector.create([-0.0, 0.0, -6.0]);
+		this.position = Vector.create([0.0, 0.0, 0.0]);
 		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
 		this.modelMatrix = Matrix.I(4);
 		this.calc();

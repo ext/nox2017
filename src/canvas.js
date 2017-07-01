@@ -8,6 +8,7 @@ export class CanvasController {
 		this.element = $element[0];
 		this.$templateCache = $injector.get('$templateCache');
 		this.ShaderService = $injector.get('ShaderService');
+		this.MapService = $injector.get('MapService');
 		this.context = null;
 
 		$window.addEventListener('resize', () => {
@@ -56,6 +57,10 @@ export class CanvasController {
 
 	loadShader(filename){
 		return this.ShaderService.load(this.context, filename);
+	}
+
+	loadMap(filename){
+		return this.MapService.fromFile(this.context, filename);
 	}
 
 	clear(){

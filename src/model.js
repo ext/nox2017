@@ -25,6 +25,8 @@ export class Model {
 	}
 
 	upload(vertices, indices){
+		vertices = flatten(vertices);
+		indices = flatten(indices);
 		const gl = this.context;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -47,4 +49,8 @@ export class Model {
 		this.bind(shader);
 		gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_INT, 0);
 	}
+}
+
+function flatten(src){
+	return src.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 }

@@ -5,21 +5,21 @@ class ModelService {
 		this.$templateCache = $templateCache;
 	}
 
-	load(gl, filename){
+	fromFile(gl, filename){
 		const data = this.$templateCache.get(filename);
 		if (angular.isUndefined(data)){
 			throw new Error(`Failed to load model "${filename}", file not found.`);
 		}
 		const model = new Model(gl);
-		const vertices = flatten(data.vertices);
-		const indices = flatten(data.indices);
+		model.upload(data.vertices, data.indices);
+		return model;
+	}
+
+	fromData(gl, vertices, indices){
+		const model = new Model(gl);
 		model.upload(vertices, indices);
 		return model;
 	}
-}
-
-function flatten(src){
-	return src.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 }
 
 ModelService.$$ngIsClass = true;

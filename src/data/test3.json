@@ -1,0 +1,37 @@
+{ "height":10,
+ "layers":[
+        {
+         "data":[217, 217, 163, 164, 165, 166, 0, 0, 0, 0, 177, 178, 179, 180, 181, 182, 0, 0, 0, 0, 193, 194, 195, 196, 197, 198, 0, 0, 0, 0, 209, 210, 211, 212, 213, 214, 0, 0, 0, 0, 225, 226, 227, 228, 229, 230, 0, 0, 0, 0, 241, 242, 243, 244, 245, 246, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":10,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":10,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.0.2",
+ "tileheight":8,
+ "tilesets":[
+        {
+         "columns":16,
+         "firstgid":1,
+         "image":"textures\/tiles.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "margin":0,
+         "name":"sadf",
+         "spacing":0,
+         "tilecount":256,
+         "tileheight":8,
+         "tilewidth":8
+        }],
+ "tilewidth":8,
+ "type":"map",
+ "version":1,
+ "width":10
+}

@@ -3,7 +3,7 @@ import { Vector, Matrix } from 'sylvester';
 export class Camera {
 	constructor(options){
 		options = Object.assign({
-			position: Vector.create([0, 0, 1.5]),
+			position: Vector.create([0, 0, -25]),
 			target: Vector.create([0, 0, 0]),
 		}, options);
 

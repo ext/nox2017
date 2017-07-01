@@ -8,6 +8,7 @@ require('./math/vector.js');
 require('./app.module');
 require('./app.config');
 require('./shader.service');
+require('./map.service');
 require('./model.service');
 
 require('./main.controller');

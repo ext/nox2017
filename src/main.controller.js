@@ -35,14 +35,23 @@ class MainController extends CanvasController {
 	}
 
 	setupWorld(){
+		const promises = [];
+
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 		this.entity = new Entity(this.context, {
-			model: this.ModelService.load(this.context, '/data/cube.yml'),
+			model: this.ModelService.fromFile(this.context, '/data/cube.yml'),
 		});
 		this.camera = new Camera();
-		return Texture.load(this.context, '/textures/uvgrid.jpg').then(texture => {
+
+		promises.push(this.loadMap('/data/test3.json').then((map) => {
+			this.map = map;
+		}));
+
+		promises.push(Texture.load(this.context, '/textures/uvgrid.jpg').then(texture => {
 			this.texture = texture;
-		});
+		}));
+
+		return Promise.all(promises);
 	}
 
 	setupEventHandlers(){
@@ -77,6 +86,12 @@ class MainController extends CanvasController {
 
 		this.clear();
 		this.ShaderService.uploadProjectionView(gl, this.matP, this.camera.getViewMatrix());
+
+		{
+			this.shader.bind();
+			this.ShaderService.uploadModel(gl, Matrix.I(4));
+			this.map.render(this.shader);
+		}
 
 		{
 			this.shader.bind();

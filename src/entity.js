@@ -10,20 +10,20 @@ export class Entity {
 		this.context = gl;
 		this.model = options.model;
 		this.position = Vector.create([-0.0, 0.0, -6.0]);
+		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
 		this.modelMatrix = Matrix.I(4);
 		this.calc();
 	}
 
 	calc(){
-		this.modelMatrix = Matrix.Translation(this.position).ensure4x4();
+		const t = Matrix.Translation(this.position).ensure4x4();
+		const r = Matrix.RotationFromQuat(this.rotation).ensure4x4();
+		this.modelMatrix = t.x(r);
 	}
 
 	render(shader){
 		if (!this.model) return;
-
-		const gl = this.context;
-		this.model.bind(shader);
-		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+		this.model.render(shader);
 	}
 
 }

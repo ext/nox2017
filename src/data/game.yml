@@ -1,1 +1,3 @@
 preload:
+  texture:
+    - textures/tiles.png

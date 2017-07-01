@@ -12,13 +12,15 @@ const zNear = 0.1;
 const zFar = 100.0;
 
 class MainController extends CanvasController {
-	constructor($scope, $element, $injector){
+	constructor($scope, $element, $injector, ModelService){
 		super($element, $injector);
 		this.$scope = $scope;
+		this.ModelService = ModelService;
 
 		this.init('/data/game.yml').then(() => {
 			this.render();
 		}).catch((err) => {
+			// eslint-disable-next-line no-console
 			console.error(err);
 		});
 	}
@@ -35,7 +37,7 @@ class MainController extends CanvasController {
 	setupWorld(){
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 		this.entity = new Entity(this.context, {
-			model: Model.Quad(this.context),
+			model: this.ModelService.load(this.context, '/data/cube.yml'),
 		});
 		this.camera = new Camera();
 		return Texture.load(this.context, '/textures/uvgrid.jpg').then(texture => {
@@ -50,6 +52,15 @@ class MainController extends CanvasController {
 			'cam.z',
 		], (pos) => {
 			this.camera.setPosition(Vector.create(pos));
+			this.render();
+		});
+		this.$scope.$watchGroup([
+			'rot.x',
+			'rot.y',
+			'rot.z',
+		], (rot) => {
+			this.entity.rotation = Vector.quatFromEuler(rot[0], rot[1], rot[2]);
+			this.entity.calc();
 			this.render();
 		});
 		return Promise.resolve();
@@ -75,26 +86,6 @@ class MainController extends CanvasController {
 		}
 	}
 }
-
-// augment Sylvester some
-Matrix.Translation = function(v){
-	if (v.elements.length === 2){
-		let r = Matrix.I(3);
-		r.elements[2][0] = v.elements[0];
-		r.elements[2][1] = v.elements[1];
-		return r;
-	}
-
-	if (v.elements.length === 3){
-		let r = Matrix.I(4);
-		r.elements[0][3] = v.elements[0];
-		r.elements[1][3] = v.elements[1];
-		r.elements[2][3] = v.elements[2];
-		return r;
-	}
-
-	throw "Invalid length for Translation";
-};
 
 Matrix.prototype.flatten = function(){
 	let result = [];

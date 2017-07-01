@@ -18,6 +18,10 @@ aside {
 	flex: 0 0 auto;
 	background: #fff;
 
+	fieldset {
+		display: inline-block;
+	}
+
 	label {
 		display: block;
 	}

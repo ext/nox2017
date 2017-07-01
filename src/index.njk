@@ -14,11 +14,17 @@
 		</main>
 
 		<aside>
-			<fieldset ng-init="cam.x = 0; cam.y = 0; cam.z = 0">
+			<fieldset ng-init="cam.x = 0; cam.y = 0; cam.z = 1.5">
 				<legend>Camera</legend>
 				<label>X <input type="number" step="0.1" ng-model="cam.x"/></label>
 				<label>Y <input type="number" step="0.1" ng-model="cam.y"/></label>
 				<label>Z <input type="number" step="0.1" ng-model="cam.z"/></label>
+			</fieldset>
+			<fieldset ng-init="rot.x = 0; rot.y = 0; rot.z = 0">
+				<legend>Rotation (euler)</legend>
+				<label>X <input type="number" step="0.1" ng-model="rot.x"/></label>
+				<label>Y <input type="number" step="0.1" ng-model="rot.y"/></label>
+				<label>Z <input type="number" step="0.1" ng-model="rot.z"/></label>
 			</fieldset>
 		</aside>
 

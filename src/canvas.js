@@ -3,8 +3,8 @@ import { Matrix } from 'sylvester';
 
 export class CanvasController {
 	constructor($element, $injector){
-		const $timeout = $injector.get('$timeout');
 		const $window = $injector.get('$window');
+		this.$timeout = $injector.get('$timeout');
 		this.element = $element[0];
 		this.$templateCache = $injector.get('$templateCache');
 		this.ShaderService = $injector.get('ShaderService');
@@ -16,8 +16,7 @@ export class CanvasController {
 			canvas.width = 0;
 			canvas.height = 0;
 			canvas.classList.add('loading');
-			$timeout(() => {
-				this.resize(canvas.clientWidth, canvas.clientHeight);
+			this.calculateSize().then(() => {
 				this.render();
 				canvas.classList.remove('loading');
 			});
@@ -43,9 +42,27 @@ export class CanvasController {
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);
-		this.resize(canvas.clientWidth, canvas.clientHeight);
 
-		return this.preload(config.preload || {});
+		canvas.classList.add('loading');
+		return Promise.all([
+			this.preload(config.preload || {}),
+			this.calculateSize(),
+		]).then(() => {
+			canvas.classList.remove('loading');
+		});
+	}
+
+	calculateSize(){
+		const canvas = this.element;
+		return new Promise(resolve => {
+			this.$timeout(() => {
+				const parent = angular.element(canvas).parent();
+				const width = parent.width();
+				const height = parent.height();
+				this.resize(width, height);
+				resolve();
+			});
+		});
 	}
 
 	preload(preload){

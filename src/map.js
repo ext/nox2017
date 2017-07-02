@@ -21,7 +21,11 @@ export class Map {
 		this.model.forEach(model => model.render(shader));
 	}
 
-	getItem(name){
+	getObjects(){
+		return this.object;
+	}
+
+	getObjectByName(name){
 		return this.namedObject[name];
 	}
 

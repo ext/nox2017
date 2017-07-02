@@ -19,7 +19,7 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'browserify',
+		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'karma:default', 'browserify',
 	]);
 
 	grunt.initConfig({
@@ -133,6 +133,11 @@ module.exports = function(grunt){
 			default: {
 				configFile: 'karma.conf.js',
 			},
+			dev: {
+				configFile: 'karma.conf.js',
+				singleRun: false,
+				browsers: ['Chromium'],
+			},
 		},
 
 		browserify: {
@@ -224,7 +229,7 @@ module.exports = function(grunt){
 			},
 			js: {
 				files: ['<%=eslint.default.src%>'],
-				tasks: ['eslint', 'browserify'],
+				tasks: ['eslint', 'karma:default', 'browserify'],
 			},
 			scss: {
 				files: ['scss/**/*.scss', 'src/**/*.scss'],

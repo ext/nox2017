@@ -22,7 +22,8 @@ class MapService {
 
 		const promise = this.loadTileset(gl, map, data);
 
-		for (const layer of data.layers){
+		const layers = data.layers || [];
+		for (const layer of layers){
 			const name = layer.name;
 			switch (layer.type){
 			case 'tilelayer':
@@ -43,7 +44,7 @@ class MapService {
 	}
 
 	loadTileset(gl, map, data){
-		const tileset = data.tilesets;
+		const tileset = data.tilesets || [];
 		const texture = [];
 		for (const it of tileset){
 			texture.push(Texture.load(gl, it.image, gl.NEAREST));

@@ -1,16 +1,19 @@
 module.exports = function(config){
 	config.set({
-		basePath: '',
+		basePath: __dirname,
 
 		files: [
+			'node_modules/angular/angular.js',
+			'node_modules/angular-animate/angular-animate.js',
+			'node_modules/angular-route/angular-route.js',
+			'node_modules/angular-mocks/angular-mocks.js',
+			'src/test.config.js',
 			'src/**/*.module.js',
 			'src/**/*.js',
-			'tests/karma/**/*.js',
 		],
 
 		preprocessors: {
 			'src/**/*.js': ['browserify'],
-			'tests/**/*.js': ['browserify'],
 		},
 
 		browserify: {
@@ -21,16 +24,17 @@ module.exports = function(config){
 		},
 
 		singleRun: true,
-		browsers: ['PhantomJS'],
+		browsers: ['ChromiumHeadless'],
 		reporters: ['progress'],
 
 		frameworks: [
 			'browserify',
 			'jasmine',
 		],
+
 		plugins: [
 			'karma-browserify',
-			'karma-phantomjs-launcher',
+			'karma-chrome-launcher',
 			'karma-jasmine',
 		],
 	});

@@ -1,6 +1,7 @@
 {
   "plugins": [
-    "angular"
+    "angular",
+    "jasmine"
   ],
   "extends": [
     "plugin:angular/bestpractices"
@@ -15,5 +16,31 @@
     "angular/controller-as-vm": ["error", "$ctrl"],
     "new-cap": 0,
     "no-console": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": "**/*.spec.js",
+      "env": {
+        "angular/mocks": true,
+        "jasmine": true
+      },
+      "rules": {
+        "camelcase": 0,
+        "jasmine/named-spy": 0,
+        "jasmine/no-focused-tests": "warn",
+        "jasmine/no-disabled-tests": "warn",
+        "jasmine/no-describe-variables": 0,
+        "jasmine/no-suite-dupes": "error",
+        "jasmine/no-spec-dupes": ["warn", "branch"],
+        "jasmine/missing-expect": 0,
+        "jasmine/no-suite-callback-args": "error",
+        "jasmine/valid-expect": "error",
+        "jasmine/no-assign-spyon": "error",
+        "jasmine/no-unsafe-spy": "error",
+        "jasmine/no-global-setup": "error",
+        "jasmine/no-expect-in-setup-teardown": 0,
+        "jasmine/new-line-between-declarations": "error"
+      }
+    }
+  ]
 }

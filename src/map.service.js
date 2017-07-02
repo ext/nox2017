@@ -32,6 +32,7 @@ class MapService {
 				this.loadObjects(map, layer.objects);
 				break;
 			default:
+				// eslint-disable-next-line
 				console.warn(`Unsupported layer type "${layer.type}", the layer named "${name}" ignored.`);
 			}
 		}
@@ -49,6 +50,7 @@ class MapService {
 		}
 		// TODO support multiple tilesets
 		if (texture.length > 1){
+			// eslint-disable-next-line
 			console.warn('Currently only one tileset is supported, first one will be used');
 		}
 		return Promise.all(texture).then((texture) => {

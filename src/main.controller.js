@@ -3,7 +3,6 @@
 import { Camera } from './camera';
 import { CanvasController } from './canvas';
 import { Entity } from './entity';
-import { Model } from './model';
 import { Texture } from './texture';
 import { Vector, Matrix } from 'sylvester';
 

@@ -1,9 +1,9 @@
 /* eslint-disable angular/no-controller */
 
-import { Camera } from './camera';
-import { CanvasController } from './canvas';
-import { Entity } from './entity';
-import { Texture } from './texture';
+import { Camera } from 'camera';
+import { CanvasController } from 'canvas';
+import { Entity } from 'entity';
+import { Texture } from 'texture';
 import { Vector, Matrix } from 'sylvester';
 
 const FOV = 45.0;

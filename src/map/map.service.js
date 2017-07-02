@@ -1,5 +1,5 @@
 import { Map } from './map';
-import { Texture } from './texture';
+import { Texture } from 'texture';
 
 class MapService {
 	constructor($templateCache, ModelService){

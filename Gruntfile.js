@@ -87,7 +87,7 @@ module.exports = function(grunt){
 				},
 				src: [
 					'src/**/*.html',
-					'!src/layout/*.html',
+					'game/**/*.html',
 				],
 				dest: 'build/templates.js',
 			},
@@ -99,8 +99,8 @@ module.exports = function(grunt){
 					module: 'wge.data',
 				},
 				src: [
-					'src/data/**/*.json',
-					'src/data/**/*.yml',
+					'data/**/*.json',
+					'data/**/*.yml',
 				],
 				dest: 'build/data.js',
 			},
@@ -123,8 +123,7 @@ module.exports = function(grunt){
 				src: [
 					'Gruntfile.js',
 					'src/**/*.js',
-					'tests/e2e/**/*.js',
-					'tests/unit/**/*.js',
+					'game/**/*.js',
 				],
 			},
 		},
@@ -143,6 +142,12 @@ module.exports = function(grunt){
 		browserify: {
 			default: {
 				options: {
+					browserifyOptions: {
+						paths: [
+							'node_modules',
+							'src',
+						],
+					},
 					transform: [
 						['babelify', {
 							presets: ['env'],
@@ -150,7 +155,7 @@ module.exports = function(grunt){
 						}],
 					],
 				},
-				src: 'src/app.js',
+				src: 'game/app.js',
 				dest: 'public/assets/js/<%=pkg.files.js%>.min.js',
 			},
 		},
@@ -178,7 +183,7 @@ module.exports = function(grunt){
 				configureEnvironment: configureNunjucks,
 			},
 			index: {
-				src: 'src/index.njk',
+				src: 'game/index.njk',
 				dest: 'public/index.html',
 			},
 		},
@@ -216,7 +221,7 @@ module.exports = function(grunt){
 				tasks: ['md2html', 'html2js', 'browserify'],
 			},
 			data: {
-				files: ['src/data/**'],
+				files: ['data/**'],
 				tasks: ['data2js', 'browserify'],
 			},
 			glsl: {
@@ -236,7 +241,7 @@ module.exports = function(grunt){
 				tasks: ['sass', 'postcss'],
 			},
 			index: {
-				files: ['src/*.njk'],
+				files: ['game/*.njk'],
 				tasks: ['nunjucks'],
 			},
 		},

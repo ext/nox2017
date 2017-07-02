@@ -7,17 +7,23 @@ module.exports = function(config){
 			'node_modules/angular-animate/angular-animate.js',
 			'node_modules/angular-route/angular-route.js',
 			'node_modules/angular-mocks/angular-mocks.js',
+			'game/**/*.module.js',
+			'game/**/*.js',
 			'src/test.config.js',
-			'src/**/*.module.js',
 			'src/**/*.js',
 		],
 
 		preprocessors: {
+			'game/**/*.js': ['browserify'],
 			'src/**/*.js': ['browserify'],
 		},
 
 		browserify: {
 			debug: true,
+			paths: [
+				'node_modules',
+				'src',
+			],
 			transform: [
 				['babelify', {presets: ['env']}],
 			],

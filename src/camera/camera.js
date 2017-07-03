@@ -6,17 +6,34 @@ export class Camera {
 			position: Vector.create([0, 0, 25]),
 			target: Vector.create([0, 0, 0]),
 			up: Vector.create([0, 1, 0]),
+			onUpdate: null,
 		}, options);
 
 		this.position = options.position;
 		this.target = options.target;
 		this.up = options.up,
 		this.matrix = Matrix.I(4);
+		this.onUpdate = options.onUpdate;
 		this.calc();
+	}
+
+	static follow(entity, options){
+		const offset = Vector.create(options.offset || [0, 0, 25]);
+		return (camera) => {
+			camera.setPosition(entity.position.add(offset));
+			camera.setTarget(Vector.create(entity.position.elements));
+		};
 	}
 
 	calc(){
 		this.matrix = lookAt(this.position, this.target, this.up);
+	}
+
+	update(){
+		if (this.onUpdate){
+			this.onUpdate(this);
+			this.calc();
+		}
 	}
 
 	setPosition(v){

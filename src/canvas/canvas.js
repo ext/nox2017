@@ -3,15 +3,17 @@ import { Matrix } from 'sylvester';
 
 export class CanvasController {
 	constructor($element, $injector){
-		const $window = $injector.get('$window');
+		this.$window = $injector.get('$window');
 		this.$timeout = $injector.get('$timeout');
 		this.element = $element[0];
 		this.$templateCache = $injector.get('$templateCache');
 		this.ShaderService = $injector.get('ShaderService');
 		this.MapService = $injector.get('MapService');
 		this.context = null;
+		this.lastFrame = null;              /* timestamp of last frame */
+		this.keypress = [];                 /* state of keyboard */
 
-		$window.addEventListener('resize', () => {
+		this.$window.addEventListener('resize', () => {
 			const canvas = this.element;
 			canvas.width = 0;
 			canvas.height = 0;
@@ -43,12 +45,23 @@ export class CanvasController {
 		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);
 
+		this.bindKeys();
+
 		canvas.classList.add('loading');
 		return Promise.all([
 			this.preload(config.preload || {}),
 			this.calculateSize(),
 		]).then(() => {
 			canvas.classList.remove('loading');
+		});
+	}
+
+	bindKeys(){
+		this.$window.addEventListener('keydown', event => {
+			this.keypress[event.keyCode] = true;
+		});
+		this.$window.addEventListener('keyup', event => {
+			this.keypress[event.keyCode] = false;
 		});
 	}
 
@@ -80,6 +93,24 @@ export class CanvasController {
 		return this.MapService.fromFile(this.context, filename);
 	}
 
+	start(){
+		this.lastFrame = Date.now();
+		this.tick();
+	}
+
+	tick(){
+		const now = Date.now();
+		const dt = (now - this.lastFrame) / 1000;
+		this.lastFrame = now;
+
+		this.update(dt);
+		this.render();
+
+		requestAnimationFrame(() => {
+			this.tick();
+		});
+	}
+
 	clear(){
 		this.context.clearColor(0.0, 0.0, 0.0, 1.0);
 		this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
@@ -89,6 +120,10 @@ export class CanvasController {
 		const canvas = this.element;
 		canvas.width = width;
 		canvas.height = height;
+	}
+
+	update(){
+
 	}
 
 	render(){

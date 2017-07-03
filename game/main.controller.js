@@ -10,6 +10,13 @@ const FOV = 45.0;
 const zNear = 0.1;
 const zFar = 100.0;
 
+const KEY_LEFT = 65;
+const KEY_RIGHT = 68;
+const KEY_UP = 87;
+const KEY_DOWN = 83;
+
+const PLAYER_SPEED = 5;
+
 class MainController extends CanvasController {
 	constructor($scope, $element, $injector, ModelService){
 		super($element, $injector);
@@ -17,7 +24,7 @@ class MainController extends CanvasController {
 		this.ModelService = ModelService;
 
 		this.init('/data/game.yml').then(() => {
-			this.render();
+			this.start();
 		}).catch((err) => {
 			// eslint-disable-next-line no-console
 			console.error(err);
@@ -40,7 +47,10 @@ class MainController extends CanvasController {
 		this.entity = new Entity(this.context, {
 			model: this.ModelService.fromFile(this.context, '/data/cube.yml'),
 		});
-		this.camera = new Camera();
+
+		this.camera = new Camera({
+			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 25]}),
+		});
 
 		promises.push(this.loadMap('/data/test3.json').then((map) => {
 			this.map = map;
@@ -78,6 +88,31 @@ class MainController extends CanvasController {
 		super.resize(width, height);
 		this.matP = makePerspective(FOV, width / height, zNear, zFar);
 		this.context.viewport(0, 0, width, height);
+	}
+
+	update(dt){
+		let velocity = Vector.create([0, 0, 0]);
+
+		if (this.keypress[KEY_RIGHT]){
+			velocity.elements[0] += PLAYER_SPEED;
+		}
+
+		if (this.keypress[KEY_LEFT]){
+			velocity.elements[0] -= PLAYER_SPEED;
+		}
+
+		if (this.keypress[KEY_UP]){
+			velocity.elements[1] += PLAYER_SPEED;
+		}
+
+		if (this.keypress[KEY_DOWN]){
+			velocity.elements[1] -= PLAYER_SPEED;
+		}
+
+		this.entity.position = this.entity.position.add(velocity.x(dt));
+		this.entity.calc();
+
+		this.camera.update();
 	}
 
 	render(){

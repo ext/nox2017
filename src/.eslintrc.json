@@ -7,7 +7,8 @@
     "plugin:angular/bestpractices"
   ],
   "env": {
-    "angular/angular": true
+    "angular/angular": true,
+    "browser": true
   },
   "globals": {
     "Float32Array": false

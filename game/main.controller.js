@@ -167,33 +167,6 @@ Vector.prototype.flatten = function(){
 };
 
 //
-// gluLookAt
-//
-function makeLookAt(ex, ey, ez,
-	cx, cy, cz,
-	ux, uy, uz){
-
-	let eye = Vector.create([ex, ey, ez]);
-	let center = Vector.create([cx, cy, cz]);
-	let up = Vector.create([ux, uy, uz]);
-
-	let z = eye.subtract(center).toUnitVector();
-	let x = up.cross(z).toUnitVector();
-	let y = z.cross(x).toUnitVector();
-
-	let m = Matrix.create([[x.e(1), x.e(2), x.e(3), 0],
-		[y.e(1), y.e(2), y.e(3), 0],
-		[z.e(1), z.e(2), z.e(3), 0],
-		[0, 0, 0, 1]]);
-
-	let t = Matrix.create([[1, 0, 0, -ex],
-		[0, 1, 0, -ey],
-		[0, 0, 1, -ez],
-		[0, 0, 0, 1]]);
-	return m.x(t);
-}
-
-//
 // glOrtho
 //
 function makeOrtho(left, right,

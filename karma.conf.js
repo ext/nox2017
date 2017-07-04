@@ -11,6 +11,7 @@ module.exports = function(config){
 			'game/**/*.js',
 			'src/test.config.js',
 			'src/**/*.js',
+			'build/*.js',
 		],
 
 		preprocessors: {

@@ -19,7 +19,7 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'karma:default', 'browserify',
+		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'uglify:data', 'karma:default', 'browserify',
 	]);
 
 	grunt.initConfig({
@@ -164,6 +164,15 @@ module.exports = function(grunt){
 			options: {
 				mangle: true,
 			},
+			data: {
+				files: {
+					'public/assets/js/data.min.js': [
+						'build/data.js',
+						'build/shaders.js',
+						'build/templates.js',
+					],
+				},
+			},
 			libs: {
 				files: {
 					'public/assets/js/<%=pkg.files.libs%>.min.js': [
@@ -218,19 +227,19 @@ module.exports = function(grunt){
 			},
 			md: {
 				files: ['src/**/*.md'],
-				tasks: ['md2html', 'html2js', 'browserify'],
+				tasks: ['md2html', 'html2js', 'uglify:data'],
 			},
 			data: {
 				files: ['data/**'],
-				tasks: ['data2js', 'browserify'],
+				tasks: ['data2js', 'uglify:data'],
 			},
 			glsl: {
 				files: ['shaders/**/*.glsl', 'shaders/**/*.shader.yml'],
-				tasks: ['glsl2js', 'browserify'],
+				tasks: ['glsl2js', 'uglify:data'],
 			},
 			html: {
-				files: ['<%=html2js.default.src%>', '!build/docs/**/*.html'],
-				tasks: ['html2js', 'browserify'],
+				files: ['<%=html2js.default.src%>'],
+				tasks: ['html2js', 'uglify:data'],
 			},
 			js: {
 				files: ['<%=eslint.default.src%>'],

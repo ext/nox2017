@@ -1,3 +1,5 @@
+image: node:8
+
 cache:
   paths:
     - node_modules/
@@ -10,13 +12,12 @@ stages:
 
 Install dependencies:
   stage: prepare
-  image: node:8
   tags:
-    - nodejs
+    - docker
   artifacts:
     untracked: true
   script:
-   - npm update
+   - npm install
 
 Build:
   stage: build
@@ -31,14 +32,14 @@ Build:
 Code lint:
   stage: test
   tags:
-    - nodejs
+    - docker
   script:
     - node_modules/.bin/grunt lint
 
 Karma:
   stage: test
   tags:
-    - nodejs
+    - docker
   script:
     - node_modules/.bin/grunt build:data karma:default
 
@@ -47,6 +48,6 @@ Release:
   only:
     - tags
   tags:
-    - nodejs
+    - docker
   script:
     - node_modules/.bin/grunt compress

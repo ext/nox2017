@@ -41,6 +41,11 @@ export class CanvasController {
 		/* depth */
 		gl.enable(gl.DEPTH_TEST);
 
+		/* blending */
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
 		this.matP = Matrix.I(4);

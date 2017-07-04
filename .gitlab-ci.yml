@@ -21,7 +21,7 @@ Build:
   stage: build
   image: docker.sidvind.com/chrome
   tags:
-    - nodejs
+    - docker
   artifacts:
     untracked: true
   script:

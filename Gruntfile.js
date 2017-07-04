@@ -11,15 +11,23 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build', [
-		'clean', 'sass', 'postcss', 'build:js', 'build:libs', 'nunjucks', 'copy',
+		'clean', 'sass', 'postcss', 'build:data', 'build:js', 'build:libs', 'nunjucks', 'copy',
+	]);
+
+	grunt.registerTask('lint', [
+		'eslint',
 	]);
 
 	grunt.registerTask('build:libs', [
 		'uglify:libs',
 	]);
 
+	grunt.registerTask('build:data', [
+		'md2html', 'data2js', 'glsl2js', 'html2js', 'uglify:data',
+	]);
+
 	grunt.registerTask('build:js', [
-		'eslint', 'md2html', 'data2js', 'glsl2js', 'html2js', 'uglify:data', 'karma:default', 'browserify',
+		'eslint', 'karma:default', 'browserify',
 	]);
 
 	grunt.initConfig({
@@ -218,6 +226,22 @@ module.exports = function(grunt){
 				},
 			},
 			default: {
+			},
+		},
+
+		compress: {
+			main: {
+				options: {
+					archive: '<%= pkg.name %>-<%= pkg.version %>.zip',
+				},
+				files: [
+					{
+						expand: true,
+						cwd: 'public/',
+						src: ['**'],
+						dest: '/',
+					},
+				],
 			},
 		},
 

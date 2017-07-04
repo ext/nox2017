@@ -1,0 +1,50 @@
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - prepare
+  - build
+  - test
+  - release
+
+Install dependencies:
+  stage: prepare
+  tags:
+    - nodejs
+  artifacts:
+    untracked: true
+  script:
+   - npm update
+
+Build:
+  stage: build
+  tags:
+    - nodejs
+  artifacts:
+    untracked: true
+  script:
+    - node_modules/.bin/grunt build
+
+Code lint:
+  stage: test
+  tags:
+    - nodejs
+  script:
+    - node_modules/.bin/grunt lint
+
+Karma:
+  stage: test
+  tags:
+    - nodejs
+  script:
+    - node_modules/.bin/grunt build:data karma:default
+
+Release:
+  stage: release
+  only:
+    - tags
+  tags:
+    - nodejs
+  script:
+    - node_modules/.bin/grunt compress

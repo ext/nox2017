@@ -6,8 +6,8 @@ cache:
 
 stages:
   - prepare
-  - build
   - test
+  - build
   - release
 
 Install dependencies:
@@ -19,16 +19,6 @@ Install dependencies:
   script:
    - npm install
 
-Build:
-  stage: build
-  image: docker.sidvind.com/chrome
-  tags:
-    - docker
-  artifacts:
-    untracked: true
-  script:
-    - node_modules/.bin/grunt build
-
 Code lint:
   stage: test
   tags:
@@ -38,10 +28,21 @@ Code lint:
 
 Karma:
   stage: test
+  image: docker.sidvind.com/chrome
   tags:
     - docker
   script:
     - node_modules/.bin/grunt build:data karma:default
+
+Build:
+  stage: build
+  image: docker.sidvind.com/chrome
+  tags:
+    - docker
+  artifacts:
+    untracked: true
+  script:
+    - node_modules/.bin/grunt build
 
 Release:
   stage: release

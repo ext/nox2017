@@ -46,13 +46,14 @@ class MainController extends CanvasController {
 		this.shader = this.loadShader('/shaders/test.shader.yml');
 		this.entity = new Entity(this.context, {
 			model: this.ModelService.fromFile(this.context, '/data/cube.yml'),
+			position: [55, -9, 0],
 		});
 
 		this.camera = new Camera({
-			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 25]}),
+			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 15]}),
 		});
 
-		promises.push(this.loadMap('/data/test3.json').then((map) => {
+		promises.push(this.loadMap('/data/map.json').then((map) => {
 			this.map = map;
 		}));
 

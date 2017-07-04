@@ -62,6 +62,6 @@ Release:
     name: ${CI_PROJECT_NAME}-${CI_PIPELINE_ID}-release
     when: always
     paths:
-      - *.zip
+      - "*.zip"
   script:
     - node_modules/.bin/grunt compress

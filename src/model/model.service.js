@@ -11,7 +11,10 @@ class ModelService {
 			throw new Error(`Failed to load model "${filename}", file not found.`);
 		}
 		const model = new Model(gl);
-		model.upload(data.vertices, data.indices);
+		model.upload(
+			new Float32Array(flatten(data.vertices)),
+			new Uint32Array(flatten(data.indices))
+		);
 		return model;
 	}
 
@@ -27,3 +30,7 @@ ModelService.$$ngIsClass = true;
 angular
 	.module('wge')
 	.factory('ModelService', ModelService);
+
+function flatten(src){
+	return src.reduce((a, b) => a.concat(b), []);
+}

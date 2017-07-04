@@ -65,8 +65,18 @@ class MapService {
 		const dy = map.tileHeight / 128.0;
 		const tileDiv = 128 / map.tileWidth;
 
-		const vertices = [];
-		let indices = [];
+		/* only count tiles where something is drawn */
+		const numTiles = layer.data.reduce((n, tile) => {
+			return n + (tile >= 1 ? 1 : 0);
+		}, 0);
+
+		const stride = 9;
+		const verticesPerTile = 4;
+		const indicesPerTile = 6;
+		const numFloats = numTiles * verticesPerTile * stride;
+		const vertices = new Float32Array(numFloats);
+		const indices = new Uint32Array(numTiles * indicesPerTile);
+		const pitch = (n, i) => (n * verticesPerTile + i) * stride;
 
 		for (let i = 0, n = 0; i < layer.data.length; i++){
 			const tile = layer.data[i] - 1; // format uses tile 1-indexed, but want 0-indexed
@@ -77,12 +87,12 @@ class MapService {
 			const tx = tile % tileDiv;
 			const ty = Math.floor(tile / tileDiv);
 
-			vertices.push([x+1, y+1, 0, tx*dx+dx, ty*dy, 1, 1, 1, 1]);
-			vertices.push([x,   y+1, 0, tx*dx,    ty*dy, 1, 1, 1, 1]);
-			vertices.push([x+1, y,   0, tx*dx+dx, ty*dy+dy, 1, 1, 1, 1]);
-			vertices.push([x,   y,   0, tx*dx,    ty*dy+dy, 1, 1, 1, 1]);
+			vertices.set([x+1, y+1, 0, tx*dx+dx, ty*dy, 1, 1, 1, 1], pitch(n, 0));
+			vertices.set([x,   y+1, 0, tx*dx,    ty*dy, 1, 1, 1, 1], pitch(n, 1));
+			vertices.set([x+1, y,   0, tx*dx+dx, ty*dy+dy, 1, 1, 1, 1], pitch(n, 2));
+			vertices.set([x,   y,   0, tx*dx,    ty*dy+dy, 1, 1, 1, 1], pitch(n, 3));
 
-			indices.push([0, 1, 2, 1, 3, 2].map(x => n*4 + x));
+			indices.set([0, 1, 2, 1, 3, 2].map(x => n*4 + x), n * indicesPerTile);
 			n++;
 		}
 

@@ -13,25 +13,23 @@ export class Model {
 	static Quad(gl){
 		if (!quad){
 			quad = new Model(gl);
-			quad.upload([
+			quad.upload(new Float32Array([
 				/* X     Y     Z       U     V       R    G    B    A */
 				 1.0,  1.0,  0.0,    1.0,  0.0,    1.0, 1.0, 1.0, 1.0,
 				 0.0,  1.0,  0.0,    0.0,  0.0,    1.0, 1.0, 1.0, 1.0,
 				 1.0,  0.0,  0.0,    1.0,  1.0,    1.0, 1.0, 1.0, 1.0,
 				 0.0,  0.0,  0.0,    0.0,  1.0,    1.0, 1.0, 1.0, 1.0,
-			], [0, 1, 2, 3]);
+			]), new Uint32Array([0, 1, 2, 3]));
 		}
 		return quad;
 	}
 
 	upload(vertices, indices){
-		vertices = flatten(vertices);
-		indices = flatten(indices);
 		const gl = this.context;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 		this.numIndices = indices.length;
 	}
 
@@ -49,8 +47,4 @@ export class Model {
 		this.bind(shader);
 		gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_INT, 0);
 	}
-}
-
-function flatten(src){
-	return src.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 }

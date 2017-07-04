@@ -31,8 +31,15 @@ module.exports = function(config){
 		},
 
 		singleRun: true,
-		browsers: ['ChromiumHeadless'],
+		browsers: ['ChromiumHeadlessNoSandbox'],
 		reporters: ['progress'],
+
+		customLaunchers: {
+			ChromiumHeadlessNoSandbox: {
+				base: 'ChromiumHeadless',
+				flags: ['--no-sandbox'],
+			},
+		},
 
 		frameworks: [
 			'browserify',

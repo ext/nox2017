@@ -19,6 +19,7 @@ Install dependencies:
 
 Build:
   stage: build
+  image: docker.sidvind.com/chrome
   tags:
     - nodejs
   artifacts:

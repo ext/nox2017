@@ -99,7 +99,7 @@ class MainController extends CanvasController {
 		const gl = this.context;
 
 		if (this.fbo){
-			this.fbo.destroy(gl);
+			this.fbo.destroy();
 		}
 
 		this.fbo = new Framebuffer(gl, [width, height], {
@@ -146,15 +146,15 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadProjectionView(gl, this.projection, this.camera.getViewMatrix());
 
 		this.shader.bind();
-		this.fbo.with(gl, () => {
+		this.fbo.with(() => {
 			this.fbo.clear(gl, 0, 0, 0, 0);
 
 			this.ShaderService.uploadModel(gl, Matrix.I(4));
-			this.map.render(this.shader);
+			this.map.render();
 
 			this.texture.bind();
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
-			this.entity.render(this.shader);
+			this.entity.render();
 		});
 
 		const scale = Matrix.create([

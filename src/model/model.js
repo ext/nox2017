@@ -1,3 +1,5 @@
+import { Attribute } from 'shader';
+
 let quad = null;
 
 const stride = 9 * 4;
@@ -33,13 +35,13 @@ export class Model {
 		this.numIndices = indices.length;
 	}
 
-	bind(shader){
+	bind(){
 		const gl = this.context;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
-		gl.vertexAttribPointer(shader.aPosition, 3, gl.FLOAT, false, stride, 0*4);
-		gl.vertexAttribPointer(shader.aUV,       2, gl.FLOAT, false, stride, 3*4);
-		gl.vertexAttribPointer(shader.aColor,    4, gl.FLOAT, false, stride, 5*4);
+		gl.vertexAttribPointer(Attribute.Position, 3, gl.FLOAT, false, stride, 0*4);
+		gl.vertexAttribPointer(Attribute.UV, 2, gl.FLOAT, false, stride, 3*4);
+		gl.vertexAttribPointer(Attribute.Color, 4, gl.FLOAT, false, stride, 5*4);
 	}
 
 	render(shader){

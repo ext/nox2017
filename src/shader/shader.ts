@@ -1,5 +1,11 @@
 import { Uniform } from './uniform';
 
+declare global {
+	interface WebGL2RenderingContext {
+		wgeUniforms: any;
+	}
+}
+
 export const Attribute = {
 	Position: 0,
 	UV: 1,
@@ -9,7 +15,10 @@ export const Attribute = {
 const numAttributes = Object.keys(Attribute).length;
 
 export class Shader {
-	constructor(gl, data){
+	context: WebGL2RenderingContext;
+	sp: WebGLProgram;
+
+	constructor(gl: WebGL2RenderingContext, data: any){
 		this.context = gl;
 		const sp = this.sp = gl.createProgram();
 
@@ -26,7 +35,7 @@ export class Shader {
 		this.setupUniformBlocks();
 	}
 
-	static initialize(gl){
+	static initialize(gl: WebGL2RenderingContext){
 		gl.wgeUniforms.projectionViewMatrices = new Uniform(gl, 'projectionViewMatrices', 4*16*3);
 		gl.wgeUniforms.modelMatrices = new Uniform(gl, 'modelMatrices', 4*16*1);
 
@@ -49,7 +58,7 @@ export class Shader {
 		this.context.useProgram(this.sp);
 	}
 
-	static uploadProjectionView(gl, proj, view){
+	static uploadProjectionView(gl: WebGL2RenderingContext, proj: any, view: any){
 		const pv = proj.x(view);
 		const s = 4*16;
 		gl.wgeUniforms.projectionViewMatrices.upload(gl, [
@@ -59,24 +68,24 @@ export class Shader {
 		]);
 	}
 
-	static uploadModel(gl, model){
+	static uploadModel(gl: WebGL2RenderingContext, model: any){
 		gl.wgeUniforms.modelMatrices.upload(gl, [
 			[0, new Float32Array(model.flatten())],
 		]);
 	}
 
-	getAttribLocation(name){
+	getAttribLocation(name: string){
 		const gl = this.context;
 		return gl.getAttribLocation(this.sp, name);
 	}
 
-	getUniformLocation(name){
+	getUniformLocation(name: string){
 		const gl = this.context;
 		return gl.getUniformLocation(this.sp, name);
 	}
 }
 
-function typeToEnum(gl, type){
+function typeToEnum(gl: WebGL2RenderingContext, type: string){
 	switch (type){
 	case 'vertex': return gl.VERTEX_SHADER;
 	case 'fragment': return gl.FRAGMENT_SHADER;
@@ -84,7 +93,7 @@ function typeToEnum(gl, type){
 	}
 }
 
-function attach(gl, sp, pass){
+function attach(gl: WebGL2RenderingContext, sp: WebGLProgram, pass: Object){
 	for (const [type, source] of Object.entries(pass)){
 		const glType = typeToEnum(gl, type);
 		const shader = gl.createShader(glType);

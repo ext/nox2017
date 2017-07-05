@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "moduleResolution": "node",
+    "outDir": "build",
+    "allowJs": true,
+    "baseUrl": "src",
+    "noImplicitAny": true,
+    "lib": [
+      "ES2017",
+      "DOM"
+    ]
+  }
+}

@@ -1,17 +1,21 @@
 import { Attribute } from 'shader';
 
-let quad = null;
+let quad: Model = null;
 
 const stride = 9 * 4;
 
 export class Model {
-	constructor(gl){
+	vertices: WebGLBuffer;
+	indices: WebGLBuffer;
+	numIndices: number;
+
+	constructor(gl: WebGL2RenderingContext){
 		this.vertices = gl.createBuffer();
 		this.indices = gl.createBuffer();
 		this.numIndices = 0;
 	}
 
-	static Quad(gl){
+	static Quad(gl: WebGL2RenderingContext){
 		if (!quad){
 			quad = new Model(gl);
 			quad.upload(gl, new Float32Array([
@@ -25,7 +29,7 @@ export class Model {
 		return quad;
 	}
 
-	upload(gl, vertices, indices){
+	upload(gl: WebGL2RenderingContext, vertices: Float32Array, indices: Uint32Array){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
@@ -33,7 +37,7 @@ export class Model {
 		this.numIndices = indices.length;
 	}
 
-	bind(gl){
+	bind(gl: WebGL2RenderingContext){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
 		gl.vertexAttribPointer(Attribute.Position, 3, gl.FLOAT, false, stride, 0*4);
@@ -41,7 +45,7 @@ export class Model {
 		gl.vertexAttribPointer(Attribute.Color, 4, gl.FLOAT, false, stride, 5*4);
 	}
 
-	render(gl){
+	render(gl: WebGL2RenderingContext){
 		if (gl === null) throw new Error('Model.render() called without GL context');
 		this.bind(gl);
 		gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_INT, 0);

@@ -7,6 +7,7 @@ export class Framebuffer {
 			filter: gl.NEAREST,
 		}, options);
 
+		this.context = gl;
 		this.id = gl.createFramebuffer();
 		this.color = [gl.createTexture(), gl.createTexture()];
 		this.depth = options.depth ? gl.createTexture() : null;
@@ -26,7 +27,7 @@ export class Framebuffer {
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT16, size[0], size[1], 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
 		}
 
-		this.with(gl, () => {
+		this.with(() => {
 			if (this.depth){
 				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depth, 0);
 			}
@@ -41,11 +42,12 @@ export class Framebuffer {
 			gl.enable(gl.BLEND);
 			gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-			this.clear(gl, 0, 0, 0, 1);
+			this.clear(0, 0, 0, 1);
 		});
 	}
 
-	destroy(gl){
+	destroy(){
+		const gl = this.context;
 		gl.deleteFramebuffer(this.id);
 		gl.deleteTexture(this.color[0]);
 		gl.deleteTexture(this.color[1]);
@@ -54,11 +56,13 @@ export class Framebuffer {
 		}
 	}
 
-	bindTexture(gl){
+	bindTexture(){
+		const gl = this.context;
 		gl.bindTexture(gl.TEXTURE_2D, this.color[1-this.current]);
 	}
 
-	with(gl, cb){
+	with(cb){
+		const gl = this.context;
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.id);
 		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.color[this.current], 0);
 		{
@@ -68,7 +72,8 @@ export class Framebuffer {
 		this.current = 1 - this.current;
 	}
 
-	clear(gl, ...args){
+	clear(...args){
+		const gl = this.context;
 		gl.clearColor(...args);
 		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	}

@@ -23,6 +23,10 @@ class ModelService {
 		model.upload(vertices, indices);
 		return model;
 	}
+
+	quad(gl){
+		return Model.Quad(gl);
+	}
 }
 
 ModelService.$$ngIsClass = true;

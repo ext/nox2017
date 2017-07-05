@@ -1,5 +1,13 @@
 import { Uniform } from './uniform';
 
+export const Attribute = {
+	Position: 0,
+	UV: 1,
+	Color: 2,
+};
+
+const numAttributes = Object.keys(Attribute).length;
+
 export class Shader {
 	constructor(gl, data){
 		this.context = gl;
@@ -16,12 +24,15 @@ export class Shader {
 
 		this.bind();
 		this.setupUniformBlocks();
-		this.setupAttributes();
 	}
 
 	static initialize(gl){
 		gl.wgeUniforms.projectionViewMatrices = new Uniform(gl, 'projectionViewMatrices', 4*16*3);
 		gl.wgeUniforms.modelMatrices = new Uniform(gl, 'modelMatrices', 4*16*1);
+
+		for (let i = 0; i < numAttributes; i++){
+			gl.enableVertexAttribArray(i);
+		}
 	}
 
 	setupUniformBlocks(){
@@ -32,16 +43,6 @@ export class Shader {
 				gl.uniformBlockBinding(this.sp, id, it.binding);
 			}
 		}
-	}
-
-	setupAttributes(){
-		const gl = this.context;
-		this.aPosition = this.getAttribLocation("in_pos");
-		this.aUV = this.getAttribLocation("in_uv");
-		this.aColor = this.getAttribLocation("in_color");
-		gl.enableVertexAttribArray(this.aPosition);
-		gl.enableVertexAttribArray(this.aUV);
-		gl.enableVertexAttribArray(this.aColor);
 	}
 
 	bind(){

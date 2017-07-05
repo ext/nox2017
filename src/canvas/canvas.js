@@ -123,8 +123,8 @@ export class CanvasController {
 
 	resize(width, height){
 		const canvas = this.element;
-		canvas.width = width;
-		canvas.height = height;
+		this.width = canvas.width = width;
+		this.height = canvas.height = height;
 	}
 
 	update(){

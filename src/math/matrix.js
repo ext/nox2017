@@ -32,3 +32,16 @@ Matrix.RotationFromQuat = function(q){
 		[0.0, 0.0, 0.0, 1.0],
 	]);
 };
+
+Matrix.ortho = function(left, right,  bottom, top, znear, zfar){
+	const tx = -(right+left)/(right-left);
+	const ty = -(top+bottom)/(top-bottom);
+	const tz = -(zfar+znear)/(zfar-znear);
+
+	return Matrix.create([
+		[2/(right-left), 0, 0, tx],
+		[0, 2/(top-bottom), 0, ty],
+		[0, 0, -2/(zfar-znear), tz],
+		[0, 0, 0, 1],
+	]);
+};

@@ -150,11 +150,11 @@ class MainController extends CanvasController {
 			this.fbo.clear(gl, 0, 0, 0, 0);
 
 			this.ShaderService.uploadModel(gl, Matrix.I(4));
-			this.map.render(this.shader);
+			this.map.render();
 
 			this.texture.bind();
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
-			this.entity.render(this.shader);
+			this.entity.render();
 		});
 
 		const scale = Matrix.create([

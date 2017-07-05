@@ -16,9 +16,9 @@ export class Map {
 		this.namedObject = {};
 	}
 
-	render(shader){
+	render(){
 		this.texture.bind();
-		this.model.forEach(model => model.render(shader));
+		this.model.forEach(model => model.render());
 	}
 
 	getObjects(){

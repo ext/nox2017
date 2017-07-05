@@ -33,13 +33,13 @@ export class Model {
 		this.numIndices = indices.length;
 	}
 
-	bind(shader){
+	bind(){
 		const gl = this.context;
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
-		gl.vertexAttribPointer(shader.aPosition, 3, gl.FLOAT, false, stride, 0*4);
-		gl.vertexAttribPointer(shader.aUV,       2, gl.FLOAT, false, stride, 3*4);
-		gl.vertexAttribPointer(shader.aColor,    4, gl.FLOAT, false, stride, 5*4);
+		gl.vertexAttribPointer(0, 3, gl.FLOAT, false, stride, 0*4);
+		gl.vertexAttribPointer(1, 2, gl.FLOAT, false, stride, 3*4);
+		gl.vertexAttribPointer(2, 4, gl.FLOAT, false, stride, 5*4);
 	}
 
 	render(shader){

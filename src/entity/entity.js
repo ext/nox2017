@@ -22,9 +22,9 @@ export class Entity {
 		this.modelMatrix = t.x(r);
 	}
 
-	render(shader){
+	render(){
 		if (!this.model) return;
-		this.model.render(shader);
+		this.model.render();
 	}
 
 }

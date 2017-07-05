@@ -12,6 +12,7 @@ export class Framebuffer {
 		this.color = [gl.createTexture(), gl.createTexture()];
 		this.depth = options.depth ? gl.createTexture() : null;
 		this.current = 0;
+		this.size = size;
 
 		for (const target of this.color){
 			gl.bindTexture(gl.TEXTURE_2D, target);

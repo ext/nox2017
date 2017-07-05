@@ -135,6 +135,12 @@ class MainController extends CanvasController {
 
 	render(){
 		const gl = this.context;
+		let error;
+
+		error = gl.getError();
+		if (error !== gl.NO_ERROR){
+			throw new Error(`Pre frame check returned error ${error}`);
+		}
 
 		this.clear();
 		this.ShaderService.uploadProjectionView(gl, this.projection, this.camera.getViewMatrix());
@@ -163,6 +169,10 @@ class MainController extends CanvasController {
 
 		this.fbo.bindTexture(gl);
 		this.quad.render(this.shader);
+
+		if (error !== gl.NO_ERROR){
+			throw new Error(`Post frame check returned error ${error}`);
+		}
 	}
 }
 

@@ -5,6 +5,7 @@ import { CanvasController } from 'canvas';
 import { Entity } from 'entity';
 import { Texture } from 'texture';
 import { Vector, Matrix } from 'sylvester';
+import { Framebuffer } from 'framebuffer';
 
 const FOV = 45.0;
 const zNear = 0.1;
@@ -22,6 +23,7 @@ class MainController extends CanvasController {
 		super($element, $injector);
 		this.$scope = $scope;
 		this.ModelService = ModelService;
+		this.fbo = undefined;
 
 		this.init('/data/game.yml').then(() => {
 			this.start();
@@ -89,6 +91,17 @@ class MainController extends CanvasController {
 		super.resize(width, height);
 		this.matP = makePerspective(FOV, width / height, zNear, zFar);
 		this.context.viewport(0, 0, width, height);
+
+		const gl = this.context;
+
+		if (this.fbo){
+			this.fbo.destroy(gl);
+		}
+
+		this.fbo = new Framebuffer(gl, [width, height], {
+			format: gl.RGB8,
+			depth: true,
+		});
 	}
 
 	update(dt){

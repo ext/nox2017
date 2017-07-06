@@ -9,12 +9,48 @@ describe('Framebuffer', function(){
 		gl = glMock();
 	});
 
-	describe('should be initialized', () => {
+	describe('constructor', () => {
 
-		it('with size', () => {
+		it('should be initialized', () => {
 			const fbo = new Framebuffer(gl, [800, 600]);
+			expect(fbo.id).toBeFramebuffer(1);
+			expect(fbo.color[0]).toBeTexture(2);
+			expect(fbo.color[1]).toBeTexture(3);
+			expect(fbo.depth).toBeTexture(4);
 			expect(fbo.size[0]).toEqual(800);
 			expect(fbo.size[1]).toEqual(600);
+		});
+
+		it('should be initialized without depth', () => {
+			const fbo = new Framebuffer(gl, [800, 600], {depth: false});
+			expect(fbo.id).toBeFramebuffer(1);
+			expect(fbo.color[0]).toBeTexture(2);
+			expect(fbo.color[1]).toBeTexture(3);
+			expect(fbo.depth).toBe(null);
+		});
+
+		it('should be cleared', () => {
+			spyOn(gl, 'clear');
+			spyOn(gl, 'clearColor');
+			const fbo = new Framebuffer(gl, [800, 600]); // eslint-disable-line no-unused-vars
+			expect(gl.clearColor).toHaveBeenCalledWith(0, 0, 0, 1);
+			expect(gl.clear).toHaveBeenCalled();
+		});
+
+	});
+
+	describe('destroy()', () => {
+
+		it('should release resources, with depth enabled', () => {
+			spyOn(gl, 'deleteFramebuffer');
+			spyOn(gl, 'deleteTexture');
+			const fbo = new Framebuffer(gl, [800, 600], {depth: true});
+			fbo.destroy();
+			expect(gl.deleteFramebuffer).toHaveBeenCalled();
+			expect(gl.deleteTexture.calls.count()).toBe(3);
+			expect(gl.deleteTexture.calls.argsFor(0)).toEqual([fbo.color[0]]);
+			expect(gl.deleteTexture.calls.argsFor(1)).toEqual([fbo.color[1]]);
+			expect(gl.deleteTexture.calls.argsFor(2)).toEqual([fbo.depth]);
 		});
 
 	});

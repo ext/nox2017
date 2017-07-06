@@ -3,8 +3,8 @@
 let id;
 let glError;
 
-function createId(){
-	return {id: id++};
+function createId(type){
+	return {id: id++, type};
 }
 
 function getError(){
@@ -17,14 +17,16 @@ const functions = [
 	'blendFunc',
 	'clear',
 	'clearColor',
+	'deleteFramebuffer',
+	'deleteTexture',
 	'disable',
 	'enable',
 	'framebufferTexture2D',
 	'texImage2D',
 	'texParameteri',
 	['checkFramebufferStatus', () => constants.FRAMEBUFFER_COMPLETE],
-	['createFramebuffer', createId],
-	['createTexture', createId],
+	['createFramebuffer', createId, 'Framebuffer'],
+	['createTexture', createId, 'Texture'],
 	['getError', getError],
 ];
 
@@ -657,10 +659,10 @@ export function glMock(){
 	/* functions */
 	for (const func of functions){
 		if (Array.isArray(func)){
-			const [name, fake] = func;
-			gl[name] = jasmine.createSpy(name).and.callFake(fake);
+			const [name, fake, ...args] = func;
+			gl[name] = fake.bind(gl, ...args);
 		} else {
-			gl[func] = jasmine.createSpy(name);
+			gl[func] = () => null;
 		}
 	}
 

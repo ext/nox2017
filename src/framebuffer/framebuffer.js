@@ -12,6 +12,7 @@ export class Framebuffer {
 		this.color = [gl.createTexture(), gl.createTexture()];
 		this.depth = options.depth ? gl.createTexture() : null;
 		this.current = 0;
+		this.size = size;
 
 		for (const target of this.color){
 			gl.bindTexture(gl.TEXTURE_2D, target);
@@ -61,6 +62,10 @@ export class Framebuffer {
 		gl.bindTexture(gl.TEXTURE_2D, this.color[1-this.current]);
 	}
 
+	swap(){
+		this.current = 1 - this.current;
+	}
+
 	with(cb){
 		const gl = this.context;
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.id);
@@ -69,7 +74,7 @@ export class Framebuffer {
 			cb();
 		}
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		this.current = 1 - this.current;
+		this.swap();
 	}
 
 	clear(...args){

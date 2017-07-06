@@ -20,7 +20,10 @@
   },
   "overrides": [
     {
-      "files": "**/*.spec.js",
+      "files": [
+        "**/*.spec.js",
+        "gl-mock/*.js"
+      ],
       "env": {
         "angular/mocks": true,
         "jasmine": true

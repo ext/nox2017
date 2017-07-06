@@ -55,4 +55,39 @@ describe('Framebuffer', function(){
 
 	});
 
+	describe('bindTexture()', () => {
+
+		it('should bind the colorbuffer currently not rendered to', () => {
+			const fbo = new Framebuffer(gl, [800, 600]);
+			spyOn(gl, 'bindTexture');
+			fbo.bindTexture();
+			expect(fbo.color[fbo.current]).toEqual(jasmine.objectContaining({id: 3}));
+			expect(gl.bindTexture).toHaveBeenCalledWith(gl.TEXTURE_2D, jasmine.objectContaining({id: 2}));
+			fbo.swap();
+			fbo.bindTexture();
+			expect(fbo.color[fbo.current]).toEqual(jasmine.objectContaining({id: 2}));
+			expect(gl.bindTexture).toHaveBeenCalledWith(gl.TEXTURE_2D, jasmine.objectContaining({id: 3}));
+		});
+
+	});
+
+	describe('with()', () => {
+
+		it('should call provided callback', () => {
+			const fbo = new Framebuffer(gl, [800, 600]);
+			const cb = jasmine.createSpy('callback');
+			fbo.with(cb);
+			expect(cb).toHaveBeenCalled();
+		});
+
+		it('should swap buffers', () => {
+			const fbo = new Framebuffer(gl, [800, 600]);
+			const cb = jasmine.createSpy('callback');
+			spyOn(fbo, 'swap');
+			fbo.with(cb);
+			expect(fbo.swap).toHaveBeenCalled();
+		});
+
+	});
+
 });

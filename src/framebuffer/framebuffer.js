@@ -62,6 +62,10 @@ export class Framebuffer {
 		gl.bindTexture(gl.TEXTURE_2D, this.color[1-this.current]);
 	}
 
+	swap(){
+		this.current = 1 - this.current;
+	}
+
 	with(cb){
 		const gl = this.context;
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.id);
@@ -70,7 +74,7 @@ export class Framebuffer {
 			cb();
 		}
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		this.current = 1 - this.current;
+		this.swap();
 	}
 
 	clear(...args){

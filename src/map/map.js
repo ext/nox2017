@@ -16,9 +16,10 @@ export class Map {
 		this.namedObject = {};
 	}
 
-	render(){
+	render(gl){
+		if (gl === null) throw new Error('Map.render() called without GL context');
 		this.texture.bind();
-		this.model.forEach(model => model.render());
+		this.model.forEach(model => model.render(gl));
 	}
 
 	getObjects(){

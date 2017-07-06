@@ -153,11 +153,11 @@ class MainController extends CanvasController {
 			this.fbo.clear(gl, 0, 0, 0, 0);
 
 			this.ShaderService.uploadModel(gl, Matrix.I(4));
-			this.map.render();
+			this.map.render(gl);
 
 			this.texture.bind();
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
-			this.entity.render();
+			this.entity.render(gl);
 		});
 
 		const scale = Matrix.create([
@@ -171,7 +171,7 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadModel(gl, scale);
 
 		this.fbo.bindTexture(gl);
-		this.quad.render(this.shader);
+		this.quad.render(gl);
 
 		if (error !== gl.NO_ERROR){
 			throw new Error(`Post frame check returned error ${error}`);

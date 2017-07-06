@@ -20,8 +20,8 @@ export class Entity {
 		this.modelMatrix = t.x(r);
 	}
 
-	render(){
+	render(gl){
 		if (!this.model) return;
-		this.model.render();
+		this.model.render(gl);
 	}
 }

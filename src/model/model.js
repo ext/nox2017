@@ -6,7 +6,6 @@ const stride = 9 * 4;
 
 export class Model {
 	constructor(gl){
-		this.context = gl;
 		this.vertices = gl.createBuffer();
 		this.indices = gl.createBuffer();
 		this.numIndices = 0;
@@ -15,7 +14,7 @@ export class Model {
 	static Quad(gl){
 		if (!quad){
 			quad = new Model(gl);
-			quad.upload(new Float32Array([
+			quad.upload(gl, new Float32Array([
 				/* X     Y     Z       U     V       R    G    B    A */
 				 1.0,  1.0,  0.0,    1.0,  1.0,    1.0, 1.0, 1.0, 1.0,
 				 0.0,  1.0,  0.0,    0.0,  1.0,    1.0, 1.0, 1.0, 1.0,
@@ -26,8 +25,7 @@ export class Model {
 		return quad;
 	}
 
-	upload(vertices, indices){
-		const gl = this.context;
+	upload(gl, vertices, indices){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
@@ -35,8 +33,7 @@ export class Model {
 		this.numIndices = indices.length;
 	}
 
-	bind(){
-		const gl = this.context;
+	bind(gl){
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertices);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
 		gl.vertexAttribPointer(Attribute.Position, 3, gl.FLOAT, false, stride, 0*4);
@@ -44,9 +41,9 @@ export class Model {
 		gl.vertexAttribPointer(Attribute.Color, 4, gl.FLOAT, false, stride, 5*4);
 	}
 
-	render(shader){
-		const gl = this.context;
-		this.bind(shader);
+	render(gl){
+		if (gl === null) throw new Error('Model.render() called without GL context');
+		this.bind(gl);
 		gl.drawElements(gl.TRIANGLES, this.numIndices, gl.UNSIGNED_INT, 0);
 	}
 }

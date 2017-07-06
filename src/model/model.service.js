@@ -11,7 +11,7 @@ class ModelService {
 			throw new Error(`Failed to load model "${filename}", file not found.`);
 		}
 		const model = new Model(gl);
-		model.upload(
+		model.upload(gl,
 			new Float32Array(flatten(data.vertices)),
 			new Uint32Array(flatten(data.indices))
 		);
@@ -20,7 +20,7 @@ class ModelService {
 
 	fromData(gl, vertices, indices){
 		const model = new Model(gl);
-		model.upload(vertices, indices);
+		model.upload(gl, vertices, indices);
 		return model;
 	}
 

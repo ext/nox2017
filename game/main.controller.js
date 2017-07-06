@@ -6,6 +6,7 @@ import { Entity } from 'entity';
 import { Texture } from 'texture';
 import { Vector, Matrix } from 'sylvester';
 import { Framebuffer } from 'framebuffer';
+import { registerItems } from './items';
 
 const FOV = 45.0;
 const zNear = 0.1;
@@ -25,6 +26,8 @@ class MainController extends CanvasController {
 		this.ModelService = ModelService;
 		this.fbo = undefined;
 		this.ortho = null;
+
+		registerItems();
 
 		this.init('/data/game.yml').then(() => {
 			this.start();
@@ -49,7 +52,7 @@ class MainController extends CanvasController {
 
 		this.quad = this.ModelService.quad(gl);
 		this.shader = this.loadShader('/shaders/test.shader.yml');
-		this.entity = new Entity(gl, {
+		this.entity = new Entity({
 			model: this.ModelService.fromFile(gl, '/data/cube.yml'),
 			position: [55, -9, 0],
 		});

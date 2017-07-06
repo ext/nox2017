@@ -12,9 +12,11 @@ function getError(){
 }
 
 const functions = [
+	'bindBuffer',
 	'bindFramebuffer',
 	'bindTexture',
 	'blendFunc',
+	'bufferData',
 	'clear',
 	'clearColor',
 	'deleteFramebuffer',
@@ -25,6 +27,7 @@ const functions = [
 	'texImage2D',
 	'texParameteri',
 	['checkFramebufferStatus', () => constants.FRAMEBUFFER_COMPLETE],
+	['createBuffer', createId, 'Buffer'],
 	['createFramebuffer', createId, 'Framebuffer'],
 	['createTexture', createId, 'Texture'],
 	['getError', getError],

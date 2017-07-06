@@ -1,5 +1,6 @@
 import { Map } from './map';
 import { Texture } from 'texture';
+import { Item } from 'item';
 
 class MapService {
 	constructor($templateCache, ModelService){
@@ -30,7 +31,7 @@ class MapService {
 				this.loadTiles(gl, map, layer);
 				break;
 			case 'objectgroup':
-				this.loadObjects(map, layer.objects);
+				this.loadObjects(gl, map, layer.objects);
 				break;
 			default:
 				// eslint-disable-next-line
@@ -104,12 +105,13 @@ class MapService {
 		}
 	}
 
-	loadObjects(map, src){
+	loadObjects(gl, map, src){
 		for (const obj of src){
-			map.object.push(obj);
+			const item = Item.factory(obj.type, gl, obj, obj.properties);
+			map.object.push(item);
 
 			if (obj.name){
-				map.namedObject[obj.name] = obj;
+				map.namedObject[obj.name] = item;
 			}
 		}
 	}

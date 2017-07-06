@@ -1,3 +1,5 @@
+import { glMock } from 'gl-mock';
+
 describe('MapService', function(){
 
 	let mockMap;
@@ -14,10 +16,7 @@ describe('MapService', function(){
 
 	beforeEach(inject(($injector) => {
 		service = $injector.get('MapService');
-		//$rootScope = $injector.get('$rootScope');
-		gl = {
-
-		};
+		gl = glMock();
 	}));
 
 	describe('fromFile()', () => {
@@ -36,8 +35,8 @@ describe('MapService', function(){
 
 		it('should load objects', (done) => {
 			const mockObjects = [
-				{id: 1, name: 'foo'},
-				{id: 2},
+				{id: 1, type: null, model: null, name: 'foo'},
+				{id: 2, type: null, model: null},
 			];
 			mockMap = {
 				layers: [
@@ -48,8 +47,11 @@ describe('MapService', function(){
 				],
 			};
 			service.fromFile(gl, '/foobar.json').then((map) => {
-				expect(map.getObjects()).toEqual(mockObjects);
-				expect(map.getObjectByName('foo')).toEqual(mockObjects[0]);
+				expect(map.getObjects()).toEqual([
+					jasmine.objectContaining({id: 1, name: 'foo'}),
+					jasmine.objectContaining({id: 2}),
+				]);
+				expect(map.getObjectByName('foo')).toEqual(jasmine.objectContaining({id: 1, name: 'foo'}));
 				done();
 			});
 		});

@@ -154,7 +154,7 @@ class MainController extends CanvasController {
 
 			this.map.render(gl);
 
-			this.texture.bind();
+			this.texture.bind(gl);
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(gl);
 		});

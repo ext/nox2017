@@ -3,7 +3,6 @@ const FALLBACK_TEXTURE = 'textures/default.jpg';
 
 export class Texture {
 	constructor(gl){
-		this.context = gl;
 		this.binding = gl.createTexture();
 	}
 
@@ -27,13 +26,11 @@ export class Texture {
 		return Texture.load(gl, filename);
 	}
 
-	bind(){
-		const gl = this.context;
+	bind(gl){
 		gl.bindTexture(gl.TEXTURE_2D, this.binding);
 	}
 
-	unbind(){
-		const gl = this.context;
+	unbind(gl){
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 
@@ -44,7 +41,7 @@ export class Texture {
 			// eslint-disable-next-line no-undef
 			const img = new Image();
 			img.onload = () => {
-				this.bind();
+				this.bind(gl);
 				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);

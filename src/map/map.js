@@ -21,7 +21,7 @@ export class Map {
 		if (gl === null) throw new Error('Map.render() called without GL context');
 
 		/* render map itself */
-		this.texture.bind();
+		this.texture.bind(gl);
 		Shader.uploadModel(gl, Matrix.I(4));
 		this.model.forEach(model => model.render(gl));
 

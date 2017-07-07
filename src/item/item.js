@@ -44,7 +44,7 @@ export class Item extends Entity {
 
 	render(gl){
 		if (this.diffuse){
-			this.diffuse.bind();
+			this.diffuse.bind(gl);
 		}
 
 		if (this.model){

@@ -1,4 +1,5 @@
 const cache = {};
+const FALLBACK_TEXTURE = 'textures/default.jpg';
 
 export class Texture {
 	constructor(gl){
@@ -45,7 +46,11 @@ export class Texture {
 				resolve(this);
 			};
 			img.onerror = (err) => {
-				reject(err);
+				Texture.load(gl, FALLBACK_TEXTURE).then(fallback => {
+					reject(fallback);
+				}).catch(() => {
+					reject(err);
+				});
 			};
 			img.src = `/assets/${filename}`;
 		});

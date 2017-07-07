@@ -1,6 +1,7 @@
 import { Map } from './map';
 import { Texture } from 'texture';
 import { Item } from 'item';
+import { Vector } from 'sylvester';
 
 class MapService {
 	constructor($templateCache, ModelService){
@@ -107,6 +108,10 @@ class MapService {
 
 	loadObjects(gl, map, src){
 		for (const obj of src){
+			/* remap position from absolute pixel {.x, .y} to tile position vector [x, y, 0] */
+			const scale = (1.0 / 8.0); // TODO Hardcoded value
+			obj.position = Vector.create([obj.x * scale, -obj.y * scale, 0]);
+
 			const item = Item.factory(obj.type, gl, obj, obj.properties);
 			map.object.push(item);
 

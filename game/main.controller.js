@@ -152,7 +152,6 @@ class MainController extends CanvasController {
 		this.fbo.with(() => {
 			this.fbo.clear(gl, 0, 0, 0, 0);
 
-			this.ShaderService.uploadModel(gl, Matrix.I(4));
 			this.map.render(gl);
 
 			this.texture.bind();

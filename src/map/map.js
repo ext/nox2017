@@ -1,4 +1,5 @@
-//import { Matrix } from 'sylvester';
+import { Shader } from 'shader';
+import { Matrix } from 'sylvester';
 
 const NO_TILE = -1;
 
@@ -18,8 +19,14 @@ export class Map {
 
 	render(gl){
 		if (gl === null) throw new Error('Map.render() called without GL context');
+
+		/* render map itself */
 		this.texture.bind();
+		Shader.uploadModel(gl, Matrix.I(4));
 		this.model.forEach(model => model.render(gl));
+
+		/* render objects in worls */
+		this.object.forEach(obj => obj.render(gl));
 	}
 
 	getObjects(){

@@ -40,6 +40,7 @@ export class CanvasController {
 
 		/* depth */
 		gl.enable(gl.DEPTH_TEST);
+		gl.depthFunc(gl.LEQUAL);
 
 		/* blending */
 		gl.enable(gl.BLEND);

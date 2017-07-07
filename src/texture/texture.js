@@ -11,6 +11,13 @@ export class Texture {
 		const key = cacheKey(filename, filter, wrap);
 		if (!cache.hasOwnProperty(key)){
 			const texture = new Texture(gl);
+
+			/* store for easier debugging */
+			texture.filename = filename;
+			texture.filter = filter;
+			texture.wrap = wrap;
+
+			/* cache texture */
 			cache[key] = texture.loadImage(gl, filename, filter, wrap);
 		}
 		return cache[key];

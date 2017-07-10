@@ -1,10 +1,24 @@
+import { Entity } from 'entity';
 import { Shader } from 'shader';
+import { Texture } from 'texture';
+import { Model } from 'model';
 import { Matrix } from 'sylvester';
 
 const NO_TILE = -1;
 
 export class Map {
-	constructor(gl, options){
+	context: WebGL2RenderingContext;
+	width: number;
+	height: number;
+	tileWidth: number;
+	tileHeight: number;
+	grid: any;
+	texture: Texture;
+	model: Model[];
+	object: Entity[];
+	namedObject: { [key:string]: Entity };
+
+	constructor(gl: WebGL2RenderingContext, options: any){
 		this.context = gl;
 		this.width = options.width;
 		this.height = options.height;
@@ -17,7 +31,7 @@ export class Map {
 		this.namedObject = {};
 	}
 
-	render(gl){
+	render(gl: WebGL2RenderingContext){
 		if (gl === null) throw new Error('Map.render() called without GL context');
 
 		/* render map itself */
@@ -25,21 +39,21 @@ export class Map {
 		Shader.uploadModel(gl, Matrix.I(4));
 		this.model.forEach(model => model.render(gl));
 
-		/* render objects in worls */
+		/* render objects in world */
 		this.object.forEach(obj => obj.render(gl));
 	}
 
-	getObjects(){
+	getObjects(): Entity[] {
 		return this.object;
 	}
 
-	getObjectByName(name){
+	getObjectByName(name: string): Entity {
 		return this.namedObject[name];
 	}
 
-	tileAt(pos){
-		const x = pos.x;
-		const y = -pos.y;
+	tileAt(pos: [number, number]){
+		const x = pos[0];
+		const y = -pos[1];
 		if (x < 0 || y < 0){
 			return NO_TILE;
 		}
@@ -47,13 +61,13 @@ export class Map {
 		return this.grid[i] || NO_TILE;
 	}
 
-	tileCollidable(i){
+	tileCollidable(i: number){
 		/* Tell if a tile index is collidable or just decorative */
-		return 0 < i < 96; // eslint-disable-line yoda
+		return i > 0 && i < 96;
 	}
 
-	tileCollisionAt(pos){
+	tileCollisionAt(pos: [number, number]){
 		/* Similar to tile_at but only returns True if the tile it collides with is collidable */
-		return this.tile_collidable(this.tile_at(pos));
+		return this.tileCollidable(this.tileAt(pos));
 	}
 }

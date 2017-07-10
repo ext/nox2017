@@ -28,7 +28,7 @@ Matrix.RotationFromQuat = function(q){
 	return new Matrix.create([
 		[1.0 - 2.0 * qy*qy - 2.0 * qz*qz, 2.0 * qx*qy - 2.0 * qz*qw,       2.0 * qx*qz + 2.0 * qy*qw, 0.0],
 		[2.0 * qx*qy + 2.0 * qz*qw,       1.0 - 2.0 * qx*qx - 2.0 * qz*qz, 2.0 * qy*qz - 2.0 * qx*qw, 0.0],
-		[2.0 * qx * qz - 2.0 * qy*qw,     2.0 * qy*qz + 2.0 * qx*qw, 1.0 - 2.0 * qx*qx - 2.0 * qy*qy, 0.0],
+		[2.0 * qx*qz - 2.0 * qy*qw,       2.0 * qy*qz + 2.0 * qx*qw, 1.0 - 2.0 * qx*qx - 2.0 * qy*qy, 0.0],
 		[0.0, 0.0, 0.0, 1.0],
 	]);
 };

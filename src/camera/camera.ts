@@ -1,7 +1,14 @@
+import { Entity } from 'entity';
 import { Vector, Matrix } from 'sylvester';
 
 export class Camera {
-	constructor(options){
+	position: Vector;
+	target: Vector;
+	up: Vector;
+	matrix: Matrix;
+	onUpdate?: (camera: Camera) => void;
+
+	constructor(options: any){
 		options = Object.assign({
 			position: Vector.create([0, 0, 25]),
 			target: Vector.create([0, 0, 0]),
@@ -17,9 +24,9 @@ export class Camera {
 		this.calc();
 	}
 
-	static follow(entity, options){
+	static follow(entity: Entity, options: any){
 		const offset = Vector.create(options.offset || [0, 0, 25]);
-		return (camera) => {
+		return (camera: Camera) => {
 			camera.setPosition(entity.position.add(offset));
 			camera.setTarget(Vector.create(entity.position.elements));
 		};
@@ -36,11 +43,11 @@ export class Camera {
 		}
 	}
 
-	setPosition(v){
+	setPosition(v: Vector): void {
 		this.position = v;
 	}
 
-	setTarget(v){
+	setTarget(v: Vector): void{
 		this.target = v;
 	}
 
@@ -49,7 +56,7 @@ export class Camera {
 	}
 }
 
-function lookAt(eye, center, up){
+function lookAt(eye: Vector, center: Vector, up: Vector){
 	const z = eye.subtract(center).toUnitVector();
 	const x = up.cross(z).toUnitVector();
 	const y = z.cross(x).toUnitVector();

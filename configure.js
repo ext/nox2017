@@ -4,6 +4,7 @@ module.exports = function(bundler){
 		target: 'es2017',
 	});
 	bundler.transform(require('babelify'), {
+		extensions: ['.js', '.ts'],
 		presets: [
 			['env', {
 				targets: {

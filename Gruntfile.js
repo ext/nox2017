@@ -131,7 +131,9 @@ module.exports = function(grunt){
 				src: [
 					'Gruntfile.js',
 					'src/**/*.js',
+					'src/**/*.ts',
 					'game/**/*.js',
+					'game/**/*.ts',
 				],
 			},
 		},

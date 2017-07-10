@@ -53,15 +53,15 @@ export class Shader {
 		const pv = proj.x(view);
 		const s = 4*16;
 		gl.wgeUniforms.projectionViewMatrices.upload(gl, [
-			[0*s, pv],
-			[1*s, proj],
-			[2*s, view],
+			[0*s, new Float32Array(pv.flatten())],
+			[1*s, new Float32Array(proj.flatten())],
+			[2*s, new Float32Array(view.flatten())],
 		]);
 	}
 
 	static uploadModel(gl, model){
 		gl.wgeUniforms.modelMatrices.upload(gl, [
-			[0, model],
+			[0, new Float32Array(model.flatten())],
 		]);
 	}
 

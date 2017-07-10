@@ -16,7 +16,7 @@ export class Uniform {
 	upload(gl, data){
 		gl.bindBuffer(gl.UNIFORM_BUFFER, this.id);
 		for (const [offset, value] of data){
-			gl.bufferSubData(gl.UNIFORM_BUFFER, offset, new Float32Array(value.flatten()));
+			gl.bufferSubData(gl.UNIFORM_BUFFER, offset, value);
 		}
 	}
 }

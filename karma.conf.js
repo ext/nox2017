@@ -25,9 +25,7 @@ module.exports = function(config){
 				'node_modules',
 				'src',
 			],
-			transform: [
-				['babelify', {presets: ['env']}],
-			],
+			configure: require('./configure.js'),
 		},
 
 		singleRun: true,

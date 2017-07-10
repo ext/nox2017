@@ -156,12 +156,7 @@ module.exports = function(grunt){
 							'src',
 						],
 					},
-					transform: [
-						['babelify', {
-							presets: ['env'],
-							plugins: ["angularjs-annotate"],
-						}],
-					],
+					configure: require('./configure.js'),
 				},
 				src: 'game/app.js',
 				dest: 'public/assets/js/<%=pkg.files.js%>.min.js',

@@ -27,6 +27,8 @@
     "sylvester": "0.0.21"
   },
   "devDependencies": {
+    "@types/angular": "^1.6.25",
+    "@types/jquery": "^3.2.6",
     "@types/webgl2": "0.0.1",
     "angular-mocks": "^1.6.4",
     "babel": "^6.23.0",

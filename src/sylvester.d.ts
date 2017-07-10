@@ -31,6 +31,8 @@ declare module Sylvester {
          * @param {number} n The vector size.
          */
         Zero(n: number): Vector;
+
+        quatFromEuler(pitch: number, roll: number, yaw: number): Vector;
     }
     interface MatrixStatic {
         /**
@@ -81,6 +83,10 @@ declare module Sylvester {
          * @param {number} m The number of columns.
          */
         Zero(n: number, m: number): Matrix;
+
+        Translation(v: Vector): Matrix;
+        RotationFromQuat(v: Vector): Matrix;
+        ortho(left: number, right: number, bottom: number, top: number, znear: number, zfar: number): Matrix;
     }
 
     interface LineStatic {
@@ -319,6 +325,8 @@ export interface Vector {
      * @param {Vector|Array<number>} els The elements.
      */
     setElements(els: Vector|Array<number>): Vector;
+
+    normalized(): Vector;
 }
 
 export interface Matrix {
@@ -544,6 +552,8 @@ export interface Matrix {
      * @param {Array<number>|Array<Array<number>>|Vector|Matrix} matrix The elements.
      */
     setElements(matrix: Array<number>|Array<Array<number>>|Vector|Matrix): Matrix;
+
+    ensure4x4(): Matrix;
 }
 
 interface Line {

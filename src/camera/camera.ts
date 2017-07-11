@@ -5,7 +5,8 @@ export class Camera {
 	position: Vector;
 	target: Vector;
 	up: Vector;
-	matrix: Matrix;
+	projectionMatrix: Matrix;
+	viewMatrix: Matrix;
 	onUpdate?: (camera: Camera) => void;
 
 	constructor(options: any){
@@ -13,13 +14,15 @@ export class Camera {
 			position: Vector.create([0, 0, 25]),
 			target: Vector.create([0, 0, 0]),
 			up: Vector.create([0, 1, 0]),
+			projection: null,
 			onUpdate: null,
 		}, options);
 
 		this.position = options.position;
 		this.target = options.target;
 		this.up = options.up,
-		this.matrix = Matrix.I(4);
+		this.projectionMatrix = options.projection || Matrix.I(4);
+		this.viewMatrix = Matrix.I(4);
 		this.onUpdate = options.onUpdate;
 		this.calc();
 	}
@@ -33,7 +36,7 @@ export class Camera {
 	}
 
 	calc(){
-		this.matrix = lookAt(this.position, this.target, this.up);
+		this.viewMatrix = lookAt(this.position, this.target, this.up);
 	}
 
 	update(){
@@ -41,6 +44,10 @@ export class Camera {
 			this.onUpdate(this);
 			this.calc();
 		}
+	}
+
+	setProjectionMatrix(m: Matrix): void {
+		this.projectionMatrix = m;
 	}
 
 	setPosition(v: Vector): void {
@@ -51,9 +58,39 @@ export class Camera {
 		this.target = v;
 	}
 
-	getViewMatrix(){
-		return this.matrix;
+	getProjectionMatrix(): Matrix {
+		return this.projectionMatrix;
 	}
+
+	getViewMatrix(): Matrix {
+		return this.viewMatrix;
+	}
+}
+
+export function makePerspective(fovy: number, aspect: number, znear: number, zfar: number){
+	const ymax = znear * Math.tan(fovy * Math.PI / 360.0);
+	const ymin = -ymax;
+	const xmin = ymin * aspect;
+	const xmax = ymax * aspect;
+	return makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
+}
+
+function makeFrustum(left: number, right: number,
+	                   bottom: number, top: number,
+	                   znear: number, zfar: number){
+	const X = 2*znear/(right-left);
+	const Y = 2*znear/(top-bottom);
+	const A = (right+left)/(right-left);
+	const B = (top+bottom)/(top-bottom);
+	const C = -(zfar+znear)/(zfar-znear);
+	const D = -2*zfar*znear/(zfar-znear);
+
+	return Matrix.create([
+		[X, 0, A, 0],
+		[0, Y, B, 0],
+		[0, 0, C, D],
+		[0, 0, -1, 0],
+	]);
 }
 
 function lookAt(eye: Vector, center: Vector, up: Vector){

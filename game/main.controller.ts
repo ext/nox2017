@@ -1,6 +1,6 @@
 /* eslint-disable angular/no-controller */
 
-import { Camera } from 'camera';
+import { Camera, makePerspective } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity } from 'entity';
 import { Framebuffer } from 'framebuffer';
@@ -32,7 +32,6 @@ class MainController extends CanvasController {
 	quad: Model;
 	shader: Shader;
 	camera: Camera;
-	projection: Matrix;
 	map: Map;
 	entity: Entity;
 	texture: Texture;
@@ -112,7 +111,7 @@ class MainController extends CanvasController {
 
 	resize(width: number, height: number){
 		super.resize(width, height);
-		this.projection = makePerspective(FOV, width / height, zNear, zFar);
+		this.camera.setProjectionMatrix(makePerspective(FOV, width / height, zNear, zFar));
 		this.context.viewport(0, 0, width, height);
 		this.ortho = Matrix.ortho(0, width, 0, height, 0, 100);
 
@@ -163,7 +162,7 @@ class MainController extends CanvasController {
 		}
 
 		this.clear();
-		this.ShaderService.uploadProjectionView(gl, this.projection, this.camera.getViewMatrix());
+		this.ShaderService.uploadProjectionView(gl, this.camera.getProjectionMatrix(), this.camera.getViewMatrix());
 
 		this.shader.bind();
 		this.fbo.with(gl, () => {
@@ -193,37 +192,6 @@ class MainController extends CanvasController {
 			throw new Error(`Post frame check returned error ${error}`);
 		}
 	}
-}
-
-//
-// gluPerspective
-//
-function makePerspective(fovy: number, aspect: number, znear: number, zfar: number){
-	let ymax = znear * Math.tan(fovy * Math.PI / 360.0);
-	let ymin = -ymax;
-	let xmin = ymin * aspect;
-	let xmax = ymax * aspect;
-
-	return makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
-}
-
-//
-// glFrustum
-//
-function makeFrustum(left: number, right: number,
-										 bottom: number, top: number,
-										 znear: number, zfar: number){
-	let X = 2*znear/(right-left);
-	let Y = 2*znear/(top-bottom);
-	let A = (right+left)/(right-left);
-	let B = (top+bottom)/(top-bottom);
-	let C = -(zfar+znear)/(zfar-znear);
-	let D = -2*zfar*znear/(zfar-znear);
-
-	return Matrix.create([[X, 0, A, 0],
-						 [0, Y, B, 0],
-						 [0, 0, C, D],
-						 [0, 0, -1, 0]]);
 }
 
 MainController.$$ngIsClass = true;

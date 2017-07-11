@@ -1,6 +1,6 @@
 /* eslint-disable angular/no-controller */
 
-import { Camera, makePerspective } from 'camera';
+import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity } from 'entity';
 import { Framebuffer } from 'framebuffer';
@@ -31,7 +31,7 @@ class MainController extends CanvasController {
 	ortho: Matrix;
 	quad: Model;
 	shader: Shader;
-	camera: Camera;
+	camera: PerspectiveCamera;
 	map: Map;
 	entity: Entity;
 	texture: Texture;
@@ -73,7 +73,11 @@ class MainController extends CanvasController {
 			position: [55, -9, 0],
 		});
 
-		this.camera = new Camera({
+		this.camera = new PerspectiveCamera({
+			fov: FOV,
+			aspect: this.width / this.height,
+			znear: zNear,
+			zfar: zFar,
 			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 15]}),
 		});
 
@@ -111,7 +115,9 @@ class MainController extends CanvasController {
 
 	resize(width: number, height: number){
 		super.resize(width, height);
-		this.camera.setProjectionMatrix(makePerspective(FOV, width / height, zNear, zFar));
+		if (this.camera){
+			this.camera.resize({aspect: width / height});
+		}
 		this.context.viewport(0, 0, width, height);
 		this.ortho = Matrix.ortho(0, width, 0, height, 0, 100);
 

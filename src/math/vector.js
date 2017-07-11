@@ -20,3 +20,7 @@ Vector.quatFromEuler = function(pitch, roll, yaw){
 		t0 * t2 * t4 + t1 * t3 * t5,
 	]);
 };
+
+Vector.prototype.flatten = function(){
+	return this.elements;
+};

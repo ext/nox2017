@@ -45,7 +45,7 @@ describe('Framebuffer', function(){
 			spyOn(gl, 'deleteFramebuffer');
 			spyOn(gl, 'deleteTexture');
 			const fbo = new Framebuffer(gl, [800, 600], {depth: true});
-			fbo.destroy();
+			fbo.destroy(gl);
 			expect(gl.deleteFramebuffer).toHaveBeenCalled();
 			expect(gl.deleteTexture.calls.count()).toBe(3);
 			expect(gl.deleteTexture.calls.argsFor(0)).toEqual([fbo.color[0]]);
@@ -60,11 +60,11 @@ describe('Framebuffer', function(){
 		it('should bind the colorbuffer currently not rendered to', () => {
 			const fbo = new Framebuffer(gl, [800, 600]);
 			spyOn(gl, 'bindTexture');
-			fbo.bindTexture();
+			fbo.bindTexture(gl);
 			expect(fbo.color[fbo.current]).toEqual(jasmine.objectContaining({id: 3}));
 			expect(gl.bindTexture).toHaveBeenCalledWith(gl.TEXTURE_2D, jasmine.objectContaining({id: 2}));
 			fbo.swap();
-			fbo.bindTexture();
+			fbo.bindTexture(gl);
 			expect(fbo.color[fbo.current]).toEqual(jasmine.objectContaining({id: 2}));
 			expect(gl.bindTexture).toHaveBeenCalledWith(gl.TEXTURE_2D, jasmine.objectContaining({id: 3}));
 		});
@@ -76,7 +76,7 @@ describe('Framebuffer', function(){
 		it('should call provided callback', () => {
 			const fbo = new Framebuffer(gl, [800, 600]);
 			const cb = jasmine.createSpy('callback');
-			fbo.with(cb);
+			fbo.with(gl, cb);
 			expect(cb).toHaveBeenCalled();
 		});
 
@@ -84,7 +84,7 @@ describe('Framebuffer', function(){
 			const fbo = new Framebuffer(gl, [800, 600]);
 			const cb = jasmine.createSpy('callback');
 			spyOn(fbo, 'swap');
-			fbo.with(cb);
+			fbo.with(gl, cb);
 			expect(fbo.swap).toHaveBeenCalled();
 		});
 

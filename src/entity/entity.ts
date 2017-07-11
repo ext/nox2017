@@ -1,7 +1,10 @@
 import { Model } from 'model';
 import { Vector, Matrix } from 'sylvester';
 
+let id: number = 1;
+
 export class Entity {
+	id: number;
 	model: Model;
 	position: Vector;
 	rotation: Vector;
@@ -13,6 +16,7 @@ export class Entity {
 			position: [0, 0, 0],
 		}, options);
 
+		this.id = id++;
 		this.model = options.model;
 		this.position = Vector.create(options.position);
 		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);

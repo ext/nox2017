@@ -8,10 +8,8 @@ interface ItemFactory {
 }
 
 const types: { [key:string]: ItemFactory } = {};
-let id: number = 1;
 
 export class Item extends Entity {
-	id: number;
 	name?: string;
 	hp: number;
 	diffuse?: Texture;
@@ -23,7 +21,6 @@ export class Item extends Entity {
 		}, options || {}, properties);
 
 		super(options);
-		this.id = id++;
 		this.name = options.name;
 		this.hp = options.hp;
 		this.diffuse = null;

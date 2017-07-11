@@ -2,6 +2,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const serveStatic = require('serve-static');
 
+const pkg = require('./package.json');
+
 module.exports = function(grunt){
 	require('load-grunt-tasks')(grunt);
 	grunt.loadTasks('tasks');
@@ -30,8 +32,10 @@ module.exports = function(grunt){
 		'eslint', 'karma:default', 'browserify',
 	]);
 
+	grunt.registerTask('manifest', 'Create deploy manifest', manifest);
+
 	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
+		pkg,
 
 		clean: {
 			default: [
@@ -237,7 +241,7 @@ module.exports = function(grunt){
 						expand: true,
 						cwd: 'public/',
 						src: ['**'],
-						dest: '/',
+						dest: '/<%= pkg.name %>-<%= pkg.version %>',
 					},
 				],
 			},
@@ -280,7 +284,6 @@ module.exports = function(grunt){
 };
 
 function configureNunjucks(env){
-	const pkg = require('./package.json');
 	env.addFilter('assetUrl', assetHash);
 	env.addGlobal('pkg', pkg);
 	env.addGlobal('files', {
@@ -301,6 +304,17 @@ function assetHash(asset){
 		console.log(`${filename} does not exist when trying to calculate asset hash.`);
 		return `assets/${asset}`;
 	}
+}
+
+function manifest(){
+	fs.writeFileSync('./manifest.json', JSON.stringify({
+		branch: process.env.CI_COMMIT_REF_NAME,
+		slug: process.env.CI_COMMIT_TAG,
+		env: "staging",
+		commit: process.env.CI_COMMIT_SHA,
+		user: process.env.GITLAB_USER_ID,
+		archive: `${pkg.name}-${pkg.version}.zip`,
+	}, undefined, 2));
 }
 
 function serveRewrite(req, res, next){

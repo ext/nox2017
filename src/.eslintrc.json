@@ -11,9 +11,6 @@
     "angular/angular": true,
     "browser": true
   },
-  "globals": {
-    "Float32Array": false
-  },
   "rules": {
     "angular/controller-as-vm": ["error", "$ctrl"],
     "new-cap": 0,
@@ -21,15 +18,6 @@
     "strict": ["error", "never"]
   },
   "overrides": [
-    {
-      "files": [
-        "**/*.ts"
-      ],
-      "rules" : {
-        "no-undef": 0,
-        "space-before-blocks": 0
-      }
-    },
     {
       "files": [
         "**/*.spec.js",

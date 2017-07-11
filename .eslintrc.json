@@ -14,5 +14,16 @@
   "rules": {
     "no-console": 0,
     "no-warning-comments": 0
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts"
+      ],
+      "rules" : {
+        "no-undef": 0,
+        "space-before-blocks": 0
+      }
+    }
+  ]
 }

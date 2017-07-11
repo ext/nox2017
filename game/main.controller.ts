@@ -3,9 +3,12 @@
 import { Camera } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity } from 'entity';
+import { Framebuffer } from 'framebuffer';
+import { Map } from 'map';
+import { Model, ModelService } from 'model';
+import { Shader } from 'shader';
 import { Texture } from 'texture';
 import { Vector, Matrix } from 'sylvester';
-import { Framebuffer } from 'framebuffer';
 import { registerItems } from './items';
 
 const FOV = 45.0;
@@ -20,7 +23,21 @@ const KEY_DOWN = 83;
 const PLAYER_SPEED = 5;
 
 class MainController extends CanvasController {
-	constructor($scope, $element, $injector, ModelService){
+	$scope: ng.IScope;
+	ModelService: ModelService;
+	static $$ngIsClass: boolean;
+
+	fbo: Framebuffer;
+	ortho: Matrix;
+	quad: Model;
+	shader: Shader;
+	camera: Camera;
+	projection: Matrix;
+	map: Map;
+	entity: Entity;
+	texture: Texture;
+
+	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
 		this.$scope = $scope;
 		this.ModelService = ModelService;
@@ -37,7 +54,7 @@ class MainController extends CanvasController {
 		});
 	}
 
-	init(filename){
+	init(filename: string): Promise<any> {
 		return super.init(filename).then(() => {
 			return Promise.all([
 				this.setupEventHandlers(),
@@ -61,11 +78,11 @@ class MainController extends CanvasController {
 			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 15]}),
 		});
 
-		promises.push(this.loadMap('/data/map.json').then((map) => {
+		promises.push(this.loadMap('/data/map.json').then((map: Map) => {
 			this.map = map;
 		}));
 
-		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then(texture => {
+		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
 			this.texture = texture;
 		}));
 
@@ -93,7 +110,7 @@ class MainController extends CanvasController {
 		return Promise.resolve();
 	}
 
-	resize(width, height){
+	resize(width: number, height: number){
 		super.resize(width, height);
 		this.projection = makePerspective(FOV, width / height, zNear, zFar);
 		this.context.viewport(0, 0, width, height);
@@ -111,7 +128,7 @@ class MainController extends CanvasController {
 		});
 	}
 
-	update(dt){
+	update(dt: number){
 		let velocity = Vector.create([0, 0, 0]);
 
 		if (this.keypress[KEY_RIGHT]){
@@ -150,7 +167,7 @@ class MainController extends CanvasController {
 
 		this.shader.bind();
 		this.fbo.with(() => {
-			this.fbo.clear(gl, 0, 0, 0, 0);
+			this.fbo.clear(0, 0, 0, 0);
 
 			this.map.render(gl);
 
@@ -169,7 +186,7 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadProjectionView(gl, this.ortho, Matrix.I(4));
 		this.ShaderService.uploadModel(gl, scale);
 
-		this.fbo.bindTexture(gl);
+		this.fbo.bindTexture();
 		this.quad.render(gl);
 
 		if (error !== gl.NO_ERROR){
@@ -181,7 +198,7 @@ class MainController extends CanvasController {
 //
 // gluPerspective
 //
-function makePerspective(fovy, aspect, znear, zfar){
+function makePerspective(fovy: number, aspect: number, znear: number, zfar: number){
 	let ymax = znear * Math.tan(fovy * Math.PI / 360.0);
 	let ymin = -ymax;
 	let xmin = ymin * aspect;
@@ -193,9 +210,9 @@ function makePerspective(fovy, aspect, znear, zfar){
 //
 // glFrustum
 //
-function makeFrustum(left, right,
-										 bottom, top,
-										 znear, zfar){
+function makeFrustum(left: number, right: number,
+										 bottom: number, top: number,
+										 znear: number, zfar: number){
 	let X = 2*znear/(right-left);
 	let Y = 2*znear/(top-bottom);
 	let A = (right+left)/(right-left);

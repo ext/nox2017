@@ -7,8 +7,8 @@ declare global {
 export class CanvasController {
 	element: HTMLCanvasElement;
 	$window: Window;
-	$timeout: angular.ITimeoutService;
-	$templateCache: angular.ITemplateCacheService;
+	$timeout: ng.ITimeoutService;
+	$templateCache: ng.ITemplateCacheService;
 	ShaderService: any;
 	MapService: any;
 	lastFrame: number;
@@ -40,7 +40,7 @@ export class CanvasController {
 		});
 	}
 
-	init(filename: string){
+	init(filename: string): Promise<any> {
 		const config = this.$templateCache.get<any>(filename);
 		if (!config){
 			throw new Error(`Failed to load game configuration "${filename}".`);

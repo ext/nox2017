@@ -1,4 +1,4 @@
-import { Entity } from 'entity';
+import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector, Matrix } from 'sylvester';
 
 export class Camera {

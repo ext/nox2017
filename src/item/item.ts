@@ -3,11 +3,20 @@ import { Model } from 'model';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
 
-const types = {};
-let id = 1;
+interface ItemFactory {
+	new (gl: WebGL2RenderingContext, options?: any, properties?: any): Item;
+}
+
+const types: { [key:string]: ItemFactory } = {};
+let id: number = 1;
 
 export class Item extends Entity {
-	constructor(gl, options, properties){
+	id: number;
+	name?: string;
+	hp: number;
+	diffuse?: Texture;
+
+	constructor(gl: WebGL2RenderingContext, options?: any, properties?: any){
 		options = Object.assign({
 			model: Model.Quad(gl),
 			hp: 100,
@@ -19,30 +28,30 @@ export class Item extends Entity {
 		this.hp = options.hp;
 		this.diffuse = null;
 
-		Texture.load(gl, options.texture).then(texture => {
+		Texture.load(gl, options.texture).then((texture: Texture) => {
 			this.diffuse = texture;
-		}, fallback => {
+		}, (fallback: Texture) => {
 			this.diffuse = fallback;
 		});
 	}
 
-	static register(name, cls){
+	static register(name: string, cls: any){
 		types[name] = cls;
 	}
 
-	static factory(name, ...args){
+	static factory(name: string, gl: WebGL2RenderingContext, options?: any, properties?: any){
 		if (name in types){
-			return new types[name](...args);
+			return new types[name](gl, options, properties);
 		} else {
 			if (name !== null){
 				// eslint-disable-next-line
 				console.warn(`Failed to instantiate object of type "${name}", generic placeholder used instead.`);
 			}
-			return new Item(...args);
+			return new Item(gl, options);
 		}
 	}
 
-	render(gl){
+	render(gl: WebGL2RenderingContext){
 		if (this.diffuse){
 			this.diffuse.bind(gl);
 		}

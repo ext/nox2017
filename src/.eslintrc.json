@@ -1,4 +1,5 @@
 {
+  "parser": "typescript-eslint-parser",
   "plugins": [
     "angular",
     "jasmine"
@@ -16,9 +17,19 @@
   "rules": {
     "angular/controller-as-vm": ["error", "$ctrl"],
     "new-cap": 0,
-    "no-console": "warn"
+    "no-console": "warn",
+    "strict": ["error", "never"]
   },
   "overrides": [
+    {
+      "files": [
+        "**/*.ts"
+      ],
+      "rules" : {
+        "no-undef": 0,
+        "space-before-blocks": 0
+      }
+    },
     {
       "files": [
         "**/*.spec.js",

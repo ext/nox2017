@@ -1,8 +1,23 @@
 import { Texture } from 'texture';
-import { Matrix } from 'sylvester';
+
+declare global {
+	const angular: ng.IAngularStatic;
+}
 
 export class CanvasController {
-	constructor($element, $injector){
+	element: HTMLCanvasElement;
+	$window: Window;
+	$timeout: angular.ITimeoutService;
+	$templateCache: angular.ITemplateCacheService;
+	ShaderService: any;
+	MapService: any;
+	lastFrame: number;
+	context: WebGL2RenderingContext;
+	keypress: boolean[];
+	width: number;
+	height: number;
+
+	constructor($element: any, $injector: angular.auto.IInjectorService){
 		this.$window = $injector.get('$window');
 		this.$timeout = $injector.get('$timeout');
 		this.element = $element[0];
@@ -25,14 +40,15 @@ export class CanvasController {
 		});
 	}
 
-	init(filename){
-		const config = this.$templateCache.get(filename);
+	init(filename: string){
+		const config = this.$templateCache.get<any>(filename);
 		if (!config){
 			throw new Error(`Failed to load game configuration "${filename}".`);
 		}
 
 		const canvas = this.element;
-		const gl = this.context = canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2');
+		const gl = <any>(canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2')) as WebGL2RenderingContext;
+		this.context = gl;
 
 		/* enable backface culling */
 		gl.enable(gl.CULL_FACE);
@@ -49,7 +65,6 @@ export class CanvasController {
 
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);
-		this.matP = Matrix.I(4);
 
 		this.bindKeys();
 
@@ -84,18 +99,18 @@ export class CanvasController {
 		});
 	}
 
-	preload(preload){
+	preload(preload: any){
 		const textures = (preload.texture||[]);
-		return Promise.all(textures.map(cur => {
+		return Promise.all(textures.map((cur: string) => {
 			return Texture.preload(this.context, cur);
 		}));
 	}
 
-	loadShader(filename){
+	loadShader(filename: string){
 		return this.ShaderService.load(this.context, filename);
 	}
 
-	loadMap(filename){
+	loadMap(filename: string){
 		return this.MapService.fromFile(this.context, filename);
 	}
 
@@ -122,13 +137,13 @@ export class CanvasController {
 		this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.DEPTH_BUFFER_BIT);
 	}
 
-	resize(width, height){
+	resize(width: number, height: number){
 		const canvas = this.element;
 		this.width = canvas.width = width;
 		this.height = canvas.height = height;
 	}
 
-	update(){
+	update(dt: number){ // eslint-disable-line no-unused-vars
 
 	}
 

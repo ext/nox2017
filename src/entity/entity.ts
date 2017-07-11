@@ -1,7 +1,13 @@
+import { Model } from 'model';
 import { Vector, Matrix } from 'sylvester';
 
 export class Entity {
-	constructor(options){
+	model: Model;
+	position: Vector;
+	rotation: Vector;
+	modelMatrix: Matrix;
+
+	constructor(options: any){
 		options = Object.assign({
 			model: null,
 			position: [0, 0, 0],
@@ -20,7 +26,7 @@ export class Entity {
 		this.modelMatrix = t.x(r);
 	}
 
-	render(gl){
+	render(gl: WebGL2RenderingContext){
 		if (!this.model) return;
 		this.model.render(gl);
 	}

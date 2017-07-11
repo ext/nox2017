@@ -1,16 +1,82 @@
 import { Map } from './map';
+import { ModelService } from 'model';
 import { Texture } from 'texture';
 import { Item } from 'item';
 import { Vector } from 'sylvester';
 
+type IMapProperties = { [key:string]: any };
+
+interface IMapObject {
+	width: number;
+	height: number;
+	x: number;
+	y: number;
+	type: string;
+	name: string;
+	properties?: IMapProperties
+}
+
+interface IMapObject {
+	position: Vector;
+}
+
+interface IMapLayer {
+	data: number[];
+	height: number;
+	name: string;
+	opacity: number;
+	type: "tilelayer" | "objectgroup";
+	visible: boolean;
+	width: number;
+	x: number;
+	y: number;
+	objects?: IMapObject[];
+	properties?: IMapProperties
+}
+
+interface IMapTileset {
+	columns: number;
+	firstgid: number;
+	image: string;
+	imageheight: number;
+	imagewidth: number;
+	margin: number;
+	name: string;
+	spacing: number;
+	tilecount: number;
+	tileheight: number;
+	tilewidth: number;
+	properties?: IMapProperties
+}
+
+interface IMapData {
+	width: number;
+	height: number;
+	tilewidth: number;
+	tileheight: number;
+	type: string
+	version: number;
+	nextobjectid: number;
+	orientation: string;
+	renderorder: string;
+	tiledversion: string;
+	layers: IMapLayer[];
+	tilesets: IMapTileset[];
+	properties?: IMapProperties
+}
+
 class MapService {
-	constructor($templateCache, ModelService){
+	$templateCache: ng.ITemplateCacheService;
+	ModelService: ModelService;
+	static $$ngIsClass: boolean;
+
+	constructor($templateCache: ng.ITemplateCacheService, ModelService: ModelService){
 		this.$templateCache = $templateCache;
 		this.ModelService = ModelService;
 	}
 
-	fromFile(gl, filename){
-		const data = this.$templateCache.get(filename);
+	fromFile(gl: WebGL2RenderingContext, filename: string){
+		const data = this.$templateCache.get<IMapData>(filename);
 		if (angular.isUndefined(data)){
 			throw new Error(`Failed to load map "${filename}", file not found.`);
 		}
@@ -45,7 +111,7 @@ class MapService {
 		});
 	}
 
-	loadTileset(gl, map, data){
+	loadTileset(gl: WebGL2RenderingContext, map: Map, data: IMapData){
 		const tileset = data.tilesets || [];
 		const texture = [];
 		for (const it of tileset){
@@ -61,7 +127,7 @@ class MapService {
 		});
 	}
 
-	loadTiles(gl, map, layer){
+	loadTiles(gl: WebGL2RenderingContext, map: Map, layer: IMapLayer){
 		/* hardcoded */
 		const dx = map.tileWidth	/ 128.0;
 		const dy = map.tileHeight / 128.0;
@@ -78,7 +144,7 @@ class MapService {
 		const numFloats = numTiles * verticesPerTile * stride;
 		const vertices = new Float32Array(numFloats);
 		const indices = new Uint32Array(numTiles * indicesPerTile);
-		const pitch = (n, i) => (n * verticesPerTile + i) * stride;
+		const pitch = (n: number, i: number) => (n * verticesPerTile + i) * stride;
 
 		for (let i = 0, n = 0; i < layer.data.length; i++){
 			const tile = layer.data[i] - 1; // format uses tile 1-indexed, but want 0-indexed
@@ -106,7 +172,7 @@ class MapService {
 		}
 	}
 
-	loadObjects(gl, map, src){
+	loadObjects(gl: WebGL2RenderingContext, map: Map, src: IMapObject[]){
 		for (const obj of src){
 			/* remap position from absolute pixel {.x, .y} to tile position vector [x, y, 0] */
 			const scale = (1.0 / 8.0); // TODO Hardcoded value

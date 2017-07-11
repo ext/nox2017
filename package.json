@@ -27,6 +27,9 @@
     "sylvester": "0.0.21"
   },
   "devDependencies": {
+    "@types/angular": "^1.6.25",
+    "@types/jquery": "^3.2.6",
+    "@types/webgl2": "0.0.1",
     "angular-mocks": "^1.6.4",
     "babel": "^6.23.0",
     "babel-plugin-angularjs-annotate": "^0.7.0",
@@ -60,7 +63,10 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.0",
     "load-grunt-tasks": "^3.5.2",
-    "phantomjs-prebuilt": "^2.1.14"
+    "phantomjs-prebuilt": "^2.1.14",
+    "tsify": "^3.0.1",
+    "typescript": "^2.3.2",
+    "typescript-eslint-parser": "^3.0.0"
   },
   "browserslist": [
     "last 2 Chrome versions"

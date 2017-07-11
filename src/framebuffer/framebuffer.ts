@@ -1,5 +1,12 @@
 export class Framebuffer {
-	constructor(gl, size, options){
+	context: WebGL2RenderingContext;
+	id: WebGLFramebuffer;
+	color: [WebGLTexture, WebGLTexture];
+	depth: WebGLTexture;
+	current: number;
+	size: [number, number];
+
+	constructor(gl: WebGL2RenderingContext, size: [number, number], options: any){
 		options = Object.assign({
 			format: gl.RGBA8,
 			depth: true,
@@ -66,7 +73,7 @@ export class Framebuffer {
 		this.current = 1 - this.current;
 	}
 
-	with(cb){
+	with(cb: () => void){
 		const gl = this.context;
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.id);
 		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.color[this.current], 0);
@@ -77,14 +84,14 @@ export class Framebuffer {
 		this.swap();
 	}
 
-	clear(...args){
+	clear(r: number, g: number, b: number, a: number){
 		const gl = this.context;
-		gl.clearColor(...args);
+		gl.clearColor(r, g, b, a);
 		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	}
 }
 
-function framebufferStatusMessage(gl, status){
+function framebufferStatusMessage(gl: WebGL2RenderingContext, status: number){
 	switch (status){
 	case gl.FRAMEBUFFER_COMPLETE: return "FRAMEBUFFER_COMPLETE";
 	case gl.FRAMEBUFFER_INCOMPLETE_ATTACHMENT: return "FRAMEBUFFER_INCOMPLETE_ATTACHMENT";

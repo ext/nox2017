@@ -1,13 +1,18 @@
-const cache = {};
+const cache: { [key:string]: any } = {};
 const FALLBACK_TEXTURE = 'textures/default.jpg';
 
 export class Texture {
-	constructor(gl){
+	binding: WebGLTexture;
+	filename: string;
+	filter: number;
+	wrap: number;
+
+	constructor(gl: WebGL2RenderingContext){
 		this.binding = gl.createTexture();
 	}
 
-	static load(gl, filename, filter, wrap){
-		const key = cacheKey(filename, filter, wrap);
+	static load(gl: WebGL2RenderingContext, filename: string, filter?: number, wrap?: number){
+		const key: string = cacheKey(filename, filter, wrap);
 		if (!cache.hasOwnProperty(key)){
 			const texture = new Texture(gl);
 
@@ -22,19 +27,19 @@ export class Texture {
 		return cache[key];
 	}
 
-	static preload(gl, filename){
+	static preload(gl: WebGL2RenderingContext, filename: string){
 		return Texture.load(gl, filename);
 	}
 
-	bind(gl){
+	bind(gl: WebGL2RenderingContext){
 		gl.bindTexture(gl.TEXTURE_2D, this.binding);
 	}
 
-	unbind(gl){
+	unbind(gl: WebGL2RenderingContext){
 		gl.bindTexture(gl.TEXTURE_2D, null);
 	}
 
-	loadImage(gl, filename, filter, wrap){
+	loadImage(gl: WebGL2RenderingContext, filename: string, filter?: number, wrap?: number){
 		filter = filter || gl.LINEAR;
 		wrap = wrap || gl.CLAMP_TO_EDGE;
 		return new Promise((resolve, reject) => {
@@ -50,7 +55,7 @@ export class Texture {
 				resolve(this);
 			};
 			img.onerror = (err) => {
-				Texture.load(gl, FALLBACK_TEXTURE).then(fallback => {
+				Texture.load(gl, FALLBACK_TEXTURE).then((fallback: Texture) => {
 					reject(fallback);
 				}).catch(() => {
 					reject(err);
@@ -61,6 +66,6 @@ export class Texture {
 	}
 }
 
-function cacheKey(filename, filter, wrap){
+function cacheKey(filename: string, filter: number, wrap: number): string {
 	return `${filename}#${filter||'default'},${wrap||'default'}`;
 }

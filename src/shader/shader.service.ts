@@ -1,14 +1,5 @@
 import { Shader } from './shader';
-
-interface IShaderPass {
-	vertex: string;
-	fragment: string;
-}
-
-interface IShaderData {
-	name: string;
-	pass: IShaderPass[];
-}
+import { IShaderData } from './shader-data'; // eslint-disable-line no-unused-vars
 
 class ShaderService {
 	$templateCache: ng.ITemplateCacheService;

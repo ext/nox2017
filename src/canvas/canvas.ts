@@ -1,4 +1,5 @@
 import { Texture } from 'texture';
+import { IGameConfig, IGamePreload } from './game-config'; // eslint-disable-line no-unused-vars
 
 declare global {
 	const angular: ng.IAngularStatic;
@@ -41,7 +42,7 @@ export class CanvasController {
 	}
 
 	init(filename: string): Promise<any> {
-		const config = this.$templateCache.get<any>(filename);
+		const config = this.$templateCache.get<IGameConfig>(filename);
 		if (!config){
 			throw new Error(`Failed to load game configuration "${filename}".`);
 		}
@@ -102,11 +103,27 @@ export class CanvasController {
 		});
 	}
 
-	preload(preload: any){
-		const textures = (preload.texture||[]);
-		return Promise.all(textures.map((cur: string) => {
-			return Texture.preload(this.context, cur);
-		}));
+	preload(preload: IGamePreload){
+		const gl = this.context;
+		let promises: Promise<void>[] = [];
+		Object.keys(preload).forEach((type: string) => {
+			const assets = preload[type];
+			let loader = null;
+			switch (type){
+			case 'shader':
+				loader = (cur: string) => this.ShaderService.preload(gl, cur);
+				break;
+			case 'texture':
+				loader = (cur: string) => Texture.preload(gl, cur);
+				break;
+			default:
+				// eslint-disable-next-line no-console
+				console.warn(`Preload type "${type}" not supported, ignored`);
+				return;
+			}
+			promises = promises.concat(assets.map(loader));
+		});
+		return Promise.all(promises);
 	}
 
 	loadShader(filename: string){

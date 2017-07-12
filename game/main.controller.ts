@@ -67,7 +67,7 @@ class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.quad = this.ModelService.quad(gl);
-		this.shader = this.loadShader('/shaders/test.shader.yml');
+		this.shader = this.loadShader('/shaders/default.yml');
 		this.entity = new Entity({
 			model: this.ModelService.fromFile(gl, '/data/cube.yml'),
 			position: [55, -9, 0],

@@ -1,0 +1,4 @@
+name: default shader
+pass:
+  - vertex: default.vertex.glsl
+    fragment: default.frag.glsl

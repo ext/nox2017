@@ -24,6 +24,7 @@ const functions = [
 	'disable',
 	'enable',
 	'framebufferTexture2D',
+	'pixelStorei',
 	'texImage2D',
 	'texParameteri',
 	['checkFramebufferStatus', () => constants.FRAMEBUFFER_COMPLETE],

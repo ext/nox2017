@@ -47,7 +47,11 @@ export class CanvasController {
 		}
 
 		const canvas = this.element;
-		const gl = <any>(canvas.getContext('webgl2') || canvas.getContext('experimental-webgl2')) as WebGL2RenderingContext;
+		const options = {
+			premultipliedAlpha: false,
+			alpha: false,
+		};
+		const gl = <any>(canvas.getContext('webgl2', options) || canvas.getContext('experimental-webgl2', options)) as WebGL2RenderingContext;
 		this.context = gl;
 
 		/* enable backface culling */
@@ -61,7 +65,6 @@ export class CanvasController {
 		/* blending */
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
 		this.context.wgeUniforms = {}; /* uniform blocks */
 		this.ShaderService.initialize(this.context);

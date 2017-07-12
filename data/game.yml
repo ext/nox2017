@@ -1,3 +1,5 @@
 preload:
+  shader:
+    - shaders/default.yml
   texture:
     - textures/default.jpg

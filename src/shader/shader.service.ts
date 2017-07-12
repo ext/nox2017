@@ -14,18 +14,22 @@ class ShaderService {
 	load(gl: WebGL2RenderingContext, filename: string): Shader {
 		const cacheKey = filename;
 
-		if (cacheKey in cache){
-			return cache[cacheKey];
+		if (!(cacheKey in cache)){
+			this.preload(gl, filename);
 		}
 
+		return cache[cacheKey];
+	}
+
+	preload(gl: WebGL2RenderingContext, filename: string): void {
 		const data = this.$templateCache.get<IShaderData>(filename);
 		if (angular.isUndefined(data)){
 			throw new Error(`Failed to load shader "${filename}", file not found.`);
 		}
 
+		const cacheKey = filename;
 		const shader = new Shader(gl, data);
 		cache[cacheKey] = shader;
-		return shader;
 	}
 
 	initialize(gl: WebGL2RenderingContext): void {

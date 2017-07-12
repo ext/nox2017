@@ -104,19 +104,26 @@ export class CanvasController {
 	}
 
 	preload(preload: IGamePreload){
-		return Object.keys(preload).map((type: string) => {
+		const gl = this.context;
+		let promises: Promise<void>[] = [];
+		Object.keys(preload).forEach((type: string) => {
 			const assets = preload[type];
+			let loader = null;
 			switch (type){
+			case 'shader':
+				loader = (cur: string) => this.ShaderService.preload(gl, cur);
+				break;
 			case 'texture':
-				return Promise.all(assets.map((cur: string) => {
-					return Texture.preload(this.context, cur);
-				}));
+				loader = (cur: string) => Texture.preload(gl, cur);
+				break;
 			default:
 				// eslint-disable-next-line no-console
 				console.warn(`Preload type "${type}" not supported, ignored`);
-				return Promise.resolve();
+				return;
 			}
+			promises = promises.concat(assets.map(loader));
 		});
+		return Promise.all(promises);
 	}
 
 	loadShader(filename: string){

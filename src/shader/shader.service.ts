@@ -1,6 +1,8 @@
 import { Shader } from './shader';
 import { IShaderData } from './shader-data'; // eslint-disable-line no-unused-vars
 
+const cache: { [key:string]: Shader } = {};
+
 class ShaderService {
 	$templateCache: ng.ITemplateCacheService;
 	static $$ngIsClass: boolean;
@@ -9,23 +11,32 @@ class ShaderService {
 		this.$templateCache = $templateCache;
 	}
 
-	load(gl: WebGL2RenderingContext, filename: string){
+	load(gl: WebGL2RenderingContext, filename: string): Shader {
+		const cacheKey = filename;
+
+		if (cacheKey in cache){
+			return cache[cacheKey];
+		}
+
 		const data = this.$templateCache.get<IShaderData>(filename);
 		if (angular.isUndefined(data)){
 			throw new Error(`Failed to load shader "${filename}", file not found.`);
 		}
-		return new Shader(gl, data);
+
+		const shader = new Shader(gl, data);
+		cache[cacheKey] = shader;
+		return shader;
 	}
 
-	initialize(gl: WebGL2RenderingContext){
+	initialize(gl: WebGL2RenderingContext): void {
 		Shader.initialize(gl);
 	}
 
-	uploadProjectionView(gl: WebGL2RenderingContext, proj: Float32Array, view: Float32Array){
+	uploadProjectionView(gl: WebGL2RenderingContext, proj: Float32Array, view: Float32Array): void {
 		Shader.uploadProjectionView(gl, proj, view);
 	}
 
-	uploadModel(gl: WebGL2RenderingContext, model: Float32Array){
+	uploadModel(gl: WebGL2RenderingContext, model: Float32Array): void {
 		Shader.uploadModel(gl, model);
 	}
 }

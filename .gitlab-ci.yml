@@ -1,3 +1,7 @@
+variables:
+  PKGNAME: ${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz
+  URL: https://wge-staging.sidvind.com/${CI_PROJECT_NAME}/${CI_COMMIT_TAG}
+
 image: node:8
 
 stages:
@@ -5,6 +9,7 @@ stages:
   - test
   - build
   - release
+  - stage
 
 Install dependencies:
   stage: prepare
@@ -52,16 +57,30 @@ Build:
   script:
     - node_modules/.bin/grunt build
 
-Release:
+Tarball:
   stage: release
-  only:
-    - tags
   tags:
     - docker
   artifacts:
-    name: ${CI_PROJECT_NAME}-${CI_PIPELINE_ID}-release
-    when: always
+    name: $PKGNAME
+    expire_in: 1 week
     paths:
-      - "*.zip"
+      - $PKGNAME
   script:
-    - node_modules/.bin/grunt compress
+    - node_modules/.bin/grunt compress manifest
+    - cat manifest.json
+    - tar pcvzf $PKGNAME --transform 's#public/##g' --show-transformed-names public manifest.json *.zip
+
+Deploy:
+  stage: stage
+  only:
+    - tags
+  dependencies:
+    - Tarball
+  tags:
+    - nodejs
+  environment:
+    name: ${CI_COMMIT_TAG}
+    url: ${URL}
+  script:
+    - /bin/zsh -c 'ssh -Ti =(echo $SSH_KEY) deploy@sidvind.com < $PKGNAME'

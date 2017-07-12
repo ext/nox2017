@@ -61,7 +61,7 @@ export class Texture {
 					reject(err);
 				});
 			};
-			img.src = `/assets/${filename}`;
+			img.src = `assets/${filename}`;
 		});
 	}
 }

@@ -124,7 +124,7 @@ module.exports = function(grunt){
 					module: 'wge.shaders',
 				},
 				src: [
-					'shaders/**/*.shader.yml',
+					'shaders/**/*.yml',
 				],
 				dest: 'build/shaders.js',
 			},

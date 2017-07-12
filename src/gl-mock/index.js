@@ -11,8 +11,16 @@ function getError(){
 	return glError;
 }
 
+function getProgramParameter(binding, param){
+	switch (param){
+	case constants.LINK_STATUS: return true;
+	default: return 0;
+	}
+}
+
 const functions = [
 	'bindBuffer',
+	'bindBufferRange',
 	'bindFramebuffer',
 	'bindTexture',
 	'blendFunc',
@@ -23,11 +31,20 @@ const functions = [
 	'deleteTexture',
 	'disable',
 	'enable',
+	'enableVertexAttribArray',
 	'framebufferTexture2D',
+	'getProgramInfoLog',
+	'uniformBlockBinding',
+	['getUniformBlockIndex', () => 0],
+	['getProgramParameter', getProgramParameter],
+	'linkProgram',
 	'pixelStorei',
 	'texImage2D',
 	'texParameteri',
+	'useProgram',
+	['uniformBlockBinding', () => 0],
 	['checkFramebufferStatus', () => constants.FRAMEBUFFER_COMPLETE],
+	['createProgram', createId, 'Program'],
 	['createBuffer', createId, 'Buffer'],
 	['createFramebuffer', createId, 'Framebuffer'],
 	['createTexture', createId, 'Texture'],

@@ -1,4 +1,5 @@
 import { Uniform } from './uniform';
+import { IShaderData } from './shader-data'; // eslint-disable-line no-unused-vars
 
 declare global {
 	interface WebGL2RenderingContext {
@@ -18,8 +19,9 @@ export class Shader {
 	context: WebGL2RenderingContext;
 	sp: WebGLProgram;
 
-	constructor(gl: WebGL2RenderingContext, data: any){
+	constructor(gl: WebGL2RenderingContext, data: IShaderData){
 		this.context = gl;
+
 		const sp = this.sp = gl.createProgram();
 
 		/* for now only singlepass is supported */

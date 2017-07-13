@@ -3,67 +3,7 @@ import { ModelService } from 'model';
 import { Texture } from 'texture';
 import { Item } from 'item';
 import { Vector } from 'sylvester';
-
-type IMapProperties = { [key:string]: any };
-
-interface IMapObject {
-	width: number;
-	height: number;
-	x: number;
-	y: number;
-	type: string;
-	name: string;
-	properties?: IMapProperties
-}
-
-interface IMapObject {
-	position: Vector;
-}
-
-interface IMapLayer {
-	data: number[];
-	height: number;
-	name: string;
-	opacity: number;
-	type: "tilelayer" | "objectgroup";
-	visible: boolean;
-	width: number;
-	x: number;
-	y: number;
-	objects?: IMapObject[];
-	properties?: IMapProperties
-}
-
-interface IMapTileset {
-	columns: number;
-	firstgid: number;
-	image: string;
-	imageheight: number;
-	imagewidth: number;
-	margin: number;
-	name: string;
-	spacing: number;
-	tilecount: number;
-	tileheight: number;
-	tilewidth: number;
-	properties?: IMapProperties
-}
-
-interface IMapData {
-	width: number;
-	height: number;
-	tilewidth: number;
-	tileheight: number;
-	type: string
-	version: number;
-	nextobjectid: number;
-	orientation: string;
-	renderorder: string;
-	tiledversion: string;
-	layers: IMapLayer[];
-	tilesets: IMapTileset[];
-	properties?: IMapProperties
-}
+import { IMapData, IMapLayer, IMapObject } from './map-data'; // eslint-disable-line no-unused-vars
 
 class MapService {
 	$templateCache: ng.ITemplateCacheService;
@@ -81,12 +21,7 @@ class MapService {
 			throw new Error(`Failed to load map "${filename}", file not found.`);
 		}
 
-		const map = new Map(gl, {
-			width: data.width,
-			height: data.height,
-			tileWidth: data.tilewidth,
-			tileHeight: data.tileheight,
-		});
+		const map = new Map(gl, data);
 
 		const promise = this.loadTileset(gl, map, data);
 

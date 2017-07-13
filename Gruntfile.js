@@ -268,7 +268,7 @@ module.exports = function(grunt){
 				tasks: ['html2js', 'uglify:data'],
 			},
 			js: {
-				files: ['<%=eslint.default.src%>'],
+				files: ['<%=eslint.default.src%>', 'src/**/*.d.ts'],
 				tasks: ['eslint', 'karma:default', 'browserify'],
 			},
 			scss: {

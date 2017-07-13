@@ -3,6 +3,7 @@ import { Shader } from 'shader';
 import { Texture } from 'texture';
 import { Model } from 'model';
 import { Matrix } from 'sylvester';
+import { IMapData } from './map-data'; // eslint-disable-line no-unused-vars
 
 const NO_TILE = -1;
 
@@ -18,12 +19,12 @@ export class Map {
 	object: Entity[];
 	namedObject: { [key:string]: Entity };
 
-	constructor(gl: WebGL2RenderingContext, options: any){
+	constructor(gl: WebGL2RenderingContext, options: IMapData){
 		this.context = gl;
 		this.width = options.width;
 		this.height = options.height;
-		this.tileWidth = options.tileWidth;
-		this.tileHeight = options.tileHeight;
+		this.tileWidth = options.tilewidth;
+		this.tileHeight = options.tileheight;
 		this.grid = undefined;
 		this.texture = undefined;
 		this.model = [];

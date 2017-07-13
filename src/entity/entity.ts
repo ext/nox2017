@@ -38,4 +38,8 @@ export class Entity {
 		if (!this.model) return;
 		this.model.render(gl);
 	}
+
+	update(dt: number){
+		this.updateModelMatrix();
+	}
 }

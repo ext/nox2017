@@ -107,8 +107,6 @@ class MainController extends CanvasController {
 			'rot.z',
 		], (rot) => {
 			this.entity.rotation = Vector.quatFromEuler(rot[0], rot[1], rot[2]);
-			this.entity.updateModelMatrix();
-			this.render();
 		});
 		return Promise.resolve();
 	}
@@ -153,7 +151,7 @@ class MainController extends CanvasController {
 		}
 
 		this.entity.position = this.entity.position.add(velocity.x(dt));
-		this.entity.updateModelMatrix();
+		this.entity.update(dt);
 
 		this.camera.update();
 	}

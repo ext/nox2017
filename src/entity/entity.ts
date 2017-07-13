@@ -39,7 +39,7 @@ export class Entity {
 		this.model.render(gl);
 	}
 
-	update(dt: number){
+	update(dt: number){ // eslint-disable-line no-unused-vars
 		this.updateModelMatrix();
 	}
 }

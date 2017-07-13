@@ -21,11 +21,7 @@ export class Framebuffer {
 
 		for (const target of this.color){
 			gl.bindTexture(gl.TEXTURE_2D, target);
-			gl.texImage2D(gl.TEXTURE_2D, 0, options.format, size[0], size[1], 0, options.format === gl.RGBA8 ? gl.RGBA : gl.RGB, gl.UNSIGNED_BYTE, null);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, options.filter);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, options.filter);
+			this.setupColorBuffer(gl, size, options.format, options.filter);
 		}
 
 		if (this.depth){
@@ -93,6 +89,19 @@ export class Framebuffer {
 	clear(gl: WebGL2RenderingContext, r: number, g: number, b: number, a: number){
 		gl.clearColor(r, g, b, a);
 		gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+	}
+
+	private setupColorBuffer(gl: WebGL2RenderingContext, size: [number, number], internalformat: number, filter: number): void {
+		let format = gl.RGB;
+		switch (internalformat){
+		case gl.RGBA8: format = gl.RGBA; break;
+		case gl.RGBA8UI: format = gl.RGBA_INTEGER; break;
+		}
+		gl.texImage2D(gl.TEXTURE_2D, 0, internalformat, size[0], size[1], 0, format, gl.UNSIGNED_BYTE, null);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
 	}
 }
 

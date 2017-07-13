@@ -55,6 +55,14 @@ export class CanvasController {
 		const gl = <any>(canvas.getContext('webgl2', options) || canvas.getContext('experimental-webgl2', options)) as WebGL2RenderingContext;
 		this.context = gl;
 
+		/* sanity checks */
+		const maxDrawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
+		if (maxDrawBuffers < 2){
+			// eslint-disable-next-line no-consle
+			console.error('maxDrawBuffers:', maxDrawBuffers);
+			throw new Error('Not enough draw buffers');
+		}
+
 		/* enable backface culling */
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK);

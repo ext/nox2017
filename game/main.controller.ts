@@ -129,6 +129,7 @@ class MainController extends CanvasController {
 			format: gl.RGB8,
 			depth: true,
 		});
+		this.fbo.addColorBuffer(gl, gl.RGBA8UI, gl.NEAREST);
 	}
 
 	update(dt: number){
@@ -170,7 +171,9 @@ class MainController extends CanvasController {
 
 		this.shader.bind();
 		this.fbo.with(gl, () => {
-			this.fbo.clear(gl, 0, 0, 0, 0);
+			gl.clearBufferfv(gl.COLOR, 0, [0, 0, 0, 1]);
+			gl.clearBufferuiv(gl.COLOR, 1, [0, 0, 0, 0]);
+			gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 1.0, 0);
 
 			this.map.render(gl);
 
@@ -189,7 +192,7 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadProjectionView(gl, this.ortho, Matrix.I(4));
 		this.ShaderService.uploadModel(gl, scale);
 
-		this.fbo.bindTexture(gl);
+		this.fbo.bindTexture(gl, 0);
 		this.quad.render(gl);
 
 		if (error !== gl.NO_ERROR){

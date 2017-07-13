@@ -21,7 +21,7 @@
                  "id":10,
                  "name":"Gnocchi",
                  "rotation":0,
-                 "type":"food",
+                 "type":"",
                  "visible":true,
                  "width":8,
                  "x":512,
@@ -30,7 +30,7 @@
                 {
                  "height":8,
                  "id":11,
-                 "name":"chainsaw",
+                 "name":"",
                  "properties":
                     {
                      "texture":"textures\/chainsaw.png"
@@ -51,8 +51,60 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "color":"#ff00c8",
+         "draworder":"topdown",
+         "name":"Zones",
+         "objects":[
+                {
+                 "height":25,
+                 "id":23,
+                 "name":"Waypoint 1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":42.5,
+                 "x":437,
+                 "y":7.5
+                }, 
+                {
+                 "height":30.5,
+                 "id":24,
+                 "name":"Waypoint 2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":42,
+                 "x":338.5,
+                 "y":22.5
+                }, 
+                {
+                 "height":36,
+                 "id":25,
+                 "name":"Waypoint 3",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":52.5,
+                 "x":370.5,
+                 "y":139
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "DefaultType":"Waypoint"
+            },
+         "propertytypes":
+            {
+             "DefaultType":"string"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":23,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.2",

@@ -4,7 +4,7 @@ import { Texture } from 'texture';
 import { IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
 import { Item } from 'item';
 import { Vector } from 'sylvester';
-import { IMapData, IMapLayer, IMapObject } from './map-data'; // eslint-disable-line no-unused-vars
+import { IMapData, IMapLayer, IMapObject, IMapProperties } from './map-data'; // eslint-disable-line no-unused-vars
 
 class MapService {
 	$templateCache: ng.ITemplateCacheService;
@@ -34,7 +34,7 @@ class MapService {
 				this.loadTiles(gl, map, layer);
 				break;
 			case 'objectgroup':
-				this.loadObjects(gl, map, layer.objects);
+				this.loadObjects(gl, map, layer.objects, layer.properties);
 				break;
 			default:
 				// eslint-disable-next-line
@@ -108,7 +108,8 @@ class MapService {
 		}
 	}
 
-	loadObjects(gl: WebGL2RenderingContext, map: Map, src: IMapObject[]){
+	loadObjects(gl: WebGL2RenderingContext, map: Map, src: IMapObject[], properties: IMapProperties){
+		const defaultType = properties ? (properties.DefaultType || null) : null;
 		for (const obj of src){
 			/* remap position from absolute pixel {.x, .y} to tile position vector [x, y, 0] */
 			const scale = (1.0 / 8.0); // TODO Hardcoded value
@@ -116,7 +117,8 @@ class MapService {
 				position: Vector.create([obj.x * scale, -obj.y * scale, 0]),
 			});
 
-			const item = Item.factory(obj.type, gl, properties);
+			const type = obj.type || defaultType;
+			const item = Item.factory(type, gl, properties);
 			map.object.push(item);
 
 			if (obj.name){

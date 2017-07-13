@@ -80,7 +80,7 @@ class MainController extends CanvasController {
 			aspect: this.width / this.height,
 			znear: zNear,
 			zfar: zFar,
-			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 15]}),
+			onUpdate: Camera.follow(this.entity, {offset: [0, -8, 25]}),
 		});
 
 		promises.push(this.loadMap('/data/map.json').then((map: Map) => {

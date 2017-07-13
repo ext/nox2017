@@ -9,11 +9,7 @@ export interface IMapObject {
 	y: number;
 	type: string;
 	name: string;
-	properties?: IMapProperties
-}
-
-export interface IMapObject {
-	position: Vector;
+	properties?: IMapProperties;
 }
 
 export interface IMapLayer {
@@ -27,7 +23,7 @@ export interface IMapLayer {
 	x: number;
 	y: number;
 	objects?: IMapObject[];
-	properties?: IMapProperties
+	properties?: IMapProperties;
 }
 
 export interface IMapTileset {
@@ -42,7 +38,7 @@ export interface IMapTileset {
 	tilecount: number;
 	tileheight: number;
 	tilewidth: number;
-	properties?: IMapProperties
+	properties?: IMapProperties;
 }
 
 export interface IMapData {
@@ -58,5 +54,5 @@ export interface IMapData {
 	tiledversion: string;
 	layers: IMapLayer[];
 	tilesets: IMapTileset[];
-	properties?: IMapProperties
+	properties?: IMapProperties;
 }

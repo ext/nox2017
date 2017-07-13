@@ -1,6 +1,7 @@
 import { Map } from './map';
 import { ModelService } from 'model';
 import { Texture } from 'texture';
+import { IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
 import { Item } from 'item';
 import { Vector } from 'sylvester';
 import { IMapData, IMapLayer, IMapObject } from './map-data'; // eslint-disable-line no-unused-vars
@@ -111,9 +112,11 @@ class MapService {
 		for (const obj of src){
 			/* remap position from absolute pixel {.x, .y} to tile position vector [x, y, 0] */
 			const scale = (1.0 / 8.0); // TODO Hardcoded value
-			obj.position = Vector.create([obj.x * scale, -obj.y * scale, 0]);
+			const properties: IEntityProperty = Object.assign(obj, obj.properties, {
+				position: Vector.create([obj.x * scale, -obj.y * scale, 0]),
+			});
 
-			const item = Item.factory(obj.type, gl, obj, obj.properties);
+			const item = Item.factory(obj.type, gl, properties);
 			map.object.push(item);
 
 			if (obj.name){

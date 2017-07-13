@@ -1,24 +1,27 @@
-import { Entity } from 'entity';
+import { Entity, IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
 import { Model } from 'model';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
 
 interface ItemFactory {
-	new (gl: WebGL2RenderingContext, options?: any, properties?: any): Item;
+	new (gl: WebGL2RenderingContext, options?: any): Item;
 }
 
 const types: { [key:string]: ItemFactory } = {};
+
+const defaults: IEntityProperty = {
+	hp: 100,
+};
 
 export class Item extends Entity {
 	name?: string;
 	hp: number;
 	diffuse?: Texture;
 
-	constructor(gl: WebGL2RenderingContext, options?: any, properties?: any){
-		options = Object.assign({
+	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
+		options = Object.assign(defaults, {
 			model: Model.Quad(gl),
-			hp: 100,
-		}, options || {}, properties);
+		}, options);
 
 		super(options);
 		this.name = options.name;
@@ -32,13 +35,13 @@ export class Item extends Entity {
 		});
 	}
 
-	static register(name: string, cls: any){
+	static register(name: string, cls: ItemFactory){
 		types[name] = cls;
 	}
 
-	static factory(name: string, gl: WebGL2RenderingContext, options?: any, properties?: any){
+	static factory(name: string, gl: WebGL2RenderingContext, options?: IEntityProperty){
 		if (name in types){
-			return new types[name](gl, options, properties);
+			return new types[name](gl, options);
 		} else {
 			if (name !== null){
 				// eslint-disable-next-line

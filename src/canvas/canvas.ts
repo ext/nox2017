@@ -103,8 +103,8 @@ export class CanvasController {
 		return new Promise(resolve => {
 			this.$timeout(() => {
 				const parent = angular.element(canvas).parent();
-				const width = parent.width();
-				const height = parent.height();
+				const width = Math.floor(parent.width());
+				const height = Math.floor(parent.height());
 				this.resize(width, height);
 				resolve();
 			});

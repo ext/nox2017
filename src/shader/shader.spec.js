@@ -56,6 +56,12 @@ describe('Shader', function(){
 			expect(gl.uniformBlockBinding).toHaveBeenCalledWith(shader.sp, 0, 7);
 		});
 
+		it('should fail if linking fails', () => {
+			spyOn(gl, 'getProgramParameter').and.returnValue(false);
+			spyOn(gl, 'getProgramInfoLog').and.returnValue('foo');
+			expect(() => new Shader(gl, {pass: [{}]})).toThrow(new Error('Unable to initialize the shader program: foo'));
+		});
+
 	});
 
 	describe('bind()', () => {

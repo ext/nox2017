@@ -1,6 +1,13 @@
 import { Model } from 'model';
 import { Vector, Matrix } from 'sylvester';
 
+export type IEntityProperty = { [key:string]: any };
+
+const defaults: IEntityProperty = {
+	model: null,
+	position: [0, 0, 0],
+};
+
 let id: number = 1;
 
 export class Entity {
@@ -10,11 +17,8 @@ export class Entity {
 	rotation: Vector;
 	modelMatrix: Matrix;
 
-	constructor(options: any){
-		options = Object.assign({
-			model: null,
-			position: [0, 0, 0],
-		}, options);
+	constructor(options: IEntityProperty){
+		options = Object.assign(defaults, options);
 
 		this.id = id++;
 		this.model = options.model;

@@ -30,11 +30,11 @@ describe('Framebuffer', function(){
 		});
 
 		it('should be cleared', () => {
-			spyOn(gl, 'clear');
-			spyOn(gl, 'clearColor');
+			spyOn(gl, 'clearBufferfv');
+			spyOn(gl, 'clearBufferfi');
 			const fbo = new Framebuffer(gl, [800, 600]); // eslint-disable-line no-unused-vars
-			expect(gl.clearColor).toHaveBeenCalledWith(0, 0, 0, 1);
-			expect(gl.clear).toHaveBeenCalled();
+			expect(gl.clearBufferfv).toHaveBeenCalledWith(gl.COLOR, 0, [0, 0, 0, 1]);
+			expect(gl.clearBufferfi).toHaveBeenCalledWith(gl.DEPTH_STENCIL, 0, 1.0, 0);
 		});
 
 	});

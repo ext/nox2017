@@ -31,6 +31,7 @@ class MainController extends CanvasController {
 	ortho: Matrix;
 	quad: Model;
 	shader: Shader;
+	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
 	entity: Entity;
@@ -68,6 +69,7 @@ class MainController extends CanvasController {
 
 		this.quad = this.ModelService.quad(gl);
 		this.shader = this.loadShader('/shaders/default.yml');
+		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
 			model: this.ModelService.fromFile(gl, '/data/cube.yml'),
 			position: [55, -9, 0],
@@ -129,6 +131,7 @@ class MainController extends CanvasController {
 			format: gl.RGB8,
 			depth: true,
 		});
+		this.fbo.addColorBuffer(gl, gl.RGBA8UI, gl.NEAREST);
 	}
 
 	update(dt: number){
@@ -170,7 +173,9 @@ class MainController extends CanvasController {
 
 		this.shader.bind();
 		this.fbo.with(gl, () => {
-			this.fbo.clear(gl, 0, 0, 0, 0);
+			gl.clearBufferfv(gl.COLOR, 0, [0, 0, 0, 1]);
+			gl.clearBufferuiv(gl.COLOR, 1, [0, 0, 0, 0]);
+			gl.clearBufferfi(gl.DEPTH_STENCIL, 0, 1.0, 0);
 
 			this.map.render(gl);
 
@@ -189,7 +194,8 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadProjectionView(gl, this.ortho, Matrix.I(4));
 		this.ShaderService.uploadModel(gl, scale);
 
-		this.fbo.bindTexture(gl);
+		this.postshader.bind();
+		this.fbo.bindTexture(gl, 0);
 		this.quad.render(gl);
 
 		if (error !== gl.NO_ERROR){

@@ -1,0 +1,4 @@
+name: screenspace post effects
+pass:
+  - vertex: default.vertex.glsl
+    fragment: post.frag.glsl

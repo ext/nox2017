@@ -55,6 +55,14 @@ export class CanvasController {
 		const gl = <any>(canvas.getContext('webgl2', options) || canvas.getContext('experimental-webgl2', options)) as WebGL2RenderingContext;
 		this.context = gl;
 
+		/* sanity checks */
+		const maxDrawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
+		if (maxDrawBuffers < 2){
+			// eslint-disable-next-line no-consle
+			console.error('maxDrawBuffers:', maxDrawBuffers);
+			throw new Error('Not enough draw buffers');
+		}
+
 		/* enable backface culling */
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK);
@@ -95,8 +103,8 @@ export class CanvasController {
 		return new Promise(resolve => {
 			this.$timeout(() => {
 				const parent = angular.element(canvas).parent();
-				const width = parent.width();
-				const height = parent.height();
+				const width = Math.floor(parent.width());
+				const height = Math.floor(parent.height());
 				this.resize(width, height);
 				resolve();
 			});

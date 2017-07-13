@@ -50,6 +50,8 @@ export class Framebuffer {
 
 			this.clear(gl, 0, 0, 0, 1);
 		});
+
+		this.checkGLErrors(gl, 'Post framebuffer creation');
 	}
 
 	destroy(gl: WebGL2RenderingContext){
@@ -70,6 +72,7 @@ export class Framebuffer {
 	}
 
 	with(gl: WebGL2RenderingContext, cb: () => void){
+		this.checkGLErrors(gl, 'Pre framebuffer check');
 		gl.bindFramebuffer(gl.FRAMEBUFFER, this.id);
 		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.color[this.current], 0);
 		{
@@ -77,6 +80,14 @@ export class Framebuffer {
 		}
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		this.swap();
+		this.checkGLErrors(gl, 'Post framebuffer check');
+	}
+
+	checkGLErrors(gl: WebGL2RenderingContext, msg: string){
+		const error = gl.getError();
+		if (error !== gl.NO_ERROR){
+			throw new Error(`${msg} returned error ${error}`);
+		}
 	}
 
 	clear(gl: WebGL2RenderingContext, r: number, g: number, b: number, a: number){

@@ -28,11 +28,13 @@ export class Item extends Entity {
 		this.hp = options.hp;
 		this.diffuse = null;
 
-		Texture.load(gl, options.texture).then((texture: Texture) => {
-			this.diffuse = texture;
-		}, (fallback: Texture) => {
-			this.diffuse = fallback;
-		});
+		if (options.texture){
+			Texture.load(gl, options.texture).then((texture: Texture) => {
+				this.diffuse = texture;
+			}, (fallback: Texture) => {
+				this.diffuse = fallback;
+			});
+		}
 	}
 
 	static register(name: string, cls: ItemFactory){

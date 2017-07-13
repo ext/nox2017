@@ -25,10 +25,10 @@ export class Entity {
 		this.position = Vector.create(options.position);
 		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
 		this.modelMatrix = Matrix.I(4);
-		this.calc();
+		this.updateModelMatrix();
 	}
 
-	calc(){
+	updateModelMatrix(){
 		const t = Matrix.Translation(this.position).ensure4x4();
 		const r = Matrix.RotationFromQuat(this.rotation).ensure4x4();
 		this.modelMatrix = t.x(r);

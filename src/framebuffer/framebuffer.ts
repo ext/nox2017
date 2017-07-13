@@ -34,11 +34,7 @@ export class Framebuffer {
 				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, this.depth, 0);
 			}
 
-			const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-			if (status !== gl.FRAMEBUFFER_COMPLETE){
-				const message = framebufferStatusMessage(gl, status);
-				throw new Error(`Framebuffer not complete: ${message}`);
-			}
+			this.validate(gl);
 
 			gl.disable(gl.CULL_FACE);
 			gl.enable(gl.BLEND);
@@ -102,6 +98,14 @@ export class Framebuffer {
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+	}
+
+	private validate(gl: WebGL2RenderingContext){
+		const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+		if (status !== gl.FRAMEBUFFER_COMPLETE){
+			const message = framebufferStatusMessage(gl, status);
+			throw new Error(`Framebuffer not complete: ${message}`);
+		}
 	}
 }
 

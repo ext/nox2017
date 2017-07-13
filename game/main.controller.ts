@@ -31,6 +31,7 @@ class MainController extends CanvasController {
 	ortho: Matrix;
 	quad: Model;
 	shader: Shader;
+	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
 	entity: Entity;
@@ -68,6 +69,7 @@ class MainController extends CanvasController {
 
 		this.quad = this.ModelService.quad(gl);
 		this.shader = this.loadShader('/shaders/default.yml');
+		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
 			model: this.ModelService.fromFile(gl, '/data/cube.yml'),
 			position: [55, -9, 0],
@@ -192,6 +194,7 @@ class MainController extends CanvasController {
 		this.ShaderService.uploadProjectionView(gl, this.ortho, Matrix.I(4));
 		this.ShaderService.uploadModel(gl, scale);
 
+		this.postshader.bind();
 		this.fbo.bindTexture(gl, 0);
 		this.quad.render(gl);
 

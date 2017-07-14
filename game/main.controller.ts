@@ -160,6 +160,7 @@ class MainController extends CanvasController {
 			velocity.elements[1] -= PLAYER_SPEED;
 		}
 
+		this.map.update(dt);
 		this.entity.position = this.entity.position.add(velocity.x(dt));
 		this.entity.update(dt);
 

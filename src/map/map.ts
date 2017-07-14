@@ -32,6 +32,10 @@ export class Map {
 		this.namedObject = {};
 	}
 
+	update(dt: number){
+		this.object.forEach(obj => obj.update(dt));
+	}
+
 	render(gl: WebGL2RenderingContext){
 		if (gl === null) throw new Error('Map.render() called without GL context');
 

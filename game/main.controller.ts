@@ -217,7 +217,6 @@ class MainController extends CanvasController {
 			format: gl.RGB8,
 			depth: true,
 		});
-		this.fbo.addColorBuffer(gl, gl.RGBA8UI, gl.NEAREST);
 	}
 
 	tick(){

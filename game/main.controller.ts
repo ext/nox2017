@@ -65,7 +65,7 @@ class MainController extends CanvasController {
 	}
 
 	init(filename: string): Promise<any> {
-		return super.init(filename).then(() => {
+		return super.init(filename).then((config) => {
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),

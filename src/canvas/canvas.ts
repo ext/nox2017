@@ -86,6 +86,7 @@ export class CanvasController {
 			this.calculateSize(),
 		]).then(() => {
 			canvas.classList.remove('loading');
+			return config;
 		});
 	}
 

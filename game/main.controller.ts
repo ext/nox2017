@@ -141,13 +141,6 @@ class MainController extends CanvasController {
 			this.camera.setPosition(Vector.create(pos));
 			this.render();
 		});
-		this.$scope.$watchGroup([
-			'rot.x',
-			'rot.y',
-			'rot.z',
-		], (rot) => {
-			this.entity.rotation = Vector.quatFromEuler(rot[0], rot[1], rot[2]);
-		});
 		return Promise.resolve();
 	}
 

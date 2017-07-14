@@ -47,6 +47,7 @@ export class WaypointBehaviour extends Behaviour {
 		const direction = target.subtract(entity.position).toUnitVector();
 		const velocity = direction.x(entity.speed * dt);
 		entity.position = entity.position.add(velocity);
+		entity.rotation = direction;
 	}
 
 	findWaypointByName(name: string){

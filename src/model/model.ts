@@ -1,6 +1,7 @@
 import { Attribute } from 'shader';
 
 let quad: Model = null;
+let quad2: Model = null;
 
 const stride = 9 * 4;
 
@@ -27,6 +28,20 @@ export class Model {
 			]), new Uint32Array([0, 1, 2, 1, 3, 2]));
 		}
 		return quad;
+	}
+
+	static Quad2(gl: WebGL2RenderingContext){
+		if (!quad2){
+			quad2 = new Model(gl);
+			quad2.upload(gl, new Float32Array([
+				/* X     Y     Z       U     V       R    G    B    A */
+				 0.8,  0.8,  0.0,    1.0,  1.0,    1.0, 1.0, 1.0, 1.0,
+				-0.8,  0.8,  0.0,    0.0,  1.0,    1.0, 1.0, 1.0, 1.0,
+				 0.8, -0.8,  0.0,    1.0,  0.0,    1.0, 1.0, 1.0, 1.0,
+				-0.8, -0.8,  0.0,    0.0,  0.0,    1.0, 1.0, 1.0, 1.0,
+			]), new Uint32Array([0, 1, 2, 1, 3, 2]));
+		}
+		return quad2;
 	}
 
 	upload(gl: WebGL2RenderingContext, vertices: Float32Array, indices: Uint32Array){

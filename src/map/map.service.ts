@@ -86,7 +86,7 @@ class MapService {
 			if (tile < 0) continue;
 
 			const x = i % map.width;
-			const y = -Math.floor(i / map.width);
+			const y = -Math.floor(i / map.width) - 1;
 			const tx = tile % tileDiv;
 			const ty = Math.floor(tile / tileDiv);
 

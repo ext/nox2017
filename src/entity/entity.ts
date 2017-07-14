@@ -28,7 +28,7 @@ export class Entity {
 		this.id = id++;
 		this.model = options.model;
 		this.position = Vector.create(options.position);
-		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
+		this.rotation = Vector.create([0.0, 1.0, 0.0]);
 		this.modelMatrix = Matrix.I(4);
 		this.speed = options.speed;
 		this.updateModelMatrix();
@@ -40,8 +40,9 @@ export class Entity {
 	}
 
 	updateModelMatrix(){
+		if (!this.model) return;
 		const t = Matrix.Translation(this.position).ensure4x4();
-		const r = Matrix.RotationFromQuat(this.rotation).ensure4x4();
+		const r = rotationFromDirection(this.rotation).ensure4x4();
 		this.modelMatrix = t.x(r);
 	}
 
@@ -57,4 +58,17 @@ export class Entity {
 
 		this.updateModelMatrix();
 	}
+}
+
+function rotationFromDirection(dir: Vector){
+	const up = Vector.create([0, 0, 1]);
+	const inv = dir.x(-1);
+	const xaxis = inv.cross(up).toUnitVector();
+	const yaxis = xaxis.cross(inv).toUnitVector();
+
+	return Matrix.create([
+		[xaxis.elements[0], -dir.elements[0], yaxis.elements[0]],
+		[xaxis.elements[1], -dir.elements[1], yaxis.elements[1]],
+		[xaxis.elements[2], -dir.elements[2], yaxis.elements[2]],
+	]);
 }

@@ -22,7 +22,7 @@ export class Item extends Entity {
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
 		options = Object.assign(defaults, {
-			model: Model.Quad(gl),
+			model: Model.Quad2(gl),
 		}, options);
 
 		super(options);

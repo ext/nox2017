@@ -58,7 +58,7 @@ export class CanvasController {
 		/* sanity checks */
 		const maxDrawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
 		if (maxDrawBuffers < 2){
-			// eslint-disable-next-line no-consle
+			// eslint-disable-next-line no-console
 			console.error('maxDrawBuffers:', maxDrawBuffers);
 			throw new Error('Not enough draw buffers');
 		}

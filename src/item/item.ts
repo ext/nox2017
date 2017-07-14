@@ -17,6 +17,8 @@ export class Item extends Entity {
 	name?: string;
 	hp: number;
 	diffuse?: Texture;
+	width: number;
+	height: number;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
 		options = Object.assign(defaults, {
@@ -27,6 +29,8 @@ export class Item extends Entity {
 		this.name = options.name;
 		this.hp = options.hp;
 		this.diffuse = null;
+		this.width = options.width;
+		this.height = options.height;
 
 		if (options.texture){
 			Texture.load(gl, options.texture).then((texture: Texture) => {

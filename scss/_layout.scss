@@ -17,9 +17,12 @@ main {
 aside {
 	flex: 0 0 auto;
 	background: #fff;
+	display: flex;
+	flex-direction: row;
 
 	fieldset {
 		display: inline-block;
+		flex: 0 0 auto;
 	}
 
 	label {

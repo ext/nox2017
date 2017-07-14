@@ -1,0 +1,1 @@
+export { Behaviour } from './behaviour';

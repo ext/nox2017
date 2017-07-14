@@ -1,3 +1,4 @@
+import { Behaviour } from 'behaviour';
 import { Model } from 'model';
 import { Vector, Matrix } from 'sylvester';
 
@@ -16,6 +17,8 @@ export class Entity {
 	position: Vector;
 	rotation: Vector;
 	modelMatrix: Matrix;
+	behaviour: Behaviour;
+	private behaviourData: any;
 
 	constructor(options: IEntityProperty){
 		options = Object.assign(defaults, options);
@@ -26,6 +29,11 @@ export class Entity {
 		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
 		this.modelMatrix = Matrix.I(4);
 		this.updateModelMatrix();
+	}
+
+	attachBehaviour(behaviour: Behaviour): void {
+		this.behaviour = behaviour;
+		this.behaviourData = behaviour.createData(this);
 	}
 
 	updateModelMatrix(){
@@ -40,6 +48,10 @@ export class Entity {
 	}
 
 	update(dt: number){ // eslint-disable-line no-unused-vars
+		if (this.behaviour){
+			this.behaviour.update(this, this.behaviourData);
+		}
+
 		this.updateModelMatrix();
 	}
 }

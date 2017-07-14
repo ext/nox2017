@@ -108,12 +108,14 @@ class MapService {
 		}
 	}
 
-	loadObjects(gl: WebGL2RenderingContext, map: Map, src: IMapObject[], properties: IMapProperties){
-		const defaultType = properties ? (properties.DefaultType || null) : null;
+	loadObjects(gl: WebGL2RenderingContext, map: Map, src: IMapObject[], layerProperties: IMapProperties = {}){
+		const defaultType = layerProperties.type || null;
+		delete layerProperties.type;
+
 		for (const obj of src){
 			/* remap position from absolute pixel {.x, .y} to tile position vector [x, y, 0] */
 			const scale = (1.0 / 8.0); // TODO Hardcoded value
-			const properties: IEntityProperty = Object.assign(obj, obj.properties, {
+			const properties: IEntityProperty = Object.assign(obj, layerProperties, obj.properties, {
 				position: Vector.create([obj.x * scale, -obj.y * scale, 0]),
 			});
 

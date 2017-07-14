@@ -37,6 +37,13 @@ interface Wave {
 	entities: IEntityProperty[];
 }
 
+interface Constants {
+	spawnInitial: number;
+	spawnNextWave: number;
+	spawnCooldown: number;
+	spawnDelay: number;
+}
+
 class MainController extends CanvasController {
 	$scope: ng.IScope;
 	ModelService: ModelService;
@@ -52,7 +59,7 @@ class MainController extends CanvasController {
 	routes: { [key:number]: Route };
 	entity: Entity;
 	texture: Texture;
-	spawnDelay: number;
+	constants: Constants;
 	wave: Wave[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
@@ -76,13 +83,13 @@ class MainController extends CanvasController {
 	init(filename: string): Promise<any> {
 		return super.init(filename).then((config) => {
 			this.wave = config.wave;
-			this.spawnDelay = config.constants.spawnDelay;
+			this.constants = config.constants;
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
 			]);
 		}).then(() => {
-			this.spawnWave(0);
+			this.startWave(0, this.constants.spawnInitial);
 		});
 	}
 
@@ -146,6 +153,22 @@ class MainController extends CanvasController {
 		return Promise.resolve();
 	}
 
+	startWave(index: number, timeout: number){
+		const game = this.$scope.game; /* angular parent controller */
+		this.$scope.$apply(() => {
+			game.next = timeout / 1000;
+		});
+
+		this.addTimeout(timeout, () => {
+			this.$scope.$apply(() => {
+				game.next = null;
+			});
+			this.spawnWave(index);
+		}, (left: number) => {
+			game.next = Math.ceil(left);
+		});
+	}
+
 	spawnWave(index: number){
 		const gl = this.context;
 		const wave = this.wave[index];
@@ -170,7 +193,7 @@ class MainController extends CanvasController {
 						});
 						const entity = this.map.spawn(null, gl, properties);
 						entity.attachBehaviour(behaviour);
-					}, i * this.spawnDelay);
+					}, i * this.constants.spawnDelay);
 				}
 			}
 		}

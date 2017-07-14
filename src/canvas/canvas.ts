@@ -5,6 +5,12 @@ declare global {
 	const angular: ng.IAngularStatic;
 }
 
+interface Timeout {
+	cb: () => void;
+	progress: (left: number) => void;
+	timeout: number;
+}
+
 export class CanvasController {
 	element: HTMLCanvasElement;
 	$window: Window;
@@ -17,6 +23,7 @@ export class CanvasController {
 	keypress: boolean[];
 	width: number;
 	height: number;
+	private timeouts: Timeout[];
 
 	constructor($element: any, $injector: angular.auto.IInjectorService){
 		this.$window = $injector.get('$window');
@@ -28,6 +35,7 @@ export class CanvasController {
 		this.context = null;
 		this.lastFrame = null;              /* timestamp of last frame */
 		this.keypress = [];                 /* state of keyboard */
+		this.timeouts = [];
 
 		this.$window.addEventListener('resize', () => {
 			const canvas = this.element;
@@ -157,6 +165,7 @@ export class CanvasController {
 		this.lastFrame = now;
 
 		if (run){
+			this.updateTimeout(dt);
 			this.update(dt);
 			this.render();
 		}
@@ -164,6 +173,30 @@ export class CanvasController {
 		requestAnimationFrame(() => {
 			this.tick(true);
 		});
+	}
+
+	addTimeout(timeout: number, cb: () => void, progress: (left: number) => void = null): void {
+		this.timeouts.push({
+			cb,
+			progress,
+			timeout: timeout / 1000,
+		});
+	}
+
+	updateTimeout(dt: number){
+		this.timeouts.forEach(t => {
+			t.timeout -= dt;
+			if (t.progress){
+				t.progress(t.timeout);
+			}
+		});
+		const expired = this.timeouts.filter(t => t.timeout < 0);
+		if (expired.length > 0){
+			console.log('timers fired', expired);
+			this.timeouts = this.timeouts.filter(t => t.timeout >= 0);
+			expired.forEach(t => t.cb());
+		}
+
 	}
 
 	clear(){

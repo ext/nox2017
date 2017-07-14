@@ -7,6 +7,16 @@ preload:
     - textures/beaver.png
 
 constants:
+  # How long before first wave spawns
+  spawnInitial: 8000
+
+  # How long between waves
+  spawnNextWave: 5000
+
+  # How long between waves (before notice is show)
+  spawnCooldown: 5000
+
+  # How long between each group of creeps
   spawnDelay: 800
 
 wave:

@@ -9,24 +9,13 @@
 		<link rel="stylesheet" href="{{ files.css | assetUrl }}" />
 	</head>
 	<body ng-app="{{ pkg.name }}" ng-strict-di ng-controller="GameController as game">
-		<main>
-			<p class="paused" ng-show="!game.running"><span class="fa fa-pause"></span> Paused</p>
+		<main ng-cloak>
+			<p class="paused" ng-if="!game.running"><span class="fa fa-pause"></span> Paused</p>
+			<p id="next-wave" ng-if="game.next"><span class="fa fa-clock-o"></span> Next wave in <span ng-bind="game.next"></span>s</p>
 			<canvas ng-controller="MainController"></canvas>
 		</main>
 
 		<aside>
-			<fieldset ng-init="cam.x = 0; cam.y = 0; cam.z = -25">
-				<legend>Camera</legend>
-				<label>X <input type="number" step="0.1" ng-model="cam.x"/></label>
-				<label>Y <input type="number" step="0.1" ng-model="cam.y"/></label>
-				<label>Z <input type="number" step="0.1" ng-model="cam.z"/></label>
-			</fieldset>
-			<fieldset ng-init="rot.x = 0; rot.y = 0; rot.z = 0">
-				<legend>Rotation (euler)</legend>
-				<label>X <input type="number" step="0.1" ng-model="rot.x"/></label>
-				<label>Y <input type="number" step="0.1" ng-model="rot.y"/></label>
-				<label>Z <input type="number" step="0.1" ng-model="rot.z"/></label>
-			</fieldset>
 			<fieldset>
 				<legend>Game</legend>
 				<div class="button-group">

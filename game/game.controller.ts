@@ -7,10 +7,14 @@ class GameController {
 
 	running: boolean;
 	step: boolean;
+	next?: number;
+	nextLeft: number;
 
-	constructor(){
-		this.running = true;
-		this.step = false;
+	constructor($interval: ng.IIntervalService){
+		this.running = false;
+		this.step = true;
+
+		$interval(() => {}, 800);
 	}
 
 	refocusGame(){

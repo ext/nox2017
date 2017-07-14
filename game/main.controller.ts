@@ -22,10 +22,10 @@ const FOV = 45.0;
 const zNear = 0.1;
 const zFar = 100.0;
 
-const KEY_LEFT = 65;
-const KEY_RIGHT = 68;
-const KEY_UP = 87;
-const KEY_DOWN = 83;
+const KEY_LEFT = "KeyA";
+const KEY_RIGHT = "KeyD";
+const KEY_UP = "KeyW";
+const KEY_DOWN = "KeyS";
 
 const PLAYER_SPEED = 15;
 

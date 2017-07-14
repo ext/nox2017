@@ -20,7 +20,7 @@ export class CanvasController {
 	MapService: any;
 	lastFrame: number;
 	context: WebGL2RenderingContext;
-	keypress: boolean[];
+	keypress: { [key: string]: boolean };
 	width: number;
 	height: number;
 	private timeouts: Timeout[];
@@ -34,7 +34,7 @@ export class CanvasController {
 		this.MapService = $injector.get('MapService');
 		this.context = null;
 		this.lastFrame = null;              /* timestamp of last frame */
-		this.keypress = [];                 /* state of keyboard */
+		this.keypress = {};                 /* state of keyboard */
 		this.timeouts = [];
 
 		this.$window.addEventListener('resize', () => {
@@ -100,10 +100,10 @@ export class CanvasController {
 
 	bindKeys(){
 		this.$window.addEventListener('keydown', event => {
-			this.keypress[event.keyCode] = true;
+			this.keypress[event.code] = true;
 		});
 		this.$window.addEventListener('keyup', event => {
-			this.keypress[event.keyCode] = false;
+			this.keypress[event.code] = false;
 		});
 	}
 

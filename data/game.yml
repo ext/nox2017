@@ -4,9 +4,11 @@ preload:
     - /shaders/post.yml
   texture:
     - textures/default.jpg
+    - textures/beaver.png
 
 wave:
   - entities:
       - count: 5
         hp: 100
         speed: 5
+        texture: textures/beaver.png

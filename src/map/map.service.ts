@@ -120,12 +120,7 @@ class MapService {
 			});
 
 			const type = obj.type || defaultType;
-			const item = Item.factory(type, gl, properties);
-			map.object.push(item);
-
-			if (obj.name){
-				map.namedObject[obj.name] = item;
-			}
+			map.spawn(type, gl, properties);
 		}
 	}
 }

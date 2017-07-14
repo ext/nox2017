@@ -1,4 +1,5 @@
-import { Entity } from 'entity';
+import { Entity, IEntityProperty } from 'entity';
+import { Item } from 'item';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
 import { Model } from 'model';
@@ -46,6 +47,15 @@ export class Map {
 
 		/* render objects in world */
 		this.object.forEach(obj => obj.render(gl));
+	}
+
+	spawn(type: string, gl: WebGL2RenderingContext, properties: IEntityProperty){
+		const item = Item.factory(type, gl, properties);
+		this.object.push(item);
+
+		if (properties.name){
+			this.namedObject[properties.name] = item;
+		}
 	}
 
 	getObjects(): Entity[] {

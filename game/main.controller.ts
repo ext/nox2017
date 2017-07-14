@@ -134,6 +134,13 @@ class MainController extends CanvasController {
 		this.fbo.addColorBuffer(gl, gl.RGBA8UI, gl.NEAREST);
 	}
 
+	tick(){
+		const game = this.$scope.game; /* angular parent controller */
+		const run: boolean = game.running || game.step;
+		super.tick(run);
+		game.step = false;
+	}
+
 	update(dt: number){
 		let velocity = Vector.create([0, 0, 0]);
 

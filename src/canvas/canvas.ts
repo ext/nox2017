@@ -58,7 +58,7 @@ export class CanvasController {
 		/* sanity checks */
 		const maxDrawBuffers = gl.getParameter(gl.MAX_DRAW_BUFFERS);
 		if (maxDrawBuffers < 2){
-			// eslint-disable-next-line no-consle
+			// eslint-disable-next-line no-console
 			console.error('maxDrawBuffers:', maxDrawBuffers);
 			throw new Error('Not enough draw buffers');
 		}
@@ -144,19 +144,24 @@ export class CanvasController {
 
 	start(){
 		this.lastFrame = Date.now();
-		this.tick();
+		this.tick(true);
 	}
 
-	tick(){
+	/**
+	 * Run a single frame.
+	 */
+	tick(run: boolean): void {
 		const now = Date.now();
 		const dt = (now - this.lastFrame) / 1000;
 		this.lastFrame = now;
 
-		this.update(dt);
-		this.render();
+		if (run){
+			this.update(dt);
+			this.render();
+		}
 
 		requestAnimationFrame(() => {
-			this.tick();
+			this.tick(true);
 		});
 	}
 

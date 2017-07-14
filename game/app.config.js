@@ -1,6 +1,8 @@
 angular
 	.module('wge')
-	.config(routeConfig);
+	.config(routeConfig)
+	.config(animationConfig)
+;
 
 function routeConfig($locationProvider){
 	$locationProvider.html5Mode({
@@ -8,4 +10,8 @@ function routeConfig($locationProvider){
 		requireBase: true,
 		rewriteLinks: true,
 	});
+}
+
+function animationConfig($animateProvider){
+	$animateProvider.classNameFilter(/\banimated\b/);
 }

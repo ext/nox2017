@@ -2,7 +2,6 @@ import { Map } from './map';
 import { ModelService } from 'model';
 import { Texture } from 'texture';
 import { IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
-import { Item } from 'item';
 import { Vector } from 'sylvester';
 import { IMapData, IMapLayer, IMapObject, IMapProperties } from './map-data'; // eslint-disable-line no-unused-vars
 

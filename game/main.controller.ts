@@ -1,11 +1,13 @@
 /* eslint-disable angular/no-controller */
 
+/* eslint-disable no-unused-vars */
 import { WaypointBehaviour } from 'behaviour';
 import { Waypoint } from 'behaviour/waypoint-behaviour';
 import { Waypoint as WaypointItem } from './items/waypoint';
+import { Spawn } from './items/spawn';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
-import { Entity } from 'entity';
+import { Entity, IEntityProperty } from 'entity';
 import { Framebuffer } from 'framebuffer';
 import { Map } from 'map';
 import { Model, ModelService } from 'model';
@@ -14,6 +16,7 @@ import { Texture } from 'texture';
 import { AABB } from 'math';
 import { Vector, Matrix } from 'sylvester';
 import { registerItems } from './items';
+/* eslint-enable no-unused-vars */
 
 const FOV = 45.0;
 const zNear = 0.1;
@@ -28,6 +31,10 @@ const PLAYER_SPEED = 5;
 
 interface Route {
 	waypoint: Waypoint[];
+}
+
+interface Wave {
+	entities: IEntityProperty[];
 }
 
 class MainController extends CanvasController {
@@ -45,6 +52,7 @@ class MainController extends CanvasController {
 	routes: { [key:number]: Route };
 	entity: Entity;
 	texture: Texture;
+	wave: Wave[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -66,10 +74,13 @@ class MainController extends CanvasController {
 
 	init(filename: string): Promise<any> {
 		return super.init(filename).then((config) => {
+			this.wave = config.wave;
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
 			]);
+		}).then(() => {
+			this.spawnWave(0);
 		});
 	}
 
@@ -112,9 +123,6 @@ class MainController extends CanvasController {
 					next: item.next,
 				});
 			});
-
-			const chainsaw = this.map.getObjectByName('chainsaw');
-			chainsaw.attachBehaviour(new WaypointBehaviour(this.routes[1].waypoint));
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
@@ -141,6 +149,33 @@ class MainController extends CanvasController {
 			this.entity.rotation = Vector.quatFromEuler(rot[0], rot[1], rot[2]);
 		});
 		return Promise.resolve();
+	}
+
+	spawnWave(index: number){
+		const gl = this.context;
+		const wave = this.wave[index];
+		const allSpawnPoints: Spawn[] = [];
+
+		this.map.object.forEach(entity => {
+			if (entity instanceof Spawn){
+				allSpawnPoints.push(entity);
+			}
+		});
+
+		for (const spawn of allSpawnPoints){
+			const route = spawn.route;
+			const waypoints = this.routes[route].waypoint;
+			for (const it of wave.entities){
+				for (let i=0; i < it.count; i++){
+					const properties: IEntityProperty = Object.assign(it, {
+						name: null,
+						position: spawn.getPointInside(),
+					});
+					const entity = this.map.spawn(null, gl, properties);
+					entity.attachBehaviour(new WaypointBehaviour(waypoints));
+				}
+			}
+		}
 	}
 
 	resize(width: number, height: number){

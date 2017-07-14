@@ -106,7 +106,7 @@
                  "y":60.25
                 }, 
                 {
-                 "height":16.25,
+                 "height":35,
                  "id":27,
                  "name":"Spawner 1",
                  "properties":
@@ -120,9 +120,9 @@
                  "rotation":0,
                  "type":"Spawn",
                  "visible":true,
-                 "width":16.75,
-                 "x":441.5,
-                 "y":68.25
+                 "width":41.5,
+                 "x":414.75,
+                 "y":48.5
                 }],
          "opacity":1,
          "properties":

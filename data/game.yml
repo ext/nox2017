@@ -4,3 +4,9 @@ preload:
     - /shaders/post.yml
   texture:
     - textures/default.jpg
+
+wave:
+  - entities:
+      - count: 5
+        hp: 100
+        speed: 5

@@ -2,7 +2,7 @@
 
 import { WaypointBehaviour } from 'behaviour';
 import { Waypoint } from 'behaviour/waypoint-behaviour';
-import { Waypoint as WaypointItem } from './waypoint';
+import { Waypoint as WaypointItem } from './items/waypoint';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity } from 'entity';

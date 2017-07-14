@@ -18,33 +18,24 @@
          "objects":[
                 {
                  "height":8,
-                 "id":10,
-                 "name":"Gnocchi",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":512,
-                 "y":64
-                }, 
-                {
-                 "height":8,
                  "id":11,
                  "name":"chainsaw",
                  "properties":
                     {
+                     "speed":10,
                      "texture":"textures\/chainsaw.png"
                     },
                  "propertytypes":
                     {
+                     "speed":"int",
                      "texture":"string"
                     },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":8,
-                 "x":418.5,
-                 "y":58
+                 "x":472,
+                 "y":39.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -58,7 +49,7 @@
          "name":"Zone route 1",
          "objects":[
                 {
-                 "height":25,
+                 "height":13.25,
                  "id":23,
                  "name":"Waypoint 1",
                  "properties":
@@ -72,12 +63,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":42.5,
-                 "x":405.5,
-                 "y":45.75
+                 "width":13.75,
+                 "x":410,
+                 "y":9.25
                 }, 
                 {
-                 "height":30.5,
+                 "height":9.75,
                  "id":24,
                  "name":"Waypoint 2",
                  "properties":
@@ -91,12 +82,12 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":42,
-                 "x":321.25,
-                 "y":9
+                 "width":11,
+                 "x":373,
+                 "y":11.75
                 }, 
                 {
-                 "height":36,
+                 "height":13,
                  "id":25,
                  "name":"Waypoint 3",
                  "properties":
@@ -110,9 +101,28 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":52.5,
-                 "x":320.25,
-                 "y":94
+                 "width":12.25,
+                 "x":371.25,
+                 "y":60.25
+                }, 
+                {
+                 "height":16.25,
+                 "id":27,
+                 "name":"Spawner 1",
+                 "properties":
+                    {
+                     "next":"Waypoint 1"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
+                 "rotation":0,
+                 "type":"Spawn",
+                 "visible":true,
+                 "width":16.75,
+                 "x":441.5,
+                 "y":68.25
                 }],
          "opacity":1,
          "properties":
@@ -130,7 +140,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":26,
+ "nextobjectid":28,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.2",

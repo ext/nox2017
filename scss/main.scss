@@ -1,3 +1,10 @@
+@import 'settings';
 @import 'foundation';
+@import 'font-awesome';
 
 @import 'layout';
+
+@include foundation-global-styles;
+@include foundation-typography;
+@include foundation-button;
+@include foundation-button-group;

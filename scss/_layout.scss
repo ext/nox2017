@@ -12,6 +12,19 @@ body {
 main {
 	flex: 1 1 auto;
 	position: relative;
+
+	.paused {
+		position: absolute;
+		top: 25px;
+		left: 25px;
+		color: red;
+		font-size: 5rem;
+		text-shadow:
+			-1px -1px 0 #000,
+			1px -1px 0 #000,
+			-1px 1px 0 #000,
+			1px 1px 0 #000;
+	}
 }
 
 aside {

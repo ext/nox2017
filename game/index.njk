@@ -10,6 +10,7 @@
 	</head>
 	<body ng-app="{{ pkg.name }}" ng-strict-di ng-controller="GameController as game">
 		<main>
+			<p class="paused" ng-show="!game.running"><span class="fa fa-pause"></span> Paused</p>
 			<canvas ng-controller="MainController"></canvas>
 		</main>
 

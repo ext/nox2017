@@ -27,7 +27,7 @@ const KEY_RIGHT = 68;
 const KEY_UP = 87;
 const KEY_DOWN = 83;
 
-const PLAYER_SPEED = 5;
+const PLAYER_SPEED = 15;
 
 interface Route {
 	waypoint: Waypoint[];
@@ -92,8 +92,8 @@ class MainController extends CanvasController {
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
-			model: this.ModelService.fromFile(gl, '/data/cube.yml'),
-			position: [55, -9, 0],
+			model: null,
+			position: [50, -10, 0],
 		});
 
 		this.camera = new PerspectiveCamera({

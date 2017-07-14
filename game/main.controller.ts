@@ -1,15 +1,22 @@
 /* eslint-disable angular/no-controller */
 
+/* eslint-disable no-unused-vars */
+import { WaypointBehaviour } from 'behaviour';
+import { Waypoint } from 'behaviour/waypoint-behaviour';
+import { Waypoint as WaypointItem } from './items/waypoint';
+import { Spawn } from './items/spawn';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
-import { Entity } from 'entity';
+import { Entity, IEntityProperty } from 'entity';
 import { Framebuffer } from 'framebuffer';
 import { Map } from 'map';
 import { Model, ModelService } from 'model';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
+import { AABB } from 'math';
 import { Vector, Matrix } from 'sylvester';
 import { registerItems } from './items';
+/* eslint-enable no-unused-vars */
 
 const FOV = 45.0;
 const zNear = 0.1;
@@ -21,6 +28,14 @@ const KEY_UP = 87;
 const KEY_DOWN = 83;
 
 const PLAYER_SPEED = 5;
+
+interface Route {
+	waypoint: Waypoint[];
+}
+
+interface Wave {
+	entities: IEntityProperty[];
+}
 
 class MainController extends CanvasController {
 	$scope: ng.IScope;
@@ -34,8 +49,10 @@ class MainController extends CanvasController {
 	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
+	routes: { [key:number]: Route };
 	entity: Entity;
 	texture: Texture;
+	wave: Wave[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -43,6 +60,7 @@ class MainController extends CanvasController {
 		this.ModelService = ModelService;
 		this.fbo = undefined;
 		this.ortho = null;
+		this.routes = {};
 
 		registerItems();
 
@@ -55,11 +73,14 @@ class MainController extends CanvasController {
 	}
 
 	init(filename: string): Promise<any> {
-		return super.init(filename).then(() => {
+		return super.init(filename).then((config) => {
+			this.wave = config.wave;
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
 			]);
+		}).then(() => {
+			this.spawnWave(0);
 		});
 	}
 
@@ -80,11 +101,28 @@ class MainController extends CanvasController {
 			aspect: this.width / this.height,
 			znear: zNear,
 			zfar: zFar,
-			onUpdate: Camera.follow(this.entity, {offset: [0, 0, 15]}),
+			onUpdate: Camera.follow(this.entity, {offset: [0, -8, 25]}),
 		});
 
 		promises.push(this.loadMap('/data/map.json').then((map: Map) => {
 			this.map = map;
+
+			/* find all routes */
+			this.routes = {};
+			const waypoints = map.object.filter(item => item instanceof WaypointItem);
+			waypoints.forEach((item: WaypointItem) => {
+				if (!(item.route in this.routes)){
+					this.routes[item.route] = {
+						waypoint: [],
+					};
+				}
+				const route = this.routes[item.route];
+				route.waypoint.push({
+					name: item.name,
+					aabb: AABB.fromItem(item),
+					next: item.next,
+				});
+			});
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
@@ -111,6 +149,33 @@ class MainController extends CanvasController {
 			this.entity.rotation = Vector.quatFromEuler(rot[0], rot[1], rot[2]);
 		});
 		return Promise.resolve();
+	}
+
+	spawnWave(index: number){
+		const gl = this.context;
+		const wave = this.wave[index];
+		const allSpawnPoints: Spawn[] = [];
+
+		this.map.object.forEach(entity => {
+			if (entity instanceof Spawn){
+				allSpawnPoints.push(entity);
+			}
+		});
+
+		for (const spawn of allSpawnPoints){
+			const route = spawn.route;
+			const waypoints = this.routes[route].waypoint;
+			for (const it of wave.entities){
+				for (let i=0; i < it.count; i++){
+					const properties: IEntityProperty = Object.assign(it, {
+						name: null,
+						position: spawn.getPointInside(),
+					});
+					const entity = this.map.spawn(null, gl, properties);
+					entity.attachBehaviour(new WaypointBehaviour(waypoints));
+				}
+			}
+		}
 	}
 
 	resize(width: number, height: number){
@@ -160,6 +225,7 @@ class MainController extends CanvasController {
 			velocity.elements[1] -= PLAYER_SPEED;
 		}
 
+		this.map.update(dt);
 		this.entity.position = this.entity.position.add(velocity.x(dt));
 		this.entity.update(dt);
 

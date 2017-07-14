@@ -1,3 +1,4 @@
+import { Behaviour } from 'behaviour';
 import { Model } from 'model';
 import { Vector, Matrix } from 'sylvester';
 
@@ -6,6 +7,7 @@ export type IEntityProperty = { [key:string]: any };
 const defaults: IEntityProperty = {
 	model: null,
 	position: [0, 0, 0],
+	speed: 1,
 };
 
 let id: number = 1;
@@ -16,6 +18,9 @@ export class Entity {
 	position: Vector;
 	rotation: Vector;
 	modelMatrix: Matrix;
+	speed: number;
+	behaviour: Behaviour;
+	private behaviourData: any;
 
 	constructor(options: IEntityProperty){
 		options = Object.assign(defaults, options);
@@ -25,7 +30,13 @@ export class Entity {
 		this.position = Vector.create(options.position);
 		this.rotation = Vector.create([0.0, 0.0, 0.0, 1.0]);
 		this.modelMatrix = Matrix.I(4);
+		this.speed = options.speed;
 		this.updateModelMatrix();
+	}
+
+	attachBehaviour(behaviour: Behaviour): void {
+		this.behaviour = behaviour;
+		this.behaviourData = behaviour.createData(this);
 	}
 
 	updateModelMatrix(){
@@ -39,7 +50,11 @@ export class Entity {
 		this.model.render(gl);
 	}
 
-	update(dt: number){ // eslint-disable-line no-unused-vars
+	update(dt: number){
+		if (this.behaviour){
+			this.behaviour.update(this, this.behaviourData, dt);
+		}
+
 		this.updateModelMatrix();
 	}
 }

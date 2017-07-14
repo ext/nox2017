@@ -1,4 +1,5 @@
-import { Entity } from 'entity';
+import { Entity, IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
+import { Item } from 'item';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
 import { Model } from 'model';
@@ -32,6 +33,10 @@ export class Map {
 		this.namedObject = {};
 	}
 
+	update(dt: number){
+		this.object.forEach(obj => obj.update(dt));
+	}
+
 	render(gl: WebGL2RenderingContext){
 		if (gl === null) throw new Error('Map.render() called without GL context');
 
@@ -42,6 +47,17 @@ export class Map {
 
 		/* render objects in world */
 		this.object.forEach(obj => obj.render(gl));
+	}
+
+	spawn(type: string, gl: WebGL2RenderingContext, properties: IEntityProperty): Entity {
+		const item = Item.factory(type, gl, properties);
+		this.object.push(item);
+
+		if (properties.name){
+			this.namedObject[properties.name] = item;
+		}
+
+		return item;
 	}
 
 	getObjects(): Entity[] {

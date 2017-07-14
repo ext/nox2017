@@ -52,6 +52,7 @@ class MainController extends CanvasController {
 	routes: { [key:number]: Route };
 	entity: Entity;
 	texture: Texture;
+	spawnDelay: number;
 	wave: Wave[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
@@ -75,6 +76,7 @@ class MainController extends CanvasController {
 	init(filename: string): Promise<any> {
 		return super.init(filename).then((config) => {
 			this.wave = config.wave;
+			this.spawnDelay = config.constants.spawnDelay;
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
@@ -158,14 +160,17 @@ class MainController extends CanvasController {
 		for (const spawn of allSpawnPoints){
 			const route = spawn.route;
 			const waypoints = this.routes[route].waypoint;
+			const behaviour = new WaypointBehaviour(waypoints);
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
-					const properties: IEntityProperty = Object.assign(it, {
-						name: null,
-						position: spawn.getPointInside(),
-					});
-					const entity = this.map.spawn(null, gl, properties);
-					entity.attachBehaviour(new WaypointBehaviour(waypoints));
+					setTimeout(() => {
+						const properties: IEntityProperty = Object.assign(it, {
+							name: null,
+							position: spawn.getPointInside(),
+						});
+						const entity = this.map.spawn(null, gl, properties);
+						entity.attachBehaviour(behaviour);
+					}, i * this.spawnDelay);
 				}
 			}
 		}

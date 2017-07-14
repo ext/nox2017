@@ -6,6 +6,9 @@ preload:
     - textures/default.jpg
     - textures/beaver.png
 
+constants:
+  spawnDelay: 800
+
 wave:
   - entities:
       - count: 5

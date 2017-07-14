@@ -144,19 +144,24 @@ export class CanvasController {
 
 	start(){
 		this.lastFrame = Date.now();
-		this.tick();
+		this.tick(true);
 	}
 
-	tick(){
+	/**
+	 * Run a single frame.
+	 */
+	tick(run: boolean): void {
 		const now = Date.now();
 		const dt = (now - this.lastFrame) / 1000;
 		this.lastFrame = now;
 
-		this.update(dt);
-		this.render();
+		if (run){
+			this.update(dt);
+			this.render();
+		}
 
 		requestAnimationFrame(() => {
-			this.tick();
+			this.tick(true);
 		});
 	}
 

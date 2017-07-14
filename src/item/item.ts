@@ -29,8 +29,8 @@ export class Item extends Entity {
 		this.name = options.name;
 		this.hp = options.hp;
 		this.diffuse = null;
-		this.width = options.width;
-		this.height = options.height;
+		this.width = options.width / 8.0; /* TODO hardcoded tile size */
+		this.height = options.height / 8.0;
 
 		if (options.texture){
 			Texture.load(gl, options.texture).then((texture: Texture) => {

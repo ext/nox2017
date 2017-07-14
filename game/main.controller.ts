@@ -1,5 +1,8 @@
 /* eslint-disable angular/no-controller */
 
+import { WaypointBehaviour } from 'behaviour';
+import { Waypoint } from 'behaviour/waypoint-behaviour';
+import { Waypoint as WaypointItem } from './items';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity } from 'entity';
@@ -8,6 +11,7 @@ import { Map } from 'map';
 import { Model, ModelService } from 'model';
 import { Shader } from 'shader';
 import { Texture } from 'texture';
+import { AABB } from 'math';
 import { Vector, Matrix } from 'sylvester';
 import { registerItems } from './items';
 
@@ -22,6 +26,10 @@ const KEY_DOWN = 83;
 
 const PLAYER_SPEED = 5;
 
+interface Route {
+	waypoint: Waypoint[];
+}
+
 class MainController extends CanvasController {
 	$scope: ng.IScope;
 	ModelService: ModelService;
@@ -34,6 +42,7 @@ class MainController extends CanvasController {
 	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
+	routes: { [key:number]: Route };
 	entity: Entity;
 	texture: Texture;
 
@@ -43,6 +52,7 @@ class MainController extends CanvasController {
 		this.ModelService = ModelService;
 		this.fbo = undefined;
 		this.ortho = null;
+		this.routes = {};
 
 		registerItems();
 
@@ -85,6 +95,26 @@ class MainController extends CanvasController {
 
 		promises.push(this.loadMap('/data/map.json').then((map: Map) => {
 			this.map = map;
+
+			/* find all routes */
+			this.routes = {};
+			const waypoints = map.object.filter(item => item instanceof WaypointItem);
+			waypoints.forEach((item: WaypointItem) => {
+				if (!(item.route in this.routes)){
+					this.routes[item.route] = {
+						waypoint: [],
+					};
+				}
+				const route = this.routes[item.route];
+				route.waypoint.push({
+					name: item.name,
+					aabb: AABB.fromItem(item),
+					next: item.next,
+				});
+			});
+
+			const chainsaw = this.map.getObjectByName('chainsaw');
+			chainsaw.attachBehaviour(new WaypointBehaviour(this.routes[1].waypoint));
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {

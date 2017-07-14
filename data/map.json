@@ -30,7 +30,7 @@
                 {
                  "height":8,
                  "id":11,
-                 "name":"",
+                 "name":"chainsaw",
                  "properties":
                     {
                      "texture":"textures\/chainsaw.png"
@@ -40,11 +40,11 @@
                      "texture":"string"
                     },
                  "rotation":0,
-                 "type":"key",
+                 "type":"",
                  "visible":true,
                  "width":8,
-                 "x":424,
-                 "y":64
+                 "x":418.5,
+                 "y":58
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -55,49 +55,75 @@
         {
          "color":"#ff00c8",
          "draworder":"topdown",
-         "name":"Zones",
+         "name":"Zone route 1",
          "objects":[
                 {
                  "height":25,
                  "id":23,
                  "name":"Waypoint 1",
+                 "properties":
+                    {
+                     "next":"Waypoint 2"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":42.5,
-                 "x":437,
-                 "y":7.5
+                 "x":405.5,
+                 "y":45.75
                 }, 
                 {
                  "height":30.5,
                  "id":24,
                  "name":"Waypoint 2",
+                 "properties":
+                    {
+                     "next":"Waypoint 3"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":42,
-                 "x":338.5,
-                 "y":22.5
+                 "x":321.25,
+                 "y":9
                 }, 
                 {
                  "height":36,
                  "id":25,
                  "name":"Waypoint 3",
+                 "properties":
+                    {
+                     "next":"Waypoint 1"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":52.5,
-                 "x":370.5,
-                 "y":139
+                 "x":320.25,
+                 "y":94
                 }],
          "opacity":1,
          "properties":
             {
-             "DefaultType":"Waypoint"
+             "route":1,
+             "type":"Waypoint"
             },
          "propertytypes":
             {
-             "DefaultType":"string"
+             "route":"int",
+             "type":"string"
             },
          "type":"objectgroup",
          "visible":true,

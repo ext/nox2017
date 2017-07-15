@@ -5,8 +5,13 @@ import { Waypoint } from '../items/waypoint';
 import { Map } from 'map';
 import { AABB } from 'math';
 
+interface RouteEntry {
+	aabb: AABB;
+	index: number;
+};
+
 interface Route {
-	path: AABB[];
+	path: RouteEntry[];
 	current: number;
 }
 
@@ -57,12 +62,17 @@ export class PathfindingBehaviour extends Behaviour {
 			return;
 		}
 
-		if (data.route == null) {
+		if (data.route == null || data.route.current >= data.route.path.length) {
 			data.route = this.calculateRoute(entity, data, data.current);
 		}
 
+		const nextPoint = data.route.path[data.current];
+		if(nextPoint.aabb.pointInside(p[0], p[1])) {
+			++data.route.current;
+		}
+
 		/* move entity towards next waypoint */
-		const target = Vector.create(current.aabb.center());
+		const target = Vector.create(nextPoint.aabb.center());
 		const direction = target.subtract(entity.position).toUnitVector();
 		const velocity = direction.x(entity.speed * dt);
 		entity.position = entity.position.add(velocity);
@@ -143,6 +153,9 @@ export class PathfindingBehaviour extends Behaviour {
 
 		let currentIndex = this.map.worldSpaceToIndex([entity.position.elements[0], entity.position.elements[1]]);
 
+		console.log("currentIndex: " + currentIndex);
+		console.log(nodeInfo);
+
 		nodeInfo[currentIndex].reachCost = 0;
 		nodeInfo[currentIndex].goalCost = this.precalculated[currentIndex].perWaypointCost[waypoint];
 
@@ -150,14 +163,19 @@ export class PathfindingBehaviour extends Behaviour {
 
 		const build_path = (index: number) => {
 			let next = index;
-			let result = [this.precalculated[next].aabb];
+			let result = [{
+				aabb: this.precalculated[next].aabb,
+				index: next,
+			}];
 			while(nodeInfo[next].prevNode != -1) {
 				next = nodeInfo[next].prevNode;
-				result.push(this.precalculated[next].aabb);
+				result.push({
+					aabb: this.precalculated[next].aabb,
+					index: next,
+				});
 			}
 			return result;
 		};
-
 
 		while (pendingNodes.size > 0) {
 			currentIndex = -1;

@@ -89,7 +89,7 @@ export class Map {
 	}
 
 	worldToTileSpace(pos: [number, number]) {
-		const x = pos[0];
+		const x = Math.floor(pos[0]);
 		const y = Math.floor(-pos[1]) + 1;
 		return [x, y];
 	}

@@ -8,6 +8,7 @@ preload:
     - /textures/tiles.png
     - /textures/red.jpg
     - /textures/white.jpg
+    - /textures/money.png
 
 constants:
   # How long before first wave spawns
@@ -26,22 +27,24 @@ constants:
   startingMoney: 1000
 
 buildings:
-  - name: Building A
-    cost: 100
-    icon: /textures/building_a.jpg
+  - name: Debris
+    cost: 25
+    icon: /textures/debris_icon.jpg
     description: >-
-      Lorem ipsum dolot sit amet.
+      A pile of debris to block the beavers path.
   - name: Building B
     cost: 200
     icon: /textures/building_b.jpg
     description: >-
       Lorem ipsum dolot sit amet.
-  - name: Building C
-    cost: 300
-    icon: /textures/building_c.jpg
-    texture: /textures/beaver.png
+  - name: Printing press
+    cost: 800
+    amount: 10
+    icon: /textures/money_icon.jpg
+    texture: /textures/money.png
+    type: BuildingMoney
     description: >-
-      Lorem ipsum dolot sit amet.
+      A money-making printingpress. Kind of illegal but no one is judging you.
 
 wave:
   - entities:

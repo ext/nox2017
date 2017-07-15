@@ -11,3 +11,13 @@ export class Building extends Item {
 		super(gl, options);
 	}
 }
+
+export class BuildingMoney extends Item {
+	amount: number;
+
+	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
+		options = Object.assign({}, defaults, options);
+		super(gl, options);
+		this.amount = options.amount;
+	}
+}

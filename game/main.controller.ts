@@ -4,6 +4,7 @@
 import { WaypointBehaviour } from 'behaviour';
 import { Waypoint } from 'behaviour/waypoint-behaviour';
 import { Waypoint as WaypointItem } from './items/waypoint';
+import { BuildingMoney } from './items/building';
 import { Spawn } from './items/spawn';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
@@ -218,9 +219,15 @@ export class MainController extends CanvasController {
 			this.setSelection(event.clientX, event.clientY);
 		});
 
-		// this.element.addEventListener('mousemove', event => {
-		// 	this.setSelection(event.clientX, event.clientY);
-		// });
+		/* make money */
+		this.addInterval(1000, () => {
+			const sum = this.map.object.filter(x => x instanceof BuildingMoney).reduce((sum: number, item: any) => {
+				return sum + item.amount;
+			}, 0);
+			this.$scope.$apply(() => {
+				game.money += sum;
+			});
+		});
 
 		this.$scope.$watchGroup([
 			'cam.x',
@@ -276,7 +283,7 @@ export class MainController extends CanvasController {
 
 		/* spawn entity */
 		const gl = this.context;
-		this.map.spawn('Building', gl, Object.assign({}, obj, {
+		this.map.spawn(obj.type || 'Building', gl, Object.assign({}, obj, {
 			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
 			model: this.buildingModel,
 		}));

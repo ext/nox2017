@@ -192,7 +192,6 @@ export class CanvasController {
 		});
 		const expired = this.timeouts.filter(t => t.timeout < 0);
 		if (expired.length > 0){
-			console.log('timers fired', expired);
 			this.timeouts = this.timeouts.filter(t => t.timeout >= 0);
 			expired.forEach(t => t.cb());
 		}

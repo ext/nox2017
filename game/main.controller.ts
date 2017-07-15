@@ -26,6 +26,10 @@ const KEY_LEFT = "KeyA";
 const KEY_RIGHT = "KeyD";
 const KEY_UP = "KeyW";
 const KEY_DOWN = "KeyS";
+const KEY_ESCAPE = "Escape";
+
+const MOUSE_LEFT = 0;
+const MOUSE_RIGHT = 2;
 
 const PLAYER_SPEED = 15;
 
@@ -44,7 +48,7 @@ interface Constants {
 	spawnDelay: number;
 }
 
-class MainController extends CanvasController {
+export class MainController extends CanvasController {
 	$scope: ng.IScope;
 	ModelService: ModelService;
 	static $$ngIsClass: boolean;
@@ -63,6 +67,8 @@ class MainController extends CanvasController {
 	wave: Wave[];
 	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
 	selectionModel: Model;
+	buildingMap: Uint32Array;
+	currentlyBuilding: IEntityProperty;
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -74,6 +80,11 @@ class MainController extends CanvasController {
 		this.selected = null;
 
 		registerItems();
+
+		/* Register this controller onto the parent controller so the GUI can call
+		 * stuff on this one. */
+		const game = this.$scope.game; /* angular parent controller */
+		game.registerCanvasController(this);
 
 		this.init('/data/game.yml').then(() => {
 			this.start();
@@ -138,6 +149,10 @@ class MainController extends CanvasController {
 					next: item.next,
 				});
 			});
+
+			/* fill building map */
+			this.buildingMap = new Uint32Array(map.width * map.height);
+			this.buildingMap.fill(0);
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
@@ -148,9 +163,37 @@ class MainController extends CanvasController {
 	}
 
 	setupEventHandlers(){
+		this.$window.addEventListener('keydown', event => {
+			switch (event.code){
+			case KEY_ESCAPE:
+				this.currentlyBuilding = null;
+				break;
+			}
+		});
+
+		this.$window.addEventListener('mousedown', event => {
+			event.preventDefault();
+			switch (event.button){
+			case MOUSE_LEFT:
+				this.constructBuilding(this.currentlyBuilding);
+				this.currentlyBuilding = null;
+				break;
+			case MOUSE_RIGHT:
+				this.currentlyBuilding = null;
+				break;
+			}
+		});
+
+		/* disable rightclick context menu */
+		document.addEventListener('contextmenu', event => event.preventDefault());
+
 		this.element.addEventListener('mousemove', event => {
 			this.setSelection(event.clientX, event.clientY);
 		});
+
+		// this.element.addEventListener('mousemove', event => {
+		// 	this.setSelection(event.clientX, event.clientY);
+		// });
 
 		this.$scope.$watchGroup([
 			'cam.x',
@@ -175,6 +218,24 @@ class MainController extends CanvasController {
 		} else {
 			this.selected = null;
 		}
+	}
+
+	/**
+	 * Set the current building player wants to build.
+	 */
+	setBuilding(building: IEntityProperty): void {
+		this.currentlyBuilding = building;
+	}
+
+	/**
+	 * Actually construct building.
+	 */
+	constructBuilding(obj: IEntityProperty): void {
+		if (!obj){
+			return;
+		}
+		const gl = this.context;
+		this.map.spawn('Building', gl, obj);
 	}
 
 	/**
@@ -335,7 +396,7 @@ class MainController extends CanvasController {
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(gl);
 
-			if (this.selected){
+			if (this.selected && this.currentlyBuilding){
 				const selectionMatrix = Matrix.Translation(Vector.create([
 					this.selected[0],
 					-1 - this.selected[1],

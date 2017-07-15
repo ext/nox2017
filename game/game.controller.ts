@@ -1,5 +1,7 @@
 /* eslint-disable angular/no-controller */
 
+import { MainController } from './main.controller';
+
 interface Building {
 	name: string;
 	cost: number;
@@ -15,12 +17,17 @@ class GameController {
 	next?: number;
 	nextLeft: number;
 	buildings: Building[];
+	mainCtrl: MainController;
 
 	constructor($interval: ng.IIntervalService){
-		this.running = false;
-		this.step = true;
+		this.running = true;
+		this.step = false;
 
 		$interval(() => {}, 800);
+	}
+
+	registerCanvasController(ctrl: MainController){
+		this.mainCtrl = ctrl;
 	}
 
 	refocusGame(){
@@ -36,7 +43,7 @@ class GameController {
 	}
 
 	setBuilding(index: number): void {
-		console.log(this.buildings[index]);
+		this.mainCtrl.setBuilding(this.buildings[index]);
 	}
 }
 

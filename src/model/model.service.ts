@@ -37,6 +37,10 @@ export class ModelService {
 	quad(gl: WebGL2RenderingContext){
 		return Model.Quad(gl);
 	}
+
+	quad2(gl: WebGL2RenderingContext){
+		return Model.Quad2(gl);
+	}
 }
 
 ModelService.$$ngIsClass = true;

@@ -62,6 +62,7 @@ class MainController extends CanvasController {
 	constants: Constants;
 	wave: Wave[];
 	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
+	selectionModel: Model;
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -100,6 +101,7 @@ class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.quad = this.ModelService.quad(gl);
+		this.selectionModel = this.ModelService.quad(gl);
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
@@ -165,16 +167,12 @@ class MainController extends CanvasController {
 		const intersect = this.unprojectMap(x, y);
 		const tx = Math.floor(intersect.elements[0]);
 		const ty = -Math.floor(intersect.elements[1]) - 1;
-		this.selected = null;
 
-		if (tx < 0 || tx >= this.map.width){
-			return;
+		if (this.map.isInsideMap(tx, ty)){
+			this.selected = [tx, ty];
+		} else {
+			this.selected = null;
 		}
-		if (ty < 0 || ty >= this.map.height){
-			return;
-		}
-
-		this.selected = [tx, ty];
 	}
 
 	/**
@@ -334,6 +332,16 @@ class MainController extends CanvasController {
 			this.texture.bind(gl);
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(gl);
+
+			if (this.selected){
+				const selectionMatrix = Matrix.Translation(Vector.create([
+					this.selected[0],
+					-1 - this.selected[1],
+					0,
+				]));
+				this.ShaderService.uploadModel(gl, selectionMatrix);
+				this.selectionModel.render(gl);
+			}
 		});
 
 		const scale = Matrix.create([

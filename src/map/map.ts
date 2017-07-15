@@ -10,11 +10,11 @@ const NO_TILE = -1;
 
 export class Map {
 	context: WebGL2RenderingContext;
-	width: number;
-	height: number;
-	tileWidth: number;
-	tileHeight: number;
-	grid: any;
+	width: number;                           // number of tiles
+	height: number;                          // number of tiles
+	tileWidth: number;                       // width of a single tile in pixels
+	tileHeight: number;                      // height of a single tile in pixels
+	grid: any;                               // tile data as 1D (as regular JS array)
 	texture: Texture;
 	model: Model[];
 	object: Entity[];

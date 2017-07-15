@@ -49,6 +49,7 @@ interface Constants {
 	spawnCooldown: number;
 	spawnDelay: number;
 	startingMoney: number;
+	lives: number;
 }
 
 interface Waterballon {
@@ -117,6 +118,7 @@ export class MainController extends CanvasController {
 			this.wave = config.wave;
 			this.constants = config.constants;
 			game.money = this.constants.startingMoney;
+			game.lives = this.constants.lives;
 			game.buildings = config.buildings.map((x: any, index: number) => {
 				x.index = index + 1;
 				return x;
@@ -481,7 +483,18 @@ export class MainController extends CanvasController {
 		});
 
 		/* remove dead creep */
-		this.creep = this.creep.filter(x => !x.dead);
+		this.creep = this.creep.filter(x => {
+			if (x.dead) {
+				if (x.escaped){
+					this.$scope.$apply(() => {
+						game.lives -= 1;
+					});
+				}
+				return false;
+			} else {
+				return true;
+			}
+		});
 
 		this.camera.update();
 	}

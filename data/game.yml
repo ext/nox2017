@@ -27,6 +27,9 @@ constants:
   # How much cash the player starts with
   startingMoney: 1000
 
+  # How many lives player has
+  lives: 20
+
 buildings:
   - name: Debris
     cost: 25

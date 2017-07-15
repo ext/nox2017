@@ -9,6 +9,7 @@ const defaults: IEntityProperty = {
 export class Creep extends Item {
 	value: number;
 	stolen: boolean;
+	escaped: boolean;
 	otherDiffuse: Texture;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
@@ -16,6 +17,7 @@ export class Creep extends Item {
 		super(gl, options);
 		this.value = options.value;
 		this.stolen = false;
+		this.escaped = false;
 		this.otherDiffuse = null;
 
 		Texture.load(gl, '/textures/beaver-theft.png').then((texture: Texture) => {
@@ -31,8 +33,13 @@ export class Creep extends Item {
 	}
 
 	update(dt: number){
-		if (!this.stolen && this.position.elements[1] > -4){
+		if (!this.stolen && this.position.elements[1] > -5){
 			this.steal();
+		}
+
+		if (this.stolen && this.position.elements[1] < -45){
+			this.escaped = true;
+			this.dead = true;
 		}
 
 		super.update(dt);

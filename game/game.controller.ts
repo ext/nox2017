@@ -20,11 +20,13 @@ class GameController {
 	mainCtrl: MainController;
 	selectedBuilding: any;
 	money: number;
+	lives: number;
 
 	constructor($interval: ng.IIntervalService){
 		this.running = true;
 		this.step = false;
 		this.money = 0;
+		this.lives = 0;
 
 		$interval(() => {}, 800);
 	}

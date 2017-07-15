@@ -110,7 +110,7 @@ export class PathfindingBehaviour extends Behaviour {
 				};
 
 				for (let i = 0; i<waypoints.length; ++i) {
-					if(staticMap[index] > 0) {
+					if(staticMap[index] === 0) {
 						const waypoint = waypoints[i];
 						const center = waypoint.aabb.center();
 						const delta = [Math.abs(center[0] - xworld), Math.abs(center[1] - yworld)];
@@ -131,7 +131,7 @@ export class PathfindingBehaviour extends Behaviour {
 
 	calculateRoute(entity: Entity, data: EntityData, waypoint: number): Route {
 		let route : Route = {
-			current: 0,
+			current: 1,
 			path: [],
 		};
 
@@ -232,7 +232,8 @@ export class PathfindingBehaviour extends Behaviour {
 					continue;
 				}
 
-				if(this.precalculated[neighborIndex].staticMapValue === 0) {
+				if(this.precalculated[neighborIndex].staticMapValue !== 0
+					|| this.dynamicMap[neighborIndex] !== 0) {
 					continue;
 				}
 

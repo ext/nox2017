@@ -76,10 +76,17 @@ export class PathfindingBehaviour extends Behaviour {
 		let nextPoint = data.route.path[data.route.current];
 		if(!nextPoint) {
 			nextPoint = { index: 0, aabb: current.aabb};
+		} else {
+			if(this.dynamicMap[nextPoint.index] !== 0) {
+				data.route = null;
+				return
+			}
 		}
+
 		if(nextPoint.aabb.pointInside(p[0], p[1])) {
 			++data.route.current;
 		}
+
 
 		/* move entity towards next waypoint */
 		const target = Vector.create(nextPoint.aabb.center());

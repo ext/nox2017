@@ -26,13 +26,19 @@ buildings:
   - name: Building A
     cost: 100
     icon: /textures/building_a.jpg
+    description: >-
+      Lorem ipsum dolot sit amet.
   - name: Building B
     cost: 200
     icon: /textures/building_b.jpg
+    description: >-
+      Lorem ipsum dolot sit amet.
   - name: Building C
     cost: 300
     icon: /textures/building_c.jpg
     texture: /textures/beaver.png
+    description: >-
+      Lorem ipsum dolot sit amet.
 
 wave:
   - entities:

@@ -181,10 +181,15 @@ export class MainController extends CanvasController {
 	}
 
 	setupEventHandlers(){
+		const game = this.$scope.game; /* angular parent controller */
+
 		this.$window.addEventListener('keydown', event => {
 			switch (event.code){
 			case KEY_ESCAPE:
 				this.currentlyBuilding = null;
+				this.$scope.$apply(() => {
+					game.selectedBuilding = null;
+				});
 				break;
 			}
 		});
@@ -194,10 +199,12 @@ export class MainController extends CanvasController {
 			switch (event.button){
 			case MOUSE_LEFT:
 				this.constructBuilding(this.currentlyBuilding);
-				this.currentlyBuilding = null;
 				break;
 			case MOUSE_RIGHT:
 				this.currentlyBuilding = null;
+				this.$scope.$apply(() => {
+					game.selectedBuilding = null;
+				});
 				break;
 			}
 		});

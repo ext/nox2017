@@ -18,6 +18,7 @@ class GameController {
 	nextLeft: number;
 	buildings: Building[];
 	mainCtrl: MainController;
+	selectedBuilding: any;
 
 	constructor($interval: ng.IIntervalService){
 		this.running = true;
@@ -43,7 +44,9 @@ class GameController {
 	}
 
 	setBuilding(index: number): void {
-		this.mainCtrl.setBuilding(this.buildings[index]);
+		const obj = this.buildings[index];
+		this.mainCtrl.setBuilding(obj);
+		this.selectedBuilding = obj;
 	}
 }
 

@@ -34,12 +34,14 @@ buildings:
   - name: Debris
     cost: 25
     icon: /textures/debris_icon.jpg
+    texture: /textures/debri.png
     modelIndex: 0
     description: >-
       A pile of debris to block the beavers path.
   - name: Waterballon thrower
     cost: 200
     icon: /textures/arrow_icon.jpg
+    texture: /textures/watertower.png
     type: RangedBuilding
     modelIndex: 1
     description: >-
@@ -48,7 +50,7 @@ buildings:
     cost: 800
     amount: 10
     icon: /textures/money_icon.jpg
-    texture: /textures/money.png
+    texture: /textures/printer.png
     type: BuildingMoney
     modelIndex: 2
     description: >-

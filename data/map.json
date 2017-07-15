@@ -38,10 +38,10 @@
                 {
                  "height":7.87499999999999,
                  "id":29,
-                 "name":"Waypoint 1",
+                 "name":"Waypoint 2",
                  "properties":
                     {
-                     "next":"Waypoint 2"
+                     "next":"Waypoint 3"
                     },
                  "propertytypes":
                     {
@@ -57,13 +57,32 @@
                 {
                  "height":15.75,
                  "id":46,
-                 "name":"Waypoint 2",
+                 "name":"Waypoint 3",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":23.25,
                  "x":392.871212121212,
                  "y":376.297348484848
+                }, 
+                {
+                 "height":39.875,
+                 "id":53,
+                 "name":"Waypoint 1",
+                 "properties":
+                    {
+                     "next":"Waypoint 2"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":52.5,
+                 "x":627.78409090909,
+                 "y":246.920454545455
                 }],
          "opacity":1,
          "properties":
@@ -77,7 +96,7 @@
              "type":"string"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -93,8 +112,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":343,
-                 "x":104.666666666667,
+                 "width":673,
+                 "x":73.3333333333337,
                  "y":-1.33333333333331
                 }],
          "opacity":1,
@@ -125,8 +144,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":337.939393939394,
-                 "x":355.39393939394,
+                 "width":666.606060606061,
+                 "x":79.39393939394,
                  "y":-3.33333333333331
                 }],
          "opacity":1,
@@ -151,7 +170,7 @@
          "name":"Zone route 2",
          "objects":[
                 {
-                 "height":8.41666666666666,
+                 "height":41.6666666666667,
                  "id":35,
                  "name":"Waypoint 1",
                  "properties":
@@ -165,9 +184,9 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":8.04166666666669,
-                 "x":399.617424242424,
-                 "y":16.2386363636363
+                 "width":47.7916666666667,
+                 "x":120.367424242424,
+                 "y":247.238636363636
                 }, 
                 {
                  "height":21.5,
@@ -191,13 +210,32 @@
                 {
                  "height":15.75,
                  "id":41,
-                 "name":"Waypoint 2",
+                 "name":"Waypoint 3",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":23.25,
-                 "x":392.850378787879,
+                 "x":392.600378787879,
                  "y":376.380681818181
+                }, 
+                {
+                 "height":8.41666666666666,
+                 "id":52,
+                 "name":"Waypoint 2",
+                 "properties":
+                    {
+                     "next":"Waypoint 3"
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":8.04166666666669,
+                 "x":399.367424242424,
+                 "y":16.2386363636363
                 }],
          "opacity":1,
          "properties":
@@ -211,11 +249,11 @@
              "type":"string"
             },
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }],
- "nextobjectid":52,
+ "nextobjectid":54,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.2",

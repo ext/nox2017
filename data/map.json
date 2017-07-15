@@ -109,7 +109,7 @@
                 {
                  "height":15.75,
                  "id":46,
-                 "name":"Waypoint 10",
+                 "name":"Waypoint 2",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -180,7 +180,7 @@
              "type":"string"
             },
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }],

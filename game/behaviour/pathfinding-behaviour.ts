@@ -63,17 +63,19 @@ export class PathfindingBehaviour extends Behaviour {
 
 		/* detect if current waypoint is reached */
 		const p = entity.position.elements;
-		if (current.aabb.pointInside(p[0], p[1])){
+		if (current.aabb.pointInside(p[0], p[1]+1)){
+			console.log("Reached waypoint. Next: " + current.next);
 			data.current = this.findWaypointByName(current.next);
+			console.log("Next is " + data.current);
 			data.route = null;
 			return;
 		}
 
-		if (data.route == null || data.route.current >= data.route.path.length) {
+		if (data.route == null || data.route.current > data.route.path.length) {
 			data.route = this.calculateRoute(entity, data, data.current);
 		}
 
-		if(data.route.path.length === 0) {
+		if(data.route.path.length === 0 || data.route.current == data.route.path.length) {
 			return;
 		}
 
@@ -168,7 +170,7 @@ export class PathfindingBehaviour extends Behaviour {
 		const targetWaypoint = this.waypoints[waypoint];
 
 		const targetCenterNonFluff = targetWaypoint.aabb.center();
-		const targetIndex = this.map.fluffSpaceToIndex([targetCenterNonFluff[0], -targetCenterNonFluff[1]]);
+		const targetIndex = this.map.fluffSpaceToIndex([targetCenterNonFluff[0], -targetCenterNonFluff[1] - 1]);
 
 		let currentIndex = this.map.fluffSpaceToIndex([entity.position.elements[0], -entity.position.elements[1]]);
 
@@ -214,12 +216,8 @@ export class PathfindingBehaviour extends Behaviour {
 
 			if(currentIndex == targetIndex) {
 				route.path = build_path(currentIndex);
-				route.path.forEach(r => {
-					console.log(r.index, r.aabb.xmin, r.aabb.ymin);
-				});
 				return route;
 			}
-			console.log(currentIndex, targetIndex);
 
 			if(this.precalculated[currentIndex].perWaypointCost[waypoint] < closestVal) {
 				closestVal = this.precalculated[currentIndex].perWaypointCost[waypoint];
@@ -261,7 +259,6 @@ export class PathfindingBehaviour extends Behaviour {
 		}
 
 		console.log("Couldn't find any route :(");
-		console.log("Closest diff: ", closest - targetIndex);
 
 		route.path = build_path(closest);
 
@@ -303,12 +300,13 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 			});
 
-			this.waypoints.forEach(w => {
-					const center = [w.aabb.xmin, -w.aabb.ymin];
-					let m = Matrix.Translation(Vector.create([center[0], center[1], 0]));
-					Shader.uploadModel(gl, m);
-					quad[4].render(gl);
-			});
+			let w = this.waypoints[data.current];
+			if(w) {
+				const center = [w.aabb.xmin, -w.aabb.ymin];
+				let m = Matrix.Translation(Vector.create([center[0], center[1], 0]));
+				Shader.uploadModel(gl, m);
+				quad[4].render(gl);
+			}
 
 			if(data.route) {
 				for(let i = 0; i<data.route.path.length; ++i) {

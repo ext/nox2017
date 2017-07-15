@@ -17,6 +17,7 @@ interface RouteEntry {
 interface Route {
 	path: RouteEntry[];
 	current: number;
+	killBuildings: boolean;
 }
 
 interface EntityData {
@@ -70,13 +71,17 @@ export class PathfindingBehaviour extends Behaviour {
 		}
 
 		if (data.route == null || data.route.current > data.route.path.length) {
-			data.route = this.calculateRoute(entity, data, data.current);
+			data.route = this.calculateRoute(entity, data, data.current, false);
 		}
 
 		let nextPoint = data.route.path[data.route.current];
 		if(!nextPoint) {
-			nextPoint = { index: 0, aabb: current.aabb};
+			nextPoint = { index: 0, aabb: current.aabb };
 		} else if(this.isDynamicBlocked(nextPoint.index)) {
+			if(data.route.killBuildings) {
+				this.dynamicMap[nextPoint.index] = 0;
+			}
+
 			data.route = null;
 			return;
 		}
@@ -138,10 +143,11 @@ export class PathfindingBehaviour extends Behaviour {
 		return (this.dynamicMap[index] !== 0 && this.dynamicMap[index] !== 9999);
 	}
 
-	calculateRoute(entity: Entity, data: EntityData, waypoint: number): Route {
+	calculateRoute(entity: Entity, data: EntityData, waypoint: number, ignoreDynamic: boolean): Route {
 		let route : Route = {
 			current: 1,
 			path: [],
+			killBuildings: ignoreDynamic,
 		};
 
 		// Run A*
@@ -241,7 +247,7 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 
 				if(this.precalculated[neighborIndex].staticMapValue !== 0
-					|| this.isDynamicBlocked(neighborIndex)) {
+					|| (!ignoreDynamic && this.isDynamicBlocked(neighborIndex))) {
 					continue;
 				}
 
@@ -262,6 +268,10 @@ export class PathfindingBehaviour extends Behaviour {
 				neighbor.reachCost = tentativeReachCost;
 				neighbor.goalCost = tentativeReachCost + this.precalculated[neighborIndex].perWaypointCost[waypoint];
 			}
+		}
+
+		if(!ignoreDynamic) {
+			return this.calculateRoute(entity, data, waypoint, true);
 		}
 
 		console.log("Couldn't find any route :(");
@@ -302,10 +312,10 @@ export class PathfindingBehaviour extends Behaviour {
 					const center = [data.route.path[i].aabb.xmin, data.route.path[i].aabb.ymin];
 					let m = Matrix.Translation(Vector.create([center[0], -center[1], 0]));
 					Shader.uploadModel(gl, m);
-					if(i < data.route.current) {
-						quad[0].render(gl);
-					} else if(i == data.route.current) {
+					if(i == data.route.current) {
 						quad[1].render(gl);
+					} else if(data.route.killBuildings) {
+						quad[0].render(gl);
 					} else {
 						quad[2].render(gl);
 					}

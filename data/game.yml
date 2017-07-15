@@ -8,6 +8,8 @@ preload:
     - /textures/tiles.png
     - /textures/red.jpg
     - /textures/white.jpg
+    - /textures/money.png
+    - /textures/waterballon.png
 
 constants:
   # How long before first wave spawns
@@ -22,21 +24,34 @@ constants:
   # How long between each group of creeps
   spawnDelay: 800
 
+  # How much cash the player starts with
+  startingMoney: 1000
+
 buildings:
-  - name: Building A
-    cost: 100
-    icon: /textures/building_a.jpg
-  - name: Building B
+  - name: Debris
+    cost: 25
+    icon: /textures/debris_icon.jpg
+    description: >-
+      A pile of debris to block the beavers path.
+  - name: Waterballon thrower
     cost: 200
-    icon: /textures/building_b.jpg
-  - name: Building C
-    cost: 300
-    icon: /textures/building_c.jpg
-    texture: /textures/beaver.png
+    icon: /textures/arrow_icon.jpg
+    type: RangedBuilding
+    description: >-
+      Throws waterballons at the beavers.
+  - name: Printing press
+    cost: 800
+    amount: 10
+    icon: /textures/money_icon.jpg
+    texture: /textures/money.png
+    type: BuildingMoney
+    description: >-
+      A money-making printingpress. Kind of illegal but no one is judging you.
 
 wave:
   - entities:
       - count: 5
-        hp: 100
+        hp: 1
         speed: 5
+        value: 10
         texture: textures/beaver.png

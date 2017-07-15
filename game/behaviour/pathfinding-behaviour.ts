@@ -278,6 +278,7 @@ export class PathfindingBehaviour extends Behaviour {
 	}
 
 	render(gl: WebGL2RenderingContext, entity: Entity, data: EntityData) : void {
+	/*
 			let quad = [
 				this.Quad(gl, 1.0, [1.0, 0.0, 0.0, 0.5]),
 				this.Quad(gl, 1.0, [1.0, 1.0, 1.0, 0.5]),
@@ -300,14 +301,6 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 			});
 
-			let w = this.waypoints[data.current];
-			if(w) {
-				const center = [w.aabb.xmin, -w.aabb.ymin];
-				let m = Matrix.Translation(Vector.create([center[0], center[1], 0]));
-				Shader.uploadModel(gl, m);
-				quad[4].render(gl);
-			}
-
 			if(data.route) {
 				for(let i = 0; i<data.route.path.length; ++i) {
 					const center = [data.route.path[i].aabb.xmin, data.route.path[i].aabb.ymin];
@@ -322,6 +315,7 @@ export class PathfindingBehaviour extends Behaviour {
 					}
 				}
 			}
+*/
 	}
 
 }

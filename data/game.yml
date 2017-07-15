@@ -32,11 +32,12 @@ buildings:
     icon: /textures/debris_icon.jpg
     description: >-
       A pile of debris to block the beavers path.
-  - name: Building B
+  - name: Waterballon thrower
     cost: 200
-    icon: /textures/building_b.jpg
+    icon: /textures/arrow_icon.jpg
+    type: RangedBuilding
     description: >-
-      Lorem ipsum dolot sit amet.
+      Throws waterballons at the beavers.
   - name: Printing press
     cost: 800
     amount: 10
@@ -49,6 +50,8 @@ buildings:
 wave:
   - entities:
       - count: 5
-        hp: 100
+        hp: 1
         speed: 5
+        value: 10
+        type: Creep
         texture: textures/beaver.png

@@ -16,9 +16,7 @@ module.exports = function(grunt){
 		'clean', 'sass', 'postcss', 'build:data', 'build:js', 'build:libs', 'nunjucks', 'copy',
 	]);
 
-	grunt.registerTask('lint', [
-		'eslint',
-	]);
+	grunt.registerTask('lint', [ ]);
 
 	grunt.registerTask('build:libs', [
 		'uglify:libs',
@@ -29,7 +27,7 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'browserify',
+		'browserify',
 	]);
 
 	grunt.registerTask('manifest', 'Create deploy manifest', manifest);
@@ -269,7 +267,7 @@ module.exports = function(grunt){
 			},
 			js: {
 				files: ['<%=eslint.default.src%>', 'src/**/*.d.ts'],
-				tasks: ['eslint', 'browserify'],
+				tasks: ['browserify'],
 			},
 			scss: {
 				files: ['scss/**/*.scss', 'src/**/*.scss'],

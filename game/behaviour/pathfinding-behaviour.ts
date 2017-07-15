@@ -18,6 +18,7 @@ interface EntityData {
 export interface TileData {
 	staticMapValue: number;
 	perWaypointCost: number[];
+	aabb: AABB;
 }
 
 export class PathfindingBehaviour extends Behaviour {
@@ -80,9 +81,11 @@ export class PathfindingBehaviour extends Behaviour {
 			for (let x = 0; x < map.width; ++x) {
 				const xworld = x;
 				const index = y * map.width + x;
+				const aabb = new AABB(xworld, yworld, xworld+1, yworld+1);
 				result[index] = {
 					staticMapValue: staticMap[index],
 					perWaypointCost: [],
+					aabb: aabb,
 				};
 
 				for (let i = 0; i<waypoints.length; ++i) {
@@ -110,13 +113,27 @@ export class PathfindingBehaviour extends Behaviour {
 		let visitedNodes = new Set();
 		let pendingNodes = new Set();
 
-		let nodeInfo = [];
+		let nodeInfo : any[] = [];
+
+		const neighbors = [];
+		for (let y = -1; y<=1; ++y) {
+			for (let x = -1; x<=1; ++x) {
+				if (x === 0 && y === 0) {
+					continue;
+				}
+
+				neighbors.push({
+					offset: y * this.map.width + x,
+					cost: Math.abs(y) + Math.abs(x),
+				});
+			}
+		}
 
 		for (let i=0; i<this.map.width * this.map.height; ++i) {
 			nodeInfo[i] = {
 				prevNode: -1,
 				reachCost: Infinity, // cost of reaching this node
-				estCost: Infinity, // cost of reaching the goal by going through this node
+				goalCost: Infinity, // cost of reaching the goal by going through this node
 			};
 		}
 
@@ -125,6 +142,68 @@ export class PathfindingBehaviour extends Behaviour {
 		const targetIndex = this.map.worldSpaceToIndex(targetWaypoint.aabb.center());
 
 		let currentIndex = this.map.worldSpaceToIndex([entity.position.elements[0], entity.position.elements[1]]);
+
+		nodeInfo[currentIndex].reachCost = 0;
+		nodeInfo[currentIndex].goalCost = this.precalculated[currentIndex].perWaypointCost[waypoint];
+
+		pendingNodes.add(currentIndex);
+
+		const build_path = (index: number) => {
+			let next = index;
+			let result = [this.precalculated[next].aabb];
+			while(nodeInfo[next].prevNode != -1) {
+				next = nodeInfo[next].prevNode;
+				result.push(this.precalculated[next].aabb);
+			}
+			return result;
+		};
+
+
+		while (pendingNodes.size > 0) {
+			currentIndex = -1;
+			let currentCost = Infinity;
+			// pick the pending node that is closest to the goal
+			for (const node of pendingNodes.values()) {
+				if (nodeInfo[node].goalCost < currentCost) {
+					currentIndex = node;
+					currentCost = nodeInfo[node].goalCost;
+				}
+			}
+
+			if(currentIndex === waypoint) {
+				route.path = build_path(currentIndex);
+				return route;
+			}
+
+			pendingNodes.delete(currentIndex);
+			visitedNodes.add(currentIndex);
+
+			const currentReachCost = nodeInfo[currentIndex].reachCost;
+
+			for (const n of neighbors) {
+				const neighborIndex = currentIndex + n.offset;
+				if (neighborIndex < 0 || neighborIndex >= nodeInfo.length) {
+					continue;
+				}
+
+				if (visitedNodes.has(neighborIndex)) {
+					continue;
+				}
+
+				pendingNodes.add(neighborIndex);
+
+				const neighbor = nodeInfo[neighborIndex];
+
+				let tentativeReachCost = currentReachCost + n.cost;
+				if (tentativeReachCost >= neighbor.reachCost) {
+					continue; // not a better path
+				}
+
+				neighbor.prevNode = currentIndex;
+				neighbor.reachCost = tentativeReachCost;
+				neighbor.goalCost = tentativeReachCost + this.precalculated[neighborIndex].perWaypointCost[waypoint];
+			}
+		}
 
 		return route;
 	}

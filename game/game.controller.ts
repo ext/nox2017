@@ -1,5 +1,10 @@
 /* eslint-disable angular/no-controller */
 
+interface Building {
+	name: string;
+	cost: number;
+	image?: string;
+}
 
 class GameController {
 	$scope: ng.IScope;
@@ -9,6 +14,7 @@ class GameController {
 	step: boolean;
 	next?: number;
 	nextLeft: number;
+	buildings: Building[];
 
 	constructor($interval: ng.IIntervalService){
 		this.running = false;
@@ -27,6 +33,10 @@ class GameController {
 
 	stepFrame(): void {
 		this.step = true;
+	}
+
+	setBuilding(index: number): void {
+		console.log(this.buildings[index]);
 	}
 }
 

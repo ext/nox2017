@@ -85,8 +85,10 @@ class MainController extends CanvasController {
 
 	init(filename: string): Promise<any> {
 		return super.init(filename).then((config) => {
+			const game = this.$scope.game; /* angular parent controller */
 			this.wave = config.wave;
 			this.constants = config.constants;
+			game.buildings = config.buildings;
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),

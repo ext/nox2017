@@ -160,6 +160,9 @@ export class MainController extends CanvasController {
 			/* fill building map */
 			this.buildingMap = new Uint32Array(map.width * map.height);
 			this.buildingMap.fill(0);
+			this.map.grid.forEach((tile: number, i: number) => {
+				this.buildingMap[i] = this.map.tileCollidable(tile) ? 9999 : 0;
+			});
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {

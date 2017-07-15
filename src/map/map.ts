@@ -88,9 +88,15 @@ export class Map {
 		return this.grid[i] || NO_TILE;
 	}
 
+	/**
+	 * Tell if a tile index is collidable or just decorative.
+	 */
 	tileCollidable(i: number){
-		/* Tell if a tile index is collidable or just decorative */
-		return i > 0 && i < 96;
+		// TODO hardcoded tilemap size
+		const tx = i % 16;
+		const ty = Math.floor(i / 16);
+		const passable = tx > 7 && tx < 13 && ty < 5;
+		return !passable;
 	}
 
 	tileCollisionAt(pos: [number, number]){

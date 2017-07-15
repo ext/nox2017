@@ -36,7 +36,7 @@ buildings:
 
 wave:
   - entities:
-      - count: 5
+      - count: 1
         hp: 100
         speed: 5
         texture: textures/beaver.png

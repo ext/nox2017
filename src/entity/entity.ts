@@ -20,7 +20,7 @@ export class Entity {
 	modelMatrix: Matrix;
 	speed: number;
 	behaviour: Behaviour;
-	private behaviourData: any;
+	behaviourData: any;
 
 	constructor(options: IEntityProperty){
 		options = Object.assign(defaults, options);

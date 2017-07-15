@@ -1,9 +1,13 @@
 import { Behaviour } from 'behaviour';
 import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector } from 'sylvester';
+import { Matrix } from 'sylvester';
 import { Waypoint } from '../items/waypoint';
 import { Map } from 'map';
 import { AABB } from 'math';
+import { Model } from 'model';
+import { Texture } from 'texture';
+import { Shader } from 'shader';
 
 interface RouteEntry {
 	aabb: AABB;
@@ -31,6 +35,7 @@ export class PathfindingBehaviour extends Behaviour {
 	precalculated: TileData[];
 	dynamicMap: Uint32Array;
 	map: Map;
+	white: Texture;
 
 	constructor(map: Map, precalculated: TileData[], dynamicMap: Uint32Array, waypoints: Waypoint[]){
 		super();
@@ -38,6 +43,7 @@ export class PathfindingBehaviour extends Behaviour {
 		this.dynamicMap = dynamicMap;
 		this.waypoints = waypoints;
 		this.map = map;
+		this.white = null;
 	}
 
 	createData(entity: Entity): EntityData { // eslint-disable-line no-unused-vars
@@ -66,7 +72,11 @@ export class PathfindingBehaviour extends Behaviour {
 			data.route = this.calculateRoute(entity, data, data.current);
 		}
 
-		const nextPoint = data.route.path[data.current];
+		if(data.route.path.length === 0) {
+			return;
+		}
+
+		const nextPoint = data.route.path[data.route.current];
 		if(nextPoint.aabb.pointInside(p[0], p[1])) {
 			++data.route.current;
 		}
@@ -87,7 +97,8 @@ export class PathfindingBehaviour extends Behaviour {
 	static precalculateMap(staticMap: Uint32Array, map: Map, waypoints: Waypoint[]) : TileData[]{
 		const result: TileData[] = [];
 		for (let y = 0; y < map.height; ++y) {
-			const yworld = (-y - 1);
+			const yworld = y + 1;
+
 			for (let x = 0; x < map.width; ++x) {
 				const xworld = x;
 				const index = y * map.width + x;
@@ -99,11 +110,17 @@ export class PathfindingBehaviour extends Behaviour {
 				};
 
 				for (let i = 0; i<waypoints.length; ++i) {
-					const waypoint = waypoints[i];
-					const center = waypoint.aabb.center();
-					const delta = [Math.abs(center[0] - xworld), Math.abs(center[1] - yworld)];
-					result[index].perWaypointCost[i] = delta[0] + delta[1];
-					// todo: do bfs here instead of manhatan distance
+					if(staticMap[index] > 0) {
+						const waypoint = waypoints[i];
+						const center = waypoint.aabb.center();
+						const delta = [Math.abs(center[0] - xworld), Math.abs(center[1] - yworld)];
+						result[index].perWaypointCost[i] = delta[0] + delta[1];
+						// todo: do bfs here instead of manhatan distance
+					}
+					else
+					{
+						result[index].perWaypointCost[i] = Infinity;
+					}
 				}
 
 			}
@@ -149,12 +166,16 @@ export class PathfindingBehaviour extends Behaviour {
 
 		const targetWaypoint = this.waypoints[waypoint];
 
-		const targetIndex = this.map.worldSpaceToIndex(targetWaypoint.aabb.center());
+		const targetIndex = this.map.fluffSpaceToIndex(targetWaypoint.aabb.center());
 
-		let currentIndex = this.map.worldSpaceToIndex([entity.position.elements[0], entity.position.elements[1]]);
+		let currentIndex = this.map.fluffSpaceToIndex([entity.position.elements[0], -entity.position.elements[1]]);
 
-		console.log("currentIndex: " + currentIndex);
-		console.log(nodeInfo);
+		console.log("current: ", currentIndex, entity.position.elements[0], -entity.position.elements[1]);
+		console.log("target: ", targetIndex, targetWaypoint.aabb.xmin, targetWaypoint.aabb.ymin);
+
+		if (currentIndex < 0 || currentIndex >= nodeInfo.length) {
+			return route;
+		}
 
 		nodeInfo[currentIndex].reachCost = 0;
 		nodeInfo[currentIndex].goalCost = this.precalculated[currentIndex].perWaypointCost[waypoint];
@@ -167,6 +188,7 @@ export class PathfindingBehaviour extends Behaviour {
 				aabb: this.precalculated[next].aabb,
 				index: next,
 			}];
+
 			while(nodeInfo[next].prevNode != -1) {
 				next = nodeInfo[next].prevNode;
 				result.push({
@@ -174,11 +196,14 @@ export class PathfindingBehaviour extends Behaviour {
 					index: next,
 				});
 			}
-			return result;
+			return result.reverse();
 		};
 
+		let closest = 0;
+		let closestVal = Infinity;
+
 		while (pendingNodes.size > 0) {
-			currentIndex = -1;
+			currentIndex = pendingNodes.values().next().value;
 			let currentCost = Infinity;
 			// pick the pending node that is closest to the goal
 			for (const node of pendingNodes.values()) {
@@ -188,9 +213,22 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 			}
 
-			if(currentIndex === waypoint) {
-				route.path = build_path(currentIndex);
+			if(currentIndex == -1) {
+				console.log("Failure");
 				return route;
+			}
+
+			if(currentIndex === targetIndex) {
+				route.path = build_path(currentIndex);
+				route.path.forEach(r => {
+					console.log(r.index, r.aabb.xmin, r.aabb.ymin);
+				});
+				return route;
+			}
+
+			if(this.precalculated[currentIndex].perWaypointCost[waypoint] < closestVal) {
+				closestVal = this.precalculated[currentIndex].perWaypointCost[waypoint];
+				closest = currentIndex;
 			}
 
 			pendingNodes.delete(currentIndex);
@@ -201,6 +239,10 @@ export class PathfindingBehaviour extends Behaviour {
 			for (const n of neighbors) {
 				const neighborIndex = currentIndex + n.offset;
 				if (neighborIndex < 0 || neighborIndex >= nodeInfo.length) {
+					continue;
+				}
+
+				if(this.precalculated[neighborIndex].staticMapValue === 0) {
 					continue;
 				}
 
@@ -223,7 +265,61 @@ export class PathfindingBehaviour extends Behaviour {
 			}
 		}
 
+		console.log("Couldn't find any route :(");
+
+		route.path = build_path(closest);
+
 		return route;
+	}
+
+	Quad(gl: WebGL2RenderingContext, scale: number, color: [number, number, number, number]){
+			let quad = new Model(gl);
+			quad.upload(gl, new Float32Array([
+				/* X     Y     Z       U     V       R    G    B    A */
+				 scale,  scale,  0.0,    1.0,  1.0,    color[0], color[1], color[2], color[3],
+				 0.0,  scale,  0.0,    0.0,  1.0,    color[0], color[1], color[2], color[3],
+				 scale,  0.0,  0.0,    1.0,  0.0,    color[0], color[1], color[2], color[3],
+				 0.0,  0.0,  0.0,    0.0,  0.0,    color[0], color[1], color[2], color[3],
+			]), new Uint32Array([0, 1, 2, 1, 3, 2]));
+		return quad;
+	}
+
+	render(gl: WebGL2RenderingContext, entity: Entity, data: EntityData) : void {
+			let quad = [
+				this.Quad(gl, 0.5, [1.0, 0.0, 0.0, 0.5]),
+				this.Quad(gl, 0.5, [1.0, 1.0, 1.0, 0.5]),
+				this.Quad(gl, 0.5, [0.0, 1.0, 0.0, 0.5]),
+				this.Quad(gl, 1.0, [0.0, 0.0, 1.0, 0.1]),
+			];
+
+			if(this.white) {
+				this.white.bind(gl);
+			}
+
+			this.precalculated.forEach(c => {
+				if(c.staticMapValue === 1) {
+					const center = [c.aabb.xmin, -c.aabb.ymin];
+					//const center = [c.aabb.xmin, c.aabb.ymin];
+					let m = Matrix.Translation(Vector.create([center[0], center[1], 0]));
+					Shader.uploadModel(gl, m);
+					quad[3].render(gl);
+				}
+			});
+
+			if(data.route) {
+				for(let i = 0; i<data.route.path.length; ++i) {
+					const center = [data.route.path[i].aabb.xmin, data.route.path[i].aabb.ymin];
+					let m = Matrix.Translation(Vector.create([center[0], -center[1], 0]));
+					Shader.uploadModel(gl, m);
+					if(i < data.route.current) {
+						quad[0].render(gl);
+					} else if(i == data.route.current) {
+						quad[1].render(gl);
+					} else {
+						quad[2].render(gl);
+					}
+				}
+			}
 	}
 
 }

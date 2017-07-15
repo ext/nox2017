@@ -180,12 +180,12 @@ export class MainController extends CanvasController {
 			this.routes.forEach((route: Route) => {
 				const staticMap = new Uint32Array(this.map.width * this.map.height);
 				for (let y=0; y < this.map.height; ++y) {
-					const yworld = (-y - 1);
+					const yworld = -y;
 					for (let x=0; x < this.map.width; ++x) {
 						const index = y * this.map.width + x;
 						const xworld = x;
 
-						if (!this.map.tileCollidable(this.map.grid[index])) {
+						if (this.map.tileCollidable(this.map.grid[index])) {
 							staticMap[index] = 0;
 							continue;
 						}
@@ -383,7 +383,11 @@ export class MainController extends CanvasController {
 			const route = spawn.route;
 			const waypoints = this.routes[route].waypoints;
 			const precalculateMap = this.routes[route].precalculateMap;
-			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.dynamicMap, waypoints);
+			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.buildingMap, waypoints);
+			Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
+				behaviour.white = texture;
+			});
+
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
 					setTimeout(() => {

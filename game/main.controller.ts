@@ -79,11 +79,10 @@ export class MainController extends CanvasController {
 	constants: Constants;
 	wave: Wave[];
 	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
-	selectionModel: Model;
 	selectionTexture: [Texture, Texture];
 	buildingMap: Uint32Array;
 	currentlyBuilding: IEntityProperty;
-	buildingModel: Model;
+	buildingModel: [Model, Model, Model];
 	creep: Creep[];
 	waterballonTexture: Texture;
 	waterballons: Waterballon[];
@@ -99,6 +98,7 @@ export class MainController extends CanvasController {
 		this.selectionTexture = [null, null];
 		this.creep = [];
 		this.waterballons = [];
+		this.buildingModel = [null, null, null]
 
 		registerItems();
 
@@ -144,8 +144,11 @@ export class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.quad = this.ModelService.quad(gl);
-		this.buildingModel = this.ModelService.fromFile(gl, '/data/cube-pseudo-shaded.yml');
-		this.selectionModel = this.buildingModel;
+		this.buildingModel = [
+			this.ModelService.fromFile(gl, '/data/debris.yml'),
+			this.ModelService.fromFile(gl, '/data/cube-pseudo-shaded.yml'),
+			this.ModelService.fromFile(gl, '/data/money.yml'),
+		];
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
@@ -353,9 +356,11 @@ export class MainController extends CanvasController {
 
 		/* spawn entity */
 		const gl = this.context;
+		const index = this.selected[0] + this.selected[1] * this.map.width;
 		this.map.spawn(obj.type || 'Building', gl, Object.assign({}, obj, {
 			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
-			model: this.buildingModel,
+			model: this.buildingModel[obj.modelIndex],
+			index,
 		}));
 
 		/* record that something exists on this position */
@@ -616,6 +621,7 @@ export class MainController extends CanvasController {
 			this.renderWaterballons(gl);
 
 			if (this.selected && this.currentlyBuilding){
+				const mi = this.currentlyBuilding.modelIndex;
 				const i = this.selected[1] * this.map.width + this.selected[0];
 				const q = this.buildingMap[i] > 0 ? 1 : 0;
 				const selectionMatrix = Matrix.Translation(Vector.create([
@@ -625,7 +631,7 @@ export class MainController extends CanvasController {
 				]));
 				this.ShaderService.uploadModel(gl, selectionMatrix);
 				this.selectionTexture[q].bind(gl);
-				this.selectionModel.render(gl);
+				this.buildingModel[mi].render(gl);
 			}
 		});
 

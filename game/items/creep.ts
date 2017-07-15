@@ -1,6 +1,7 @@
 import { Item } from 'item';
-import { IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
+import { rotationFromDirection, IEntityProperty } from 'entity/entity'; // eslint-disable-line no-unused-vars
 import { Texture } from 'texture';
+import { Vector, Matrix } from 'sylvester';
 
 const defaults: IEntityProperty = {
 	value: 1,
@@ -26,6 +27,18 @@ export class Creep extends Item {
 		}).catch((fallback: Texture) => {
 			this.otherDiffuse = fallback;
 		});
+	}
+
+	updateModelMatrix(){
+		if (!this.model) return;
+		const p = this.position.add(Vector.create([0.5, 0.5, 0]));
+		const t = Matrix.Translation(p).ensure4x4();
+		if (this.rotation){
+			const r = rotationFromDirection(this.rotation).ensure4x4();
+			this.modelMatrix = t.x(r);
+		} else {
+			this.modelMatrix = t;
+		}
 	}
 
 	steal(){

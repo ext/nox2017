@@ -28,6 +28,7 @@ export class RangedBuilding extends Building {
 	damage: number;
 	timer: number;
 	cooldown: number;
+	index: number;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
 		options = Object.assign({}, defaults, rangedDefaults, options);
@@ -36,6 +37,7 @@ export class RangedBuilding extends Building {
 		this.damage = options.damage;
 		this.timer = 0;
 		this.cooldown = options.cooldown;
+		this.index = options.index;
 	}
 
 	canFire(dt: number, creep: Creep[]): Creep {

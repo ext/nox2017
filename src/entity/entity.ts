@@ -73,7 +73,7 @@ export class Entity {
 	}
 }
 
-function rotationFromDirection(dir: Vector){
+export function rotationFromDirection(dir: Vector){
 	const up = Vector.create([0, 0, 1]);
 	const inv = dir.x(-1);
 	const xaxis = inv.cross(up).toUnitVector();

@@ -23,7 +23,7 @@ export class Entity {
 	hp: number;
 	dead: boolean;
 	behaviour: Behaviour;
-	private behaviourData: any;
+	behaviourData: any;
 
 	constructor(options: IEntityProperty){
 		options = Object.assign(defaults, options);

@@ -1,9 +1,10 @@
 /* eslint-disable angular/no-controller */
 
 /* eslint-disable no-unused-vars */
-import { WaypointBehaviour } from 'behaviour';
-import { Waypoint } from 'behaviour/waypoint-behaviour';
-import { Waypoint as WaypointItem } from './items/waypoint';
+import { PathfindingBehaviour } from './behaviour';
+import { TileData } from './behaviour/pathfinding-behaviour';
+import { Waypoint } from './items/waypoint';
+import { Area } from './items/area';
 import { RangedBuilding, BuildingMoney } from './items/building';
 import { Spawn } from './items/spawn';
 import { Creep } from './items/creep';
@@ -36,7 +37,9 @@ const MOUSE_RIGHT = 2;
 const PLAYER_SPEED = 15;
 
 interface Route {
-	waypoint: Waypoint[];
+	areas: AABB[];
+	waypoints: Waypoint[];
+	precalculateMap: TileData[];
 }
 
 interface Wave {
@@ -70,7 +73,7 @@ export class MainController extends CanvasController {
 	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
-	routes: { [key:number]: Route };
+	routes: Route[];
 	entity: Entity;
 	texture: Texture;
 	constants: Constants;
@@ -91,7 +94,7 @@ export class MainController extends CanvasController {
 		this.ModelService = ModelService;
 		this.fbo = undefined;
 		this.ortho = null;
-		this.routes = {};
+		this.routes = [];
 		this.selected = null;
 		this.selectionTexture = [null, null];
 		this.creep = [];
@@ -157,21 +160,65 @@ export class MainController extends CanvasController {
 		promises.push(this.loadMap('/data/map.json').then((map: Map) => {
 			this.map = map;
 
+
 			/* find all routes */
-			this.routes = {};
-			const waypoints = map.object.filter(item => item instanceof WaypointItem);
-			waypoints.forEach((item: WaypointItem) => {
+			this.routes = [];
+
+			const waypoints = map.object.filter(item => item instanceof Waypoint);
+			waypoints.forEach((item: Waypoint) => {
 				if (!(item.route in this.routes)){
 					this.routes[item.route] = {
-						waypoint: [],
+						areas: [],
+						waypoints: [],
+						precalculateMap: [],
 					};
 				}
+
 				const route = this.routes[item.route];
-				route.waypoint.push({
-					name: item.name,
-					aabb: AABB.fromItem(item),
-					next: item.next,
-				});
+				route.waypoints.push(item);
+			});
+
+			const areas = map.object.filter(item => item instanceof Area);
+			areas.forEach((item: Area) => {
+				if (!(item.route in this.routes)){
+					this.routes[item.route] = {
+						areas: [],
+						waypoints: [],
+						precalculateMap: [],
+					};
+				}
+
+				const route = this.routes[item.route];
+				route.areas.push(
+					AABB.fromItem(item),
+				);
+			});
+
+			this.routes.forEach((route: Route) => {
+				const staticMap = new Uint32Array(this.map.width * this.map.height);
+				for (let y=0; y < this.map.height; ++y) {
+					const yworld = -y;
+					for (let x=0; x < this.map.width; ++x) {
+						const index = y * this.map.width + x;
+						const xworld = x;
+
+						if (this.map.tileCollidable(this.map.grid[index])) {
+							staticMap[index] = 0;
+							continue;
+						}
+
+						let insideArea = false;
+						for (let area of route.areas) {
+							if (area.pointInside(xworld, yworld)) {
+								insideArea = true;
+								break;
+							}
+						}
+
+						staticMap[index] = insideArea ? 1 : 0;
+					}
+				}
+				route.precalculateMap = PathfindingBehaviour.precalculateMap(staticMap, this.map, route.waypoints);
 			});
 
 			/* fill building map */
@@ -393,8 +440,13 @@ export class MainController extends CanvasController {
 
 		for (const spawn of allSpawnPoints){
 			const route = spawn.route;
-			const waypoints = this.routes[route].waypoint;
-			const behaviour = new WaypointBehaviour(waypoints);
+			const waypoints = this.routes[route].waypoints;
+			const precalculateMap = this.routes[route].precalculateMap;
+			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.buildingMap, waypoints);
+			Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
+				behaviour.white = texture;
+			});
+
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
 					setTimeout(() => {

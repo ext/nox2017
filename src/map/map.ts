@@ -106,4 +106,17 @@ export class Map {
 		/* Similar to tile_at but only returns True if the tile it collides with is collidable */
 		return this.tileCollidable(this.tileAt(pos));
 	}
+
+	// fluff space is the cozy space where things are not negative.
+	// but still pretty fucked up.
+	worldToTileSpace(pos: [number, number]) {
+		const x = Math.floor(pos[0]);
+		const y = Math.floor(pos[1]) + 1;
+		return [x, y];
+	}
+
+	fluffSpaceToIndex(pos: [number, number]) {
+		const ts = this.worldToTileSpace(pos);
+		return ts[1] * this.width + ts[0];
+	}
 }

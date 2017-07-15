@@ -8,4 +8,6 @@ export class Behaviour {
 	update(entity: Entity, data: any, dt: number): void { // eslint-disable-line no-unused-vars
 
 	}
+
+  render(gl: WebGL2RenderingContext, entity: Entity, data: any) : void {}
 }

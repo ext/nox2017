@@ -63,5 +63,10 @@ export class Item extends Entity {
 			Shader.uploadModel(gl, this.modelMatrix);
 			this.model.render(gl);
 		}
+
+    if(this.behaviour) {
+      this.behaviour.render(gl, this, this.behaviourData);
+    }
+
 	}
 }

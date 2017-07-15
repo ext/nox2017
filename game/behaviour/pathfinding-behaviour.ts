@@ -3,9 +3,16 @@ import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector } from 'sylvester';
 import { Waypoint } from '../items/waypoint';
 import { Map } from 'map';
+import { AABB } from 'math';
+
+interface Route {
+	path: AABB[];
+	current: number;
+}
 
 interface EntityData {
 	current?: number;
+	route: Route;
 }
 
 export interface TileData {
@@ -30,6 +37,7 @@ export class PathfindingBehaviour extends Behaviour {
 	createData(entity: Entity): EntityData { // eslint-disable-line no-unused-vars
 		return {
 			current: 0,
+			route: null,
 		};
 	}
 
@@ -46,6 +54,10 @@ export class PathfindingBehaviour extends Behaviour {
 		if (current.aabb.pointInside(p[0], p[1])){
 			data.current = this.findWaypointByName(current.next);
 			return;
+		}
+
+		if (data.route == null) {
+			data.route = this.calculateRoute(entity, data, data.current);
 		}
 
 		/* move entity towards next waypoint */
@@ -86,4 +98,35 @@ export class PathfindingBehaviour extends Behaviour {
 
 		return result;
 	}
+
+	calculateRoute(entity: Entity, data: EntityData, waypoint: number): Route {
+		let route : Route = {
+			current: 0,
+			path: [],
+		};
+
+		// Run A*
+
+		let visitedNodes = new Set();
+		let pendingNodes = new Set();
+
+		let nodeInfo = [];
+
+		for (let i=0; i<this.map.width * this.map.height; ++i) {
+			nodeInfo[i] = {
+				prevNode: -1,
+				reachCost: Infinity, // cost of reaching this node
+				estCost: Infinity, // cost of reaching the goal by going through this node
+			};
+		}
+
+		const targetWaypoint = this.waypoints[waypoint];
+
+		const targetIndex = this.map.worldSpaceToIndex(targetWaypoint.aabb.center());
+
+		let currentIndex = this.map.worldSpaceToIndex([entity.position.elements[0], entity.position.elements[1]]);
+
+		return route;
+	}
+
 }

@@ -9,7 +9,7 @@ export class Area extends Item {
 	route: number;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
-		options = Object.assign(defaults, options);
+		options = Object.assign({}, defaults, options);
 		super(gl, options);
 
 		this.route = options.route;

@@ -87,4 +87,15 @@ export class Map {
 		/* Similar to tile_at but only returns True if the tile it collides with is collidable */
 		return this.tileCollidable(this.tileAt(pos));
 	}
+
+	worldToTileSpace(pos: [number, number]) {
+		const x = pos[0];
+		const y = Math.floor(-pos[1]) + 1;
+		return [x, y];
+	}
+
+	worldSpaceToIndex(pos: [number, number]) {
+		const ts = this.worldToTileSpace(pos);
+		return ts[1] * this.width + ts[0];
+	}
 }

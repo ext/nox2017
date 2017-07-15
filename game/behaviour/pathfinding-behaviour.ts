@@ -76,11 +76,9 @@ export class PathfindingBehaviour extends Behaviour {
 		let nextPoint = data.route.path[data.route.current];
 		if(!nextPoint) {
 			nextPoint = { index: 0, aabb: current.aabb};
-		} else {
-			if(this.dynamicMap[nextPoint.index] !== 0) {
-				data.route = null;
-				return
-			}
+		} else if(this.isDynamicBlocked(nextPoint.index)) {
+			data.route = null;
+			return;
 		}
 
 		if(nextPoint.aabb.pointInside(p[0], p[1])) {
@@ -136,9 +134,13 @@ export class PathfindingBehaviour extends Behaviour {
 		return result;
 	}
 
+	isDynamicBlocked(index: number) {
+		return (this.dynamicMap[index] !== 0 && this.dynamicMap[index] !== 9999);
+	}
+
 	calculateRoute(entity: Entity, data: EntityData, waypoint: number): Route {
 		let route : Route = {
-			current: 2,
+			current: 1,
 			path: [],
 		};
 
@@ -240,7 +242,7 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 
 				if(this.precalculated[neighborIndex].staticMapValue !== 0
-					|| this.dynamicMap[neighborIndex] !== 0) {
+					|| this.isDynamicBlocked(neighborIndex)) {
 					continue;
 				}
 
@@ -288,23 +290,13 @@ export class PathfindingBehaviour extends Behaviour {
 				this.Quad(gl, 1.0, [1.0, 0.0, 0.0, 0.5]),
 				this.Quad(gl, 1.0, [1.0, 1.0, 1.0, 0.5]),
 				this.Quad(gl, 1.0, [0.0, 1.0, 0.0, 0.5]),
-				this.Quad(gl, 1.0, [0.0, 0.0, 1.0, 0.1]),
+				this.Quad(gl, 1.0, [0.0, 0.0, 1.0, 0.5]),
 				this.Quad(gl, 1.0, [1.0, 0.0, 1.0, 0.7]),
 			];
 
 			if(this.white) {
 				this.white.bind(gl);
 			}
-
-			this.precalculated.forEach(c => {
-				if(c.staticMapValue === 1) {
-					const center = [c.aabb.xmin, -c.aabb.ymin];
-					//const center = [c.aabb.xmin, c.aabb.ymin];
-					let m = Matrix.Translation(Vector.create([center[0], center[1], 0]));
-					Shader.uploadModel(gl, m);
-					quad[3].render(gl);
-				}
-			});
 
 			if(data.route) {
 				for(let i = 0; i<data.route.path.length; ++i) {

@@ -97,9 +97,7 @@ export class Map {
 	tileCollidable(i: number){
 		// TODO hardcoded tilemap size
 		const tx = i % 16;
-		const ty = Math.floor(i / 16);
-		const passable = tx > 7 && tx < 13 && ty < 5;
-		return !passable;
+		return tx < 8;
 	}
 
 	tileCollisionAt(pos: [number, number]){

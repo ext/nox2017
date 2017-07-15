@@ -225,7 +225,8 @@ export class MainController extends CanvasController {
 			this.buildingMap = new Uint32Array(map.width * map.height);
 			this.buildingMap.fill(0);
 			this.map.grid.forEach((tile: number, i: number) => {
-				this.buildingMap[i] = this.map.tileCollidable(tile) ? 9999 : 0;
+				const my = Math.floor(i / this.map.width);
+				this.buildingMap[i] = (this.map.tileCollidable(tile) || my < 5 || my > 45) ? 9999 : 0;
 			});
 		}));
 

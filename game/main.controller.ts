@@ -142,6 +142,13 @@ class MainController extends CanvasController {
 	}
 
 	setupEventHandlers(){
+		this.element.addEventListener('mousemove', event => {
+			const intersect = this.unprojectMap(event.clientX, event.clientY);
+			const tx = Math.floor(intersect.elements[0]);
+			const ty = -Math.floor(intersect.elements[1]) - 1;
+			console.log(tx, ty);
+		});
+
 		this.$scope.$watchGroup([
 			'cam.x',
 			'cam.y',
@@ -151,6 +158,41 @@ class MainController extends CanvasController {
 			this.render();
 		});
 		return Promise.resolve();
+	}
+
+	/**
+	 * Takes two screenspace coordinates, unprojects and intersects with map-plane
+	 * to get coordinate of where on the tilemap the point is.
+	 */
+	unprojectMap(x: number, y: number): Vector {
+		const w = this.element.width;
+		const h = this.element.height;
+		y = h - y;
+
+		const pv = this.camera.getProjectionMatrix().x(this.camera.getViewMatrix());
+		const inv = pv.inverse();
+		const winClip = Vector.create([
+			2 * x / w - 1.0,
+			2 * y / h - 1.0,
+			-1.0,
+			1.0,
+		]);
+
+		let near = inv.x(winClip);
+		near = near.x(1.0 / near.elements[3]);
+
+		winClip.elements[2] = 1.0;
+		let far = inv.x(winClip);
+		far = far.x(1.0 / far.elements[3]);
+
+		const near3 = Vector.create(near.elements.slice(0, 3));
+		const far3 = Vector.create(far.elements.slice(0, 3));
+		const dir = far3.subtract(near3).toUnitVector();
+		const plane = Vector.create([0, 0, 1]);
+		const t = -plane.dot(near3) / plane.dot(dir);
+		const intersect = near3.add(dir.x(t));
+
+		return intersect;
 	}
 
 	startWave(index: number, timeout: number){

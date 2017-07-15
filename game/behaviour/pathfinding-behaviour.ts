@@ -3,6 +3,7 @@ import { Behaviour } from 'behaviour';
 import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector } from 'sylvester';
 import { Waypoint } from '../items/waypoint';
+import { Map } from 'map';
 
 interface EntityData {
 	current?: number;
@@ -10,12 +11,16 @@ interface EntityData {
 
 export class PathfindingBehaviour extends Behaviour {
 	waypoints: Waypoint[];
-	areas: AABB[];
+	staticMap: Uint32Array;
+	dynamicMap: Uint32Array;
+	map: Map;
 
-	constructor(waypoints: Waypoint[], areas: AABB[]){
+	constructor(map: Map, staticMap: Uint32Array, dynamicMap: Uint32Array, waypoints: Waypoint[]){
 		super();
+		this.staticMap = staticMap;
+		this.dynamicMap = dynamicMap;
 		this.waypoints = waypoints;
-		this.areas = areas;
+		this.map = map;
 	}
 
 	createData(entity: Entity): EntityData { // eslint-disable-line no-unused-vars

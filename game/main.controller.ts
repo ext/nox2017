@@ -63,6 +63,7 @@ class MainController extends CanvasController {
 	texture: Texture;
 	constants: Constants;
 	wave: Wave[];
+	dynamicMap: Uint32Array;
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -71,6 +72,7 @@ class MainController extends CanvasController {
 		this.fbo = undefined;
 		this.ortho = null;
 		this.routes = {};
+		this.dynamicMap = null;
 
 		registerItems();
 
@@ -208,8 +210,8 @@ class MainController extends CanvasController {
 		for (const spawn of allSpawnPoints){
 			const route = spawn.route;
 			const waypoints = this.routes[route].waypoints;
-			const areas = this.routes[route].areas;
-			const behaviour = new PathfindingBehaviour(waypoints, areas);
+			const staticMap = this.routes[route].staticMap;
+			const behaviour = new PathfindingBehaviour(this.map, staticMap, this.dynamicMap, waypoints);
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
 					setTimeout(() => {

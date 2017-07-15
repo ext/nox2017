@@ -46,6 +46,7 @@ interface Constants {
 	spawnNextWave: number;
 	spawnCooldown: number;
 	spawnDelay: number;
+	startingMoney: number;
 }
 
 export class MainController extends CanvasController {
@@ -102,6 +103,7 @@ export class MainController extends CanvasController {
 			const game = this.$scope.game; /* angular parent controller */
 			this.wave = config.wave;
 			this.constants = config.constants;
+			game.money = this.constants.startingMoney;
 			game.buildings = config.buildings.map((x: any, index: number) => {
 				x.index = index + 1;
 				return x;
@@ -256,7 +258,13 @@ export class MainController extends CanvasController {
 	 * Actually construct building.
 	 */
 	constructBuilding(obj: IEntityProperty): void {
+		const game = this.$scope.game; /* angular parent controller */
+
 		if (!(obj && this.selected)){
+			return;
+		}
+
+		if (obj.cost > game.money){
 			return;
 		}
 
@@ -275,6 +283,11 @@ export class MainController extends CanvasController {
 
 		/* record that something exists on this position */
 		this.buildingMap[i] = obj.index;
+
+		/* reduce player money */
+		this.$scope.$apply(() => {
+			game.money -= obj.cost;
+		});
 	}
 
 	/**

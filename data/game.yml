@@ -22,6 +22,9 @@ constants:
   # How long between each group of creeps
   spawnDelay: 800
 
+  # How much cash the player starts with
+  startingMoney: 1000
+
 buildings:
   - name: Building A
     cost: 100

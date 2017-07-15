@@ -1,5 +1,5 @@
 import { Item } from 'item';
-import { Creep } from './creep';
+import { Creep } from './creep'; // eslint-disable-line no-unused-vars
 import { Entity, IEntityProperty } from 'entity'; // eslint-disable-line no-unused-vars
 
 const defaults: IEntityProperty = {

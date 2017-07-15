@@ -81,6 +81,7 @@ export class MainController extends CanvasController {
 	currentlyBuilding: IEntityProperty;
 	buildingModel: Model;
 	creep: Creep[];
+	waterballonTexture: Texture;
 	waterballons: Waterballon[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
@@ -189,6 +190,10 @@ export class MainController extends CanvasController {
 
 		promises.push(Texture.load(gl, '/textures/red.jpg').then((texture: Texture) => {
 			this.selectionTexture[1] = texture;
+		}));
+
+		promises.push(Texture.load(gl, '/textures/waterballon.png').then((texture: Texture) => {
+			this.waterballonTexture = texture;
 		}));
 
 		return Promise.all(promises);
@@ -482,6 +487,7 @@ export class MainController extends CanvasController {
 	}
 
 	renderWaterballons(gl: WebGL2RenderingContext){
+		this.waterballonTexture.bind(gl);
 		for (const p of this.waterballons){
 			const m = Matrix.Translation(p.position);
 			this.ShaderService.uploadModel(gl, m);

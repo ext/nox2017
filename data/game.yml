@@ -9,6 +9,7 @@ preload:
     - /textures/red.jpg
     - /textures/white.jpg
     - /textures/money.png
+    - /textures/waterballon.png
 
 constants:
   # How long before first wave spawns
@@ -53,5 +54,4 @@ wave:
         hp: 1
         speed: 5
         value: 10
-        type: Creep
         texture: textures/beaver.png

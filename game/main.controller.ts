@@ -61,6 +61,7 @@ class MainController extends CanvasController {
 	texture: Texture;
 	constants: Constants;
 	wave: Wave[];
+	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -69,6 +70,7 @@ class MainController extends CanvasController {
 		this.fbo = undefined;
 		this.ortho = null;
 		this.routes = {};
+		this.selected = null;
 
 		registerItems();
 
@@ -143,10 +145,7 @@ class MainController extends CanvasController {
 
 	setupEventHandlers(){
 		this.element.addEventListener('mousemove', event => {
-			const intersect = this.unprojectMap(event.clientX, event.clientY);
-			const tx = Math.floor(intersect.elements[0]);
-			const ty = -Math.floor(intersect.elements[1]) - 1;
-			console.log(tx, ty);
+			this.setSelection(event.clientX, event.clientY);
 		});
 
 		this.$scope.$watchGroup([
@@ -158,6 +157,24 @@ class MainController extends CanvasController {
 			this.render();
 		});
 		return Promise.resolve();
+	}
+
+	setSelection(x: number, y: number){
+		if (!this.map) return;
+
+		const intersect = this.unprojectMap(x, y);
+		const tx = Math.floor(intersect.elements[0]);
+		const ty = -Math.floor(intersect.elements[1]) - 1;
+		this.selected = null;
+
+		if (tx < 0 || tx >= this.map.width){
+			return;
+		}
+		if (ty < 0 || ty >= this.map.height){
+			return;
+		}
+
+		this.selected = [tx, ty];
 	}
 
 	/**

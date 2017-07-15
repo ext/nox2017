@@ -68,6 +68,16 @@ export class Map {
 		return this.namedObject[name];
 	}
 
+	isInsideMap(x: number, y: number): boolean {
+		if (x < 0 || x >= this.width){
+			return false;
+		}
+		if (y < 0 || y >= this.height){
+			return false;
+		}
+		return true;
+	}
+
 	tileAt(pos: [number, number]){
 		const x = pos[0];
 		const y = -pos[1];

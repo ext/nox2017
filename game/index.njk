@@ -10,8 +10,9 @@
 	</head>
 	<body ng-app="{{ pkg.name }}" ng-strict-di ng-controller="GameController as game">
 		<main ng-cloak>
-			<p class="paused" ng-if="!game.running"><span class="fa fa-pause"></span> Paused</p>
-			<p id="next-wave" ng-if="game.next"><span class="fa fa-clock-o"></span> Next wave in <span ng-bind="game.next"></span>s</p>
+			<p class="paused" ng-if="!game.running && !game.lost"><span class="fa fa-pause"></span> Paused</p>
+			<p id="next-wave" ng-if="game.next && !game.lost"><span class="fa fa-clock-o"></span> Next wave in <span ng-bind="game.next"></span>s</p>
+			<p id="lost" ng-if="game.hasLost"><span class="fa fa-power-off"></span><br/>Game over<br/><small>(press F5 to restart)</small></p>
 			<canvas ng-controller="MainController"></canvas>
 		</main>
 

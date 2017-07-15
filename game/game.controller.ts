@@ -21,12 +21,14 @@ class GameController {
 	selectedBuilding: any;
 	money: number;
 	lives: number;
+	hasLost: boolean;
 
 	constructor($interval: ng.IIntervalService){
 		this.running = true;
 		this.step = false;
 		this.money = 0;
 		this.lives = 0;
+		this.hasLost = false;
 
 		$interval(() => {}, 800);
 	}
@@ -51,6 +53,11 @@ class GameController {
 		const obj = this.buildings[index];
 		this.mainCtrl.setBuilding(obj);
 		this.selectedBuilding = obj;
+	}
+
+	lost(){
+		this.hasLost = true;
+		this.running = false;
 	}
 }
 

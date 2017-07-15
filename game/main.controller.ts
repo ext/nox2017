@@ -496,6 +496,12 @@ export class MainController extends CanvasController {
 			}
 		});
 
+		if (game.lives <= 0){
+			this.$scope.$apply(() => {
+				game.lost();
+			});
+		}
+
 		this.camera.update();
 	}
 

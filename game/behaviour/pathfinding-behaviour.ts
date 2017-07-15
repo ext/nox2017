@@ -138,7 +138,7 @@ export class PathfindingBehaviour extends Behaviour {
 
 	calculateRoute(entity: Entity, data: EntityData, waypoint: number): Route {
 		let route : Route = {
-			current: 1,
+			current: 2,
 			path: [],
 		};
 

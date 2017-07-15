@@ -8,6 +8,7 @@ const defaults: IEntityProperty = {
 	model: null,
 	position: [0, 0, 0],
 	speed: 1,
+	hp: 100,
 };
 
 let id: number = 1;
@@ -19,6 +20,8 @@ export class Entity {
 	rotation: Vector;
 	modelMatrix: Matrix;
 	speed: number;
+	hp: number;
+	dead: boolean;
 	behaviour: Behaviour;
 	behaviourData: any;
 
@@ -31,6 +34,8 @@ export class Entity {
 		this.rotation = null;
 		this.modelMatrix = Matrix.I(4);
 		this.speed = options.speed;
+		this.hp = options.hp;
+		this.dead = false;
 		this.updateModelMatrix();
 	}
 
@@ -61,6 +66,10 @@ export class Entity {
 		}
 
 		this.updateModelMatrix();
+	}
+
+	kill(){
+		this.dead = true;
 	}
 }
 

@@ -55,15 +55,34 @@ aside {
 	background: #fff;
 	display: flex;
 	flex-direction: column;
-	width: 300px;
+	width: 400px;
 
 	fieldset {
 		display: inline-block;
 		flex: 0 0 auto;
+
+		&.fill {
+			flex: 1 0 auto;
+		}
+	}
+
+	legend {
+		font-size: 1.2rem;
 	}
 
 	label {
 		display: block;
+	}
+
+	p {
+		font-size: 1.2rem;
+		margin: 0;
+		line-height: 1.2;
+	}
+
+	h2 {
+		margin-top: 0.5rem;
+		font-size: 1.4rem;
 	}
 }
 

@@ -10,12 +10,10 @@ interface ItemFactory {
 const types: { [key:string]: ItemFactory } = {};
 
 const defaults: IEntityProperty = {
-	hp: 100,
 };
 
 export class Item extends Entity {
 	name?: string;
-	hp: number;
 	diffuse?: Texture;
 	width: number;
 	height: number;
@@ -27,7 +25,6 @@ export class Item extends Entity {
 
 		super(options);
 		this.name = options.name;
-		this.hp = options.hp;
 		this.diffuse = null;
 		this.width = options.width / 8.0; /* TODO hardcoded tile size */
 		this.height = options.height / 8.0;

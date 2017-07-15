@@ -9,6 +9,7 @@ interface Timeout {
 	cb: () => void;
 	progress: (left: number) => void;
 	timeout: number;
+	original: number;
 }
 
 export class CanvasController {
@@ -24,6 +25,7 @@ export class CanvasController {
 	width: number;
 	height: number;
 	private timeouts: Timeout[];
+	private intervals: Timeout[];
 
 	constructor($element: any, $injector: angular.auto.IInjectorService){
 		this.$window = $injector.get('$window');
@@ -36,6 +38,7 @@ export class CanvasController {
 		this.lastFrame = null;              /* timestamp of last frame */
 		this.keypress = {};                 /* state of keyboard */
 		this.timeouts = [];
+		this.intervals = [];
 
 		this.$window.addEventListener('resize', () => {
 			const canvas = this.element;
@@ -180,6 +183,16 @@ export class CanvasController {
 			cb,
 			progress,
 			timeout: timeout / 1000,
+			original: timeout / 1000,
+		});
+	}
+
+	addInterval(timeout: number, cb: () => void): void {
+		this.intervals.push({
+			cb,
+			progress: null,
+			timeout: timeout / 1000,
+			original: timeout / 1000,
 		});
 	}
 
@@ -195,7 +208,13 @@ export class CanvasController {
 			this.timeouts = this.timeouts.filter(t => t.timeout >= 0);
 			expired.forEach(t => t.cb());
 		}
-
+		this.intervals.forEach(t => {
+			t.timeout -= dt;
+			if (t.timeout < 0){
+				t.timeout = t.original;
+				t.cb();
+			}
+		});
 	}
 
 	clear(){

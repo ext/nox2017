@@ -24,17 +24,37 @@
 					<button class="button" type="button" ng-show="!game.running" ng-click="game.stepFrame()"><span class="fa fa-step-forward"></span> Step</button>
 				</div>
 			</fieldset>
-			<fieldset>
+			<fieldset class="fill">
 				{% raw %}
 				<legend>Build</legend>
 				<ul class="building-grid">
 					<li ng-repeat="building in ::game.buildings">
 						<div class="building" ng-attr-title="{{ ::building.name }}" ng-click="game.setBuilding($index)">
 							<img ng-src="assets/{{ ::building.icon }}"/>
-							<p ng-bind="::building.cost"></p>
+							<p><span class="fa fa-money"></span> <span ng-bind="::building.cost"></span></p>
 						</div>
 					</li>
 				</ul>
+				<div class="description" ng-if="game.selectedBuilding">
+					<h2 ng-bind="game.selectedBuilding.name"></h2>
+					<p ng-bind="game.selectedBuilding.description">
+				</div>
+				{% endraw %}
+			</fieldset>
+			<fieldset>
+				<legend>Info</legend>
+				{% raw %}
+				<div class="grid-x">
+					<div class="small-4 cell">
+						<p><span class="fa fa-money"></span> {{ game.money }}</p>
+					</div>
+					<div class="small-4 cell">
+						<p><span class="fa fa-optin-monster"></span> 0</p>
+					</div>
+					<div class="small-4 cell">
+						<p><span class="fa fa-hashtag"></span> 1</p>
+					</div>
+				</div>
 				{% endraw %}
 			</fieldset>
 		</aside>

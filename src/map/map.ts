@@ -35,6 +35,9 @@ export class Map {
 
 	update(dt: number){
 		this.object.forEach(obj => obj.update(dt));
+
+		/* remove dead objects */
+		this.object = this.object.filter(x => !x.dead);
 	}
 
 	render(gl: WebGL2RenderingContext){

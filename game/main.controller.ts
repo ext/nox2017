@@ -5,7 +5,9 @@ import { PathfindingBehaviour } from './behaviour';
 import { TileData } from './behaviour/pathfinding-behaviour';
 import { Waypoint } from './items/waypoint';
 import { Area } from './items/area';
+import { RangedBuilding, BuildingMoney } from './items/building';
 import { Spawn } from './items/spawn';
+import { Creep } from './items/creep';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
 import { Entity, IEntityProperty } from 'entity';
@@ -49,6 +51,13 @@ interface Constants {
 	spawnNextWave: number;
 	spawnCooldown: number;
 	spawnDelay: number;
+	startingMoney: number;
+}
+
+interface Waterballon {
+	position: Vector;
+	target: Creep;
+	damage: number;
 }
 
 export class MainController extends CanvasController {
@@ -74,6 +83,9 @@ export class MainController extends CanvasController {
 	buildingMap: Uint32Array;
 	currentlyBuilding: IEntityProperty;
 	buildingModel: Model;
+	creep: Creep[];
+	waterballonTexture: Texture;
+	waterballons: Waterballon[];
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -84,6 +96,8 @@ export class MainController extends CanvasController {
 		this.routes = [];
 		this.selected = null;
 		this.selectionTexture = [null, null];
+		this.creep = [];
+		this.waterballons = [];
 
 		registerItems();
 
@@ -105,6 +119,7 @@ export class MainController extends CanvasController {
 			const game = this.$scope.game; /* angular parent controller */
 			this.wave = config.wave;
 			this.constants = config.constants;
+			game.money = this.constants.startingMoney;
 			game.buildings = config.buildings.map((x: any, index: number) => {
 				x.index = index + 1;
 				return x;
@@ -224,14 +239,23 @@ export class MainController extends CanvasController {
 			this.selectionTexture[1] = texture;
 		}));
 
+		promises.push(Texture.load(gl, '/textures/waterballon.png').then((texture: Texture) => {
+			this.waterballonTexture = texture;
+		}));
+
 		return Promise.all(promises);
 	}
 
 	setupEventHandlers(){
+		const game = this.$scope.game; /* angular parent controller */
+
 		this.$window.addEventListener('keydown', event => {
 			switch (event.code){
 			case KEY_ESCAPE:
 				this.currentlyBuilding = null;
+				this.$scope.$apply(() => {
+					game.selectedBuilding = null;
+				});
 				break;
 			}
 		});
@@ -241,10 +265,12 @@ export class MainController extends CanvasController {
 			switch (event.button){
 			case MOUSE_LEFT:
 				this.constructBuilding(this.currentlyBuilding);
-				this.currentlyBuilding = null;
 				break;
 			case MOUSE_RIGHT:
 				this.currentlyBuilding = null;
+				this.$scope.$apply(() => {
+					game.selectedBuilding = null;
+				});
 				break;
 			}
 		});
@@ -256,9 +282,15 @@ export class MainController extends CanvasController {
 			this.setSelection(event.clientX, event.clientY);
 		});
 
-		// this.element.addEventListener('mousemove', event => {
-		// 	this.setSelection(event.clientX, event.clientY);
-		// });
+		/* make money */
+		this.addInterval(1000, () => {
+			const sum = this.map.object.filter(x => x instanceof BuildingMoney).reduce((sum: number, item: any) => {
+				return sum + item.amount;
+			}, 0);
+			this.$scope.$apply(() => {
+				game.money += sum;
+			});
+		});
 
 		this.$scope.$watchGroup([
 			'cam.x',
@@ -296,7 +328,13 @@ export class MainController extends CanvasController {
 	 * Actually construct building.
 	 */
 	constructBuilding(obj: IEntityProperty): void {
+		const game = this.$scope.game; /* angular parent controller */
+
 		if (!(obj && this.selected)){
+			return;
+		}
+
+		if (obj.cost > game.money){
 			return;
 		}
 
@@ -308,13 +346,18 @@ export class MainController extends CanvasController {
 
 		/* spawn entity */
 		const gl = this.context;
-		this.map.spawn('Building', gl, Object.assign({}, obj, {
+		this.map.spawn(obj.type || 'Building', gl, Object.assign({}, obj, {
 			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
 			model: this.buildingModel,
 		}));
 
 		/* record that something exists on this position */
 		this.buildingMap[i] = obj.index;
+
+		/* reduce player money */
+		this.$scope.$apply(() => {
+			game.money -= obj.cost;
+		});
 	}
 
 	/**
@@ -395,8 +438,9 @@ export class MainController extends CanvasController {
 							name: null,
 							position: spawn.getPointInside(),
 						});
-						const entity = this.map.spawn(null, gl, properties);
+						const entity = this.map.spawn(properties.type || 'Creep', gl, properties);
 						entity.attachBehaviour(behaviour);
+						this.creep.push(entity as Creep);
 					}, i * this.constants.spawnDelay);
 				}
 			}
@@ -431,6 +475,7 @@ export class MainController extends CanvasController {
 	}
 
 	update(dt: number){
+		const game = this.$scope.game; /* angular parent controller */
 		let velocity = Vector.create([0, 0, 0]);
 
 		if (this.keypress[KEY_RIGHT]){
@@ -453,7 +498,53 @@ export class MainController extends CanvasController {
 		this.entity.position = this.entity.position.add(velocity.x(dt));
 		this.entity.update(dt);
 
+		/* check creep vs ranged towers */
+		for (const building of this.map.object){
+			if (!(building instanceof RangedBuilding)){
+				continue;
+			}
+			const entity = building.canFire(dt, this.creep);
+			if (entity){
+				this.waterballons.push({
+					position: building.position.dup(),
+					target: entity,
+					damage: building.damage,
+				});
+			}
+		}
+
+		/* move waterballons */
+		this.waterballons = this.waterballons.filter(p => {
+			const delta = p.target.position.subtract(p.position);
+			const distance = delta.modulus();
+			const dir = delta.toUnitVector();
+			if (distance < 0.25){
+				p.target.hp -= p.damage;
+				if (p.target.hp <= 0){
+					p.target.kill();
+					this.$scope.$apply(() => {
+						game.money += p.target.value;
+					});
+				}
+				return false;
+			}
+			p.position = p.position.add(dir.x(dt * 10));
+			return true;
+		});
+
+		/* remove dead creep */
+		this.creep = this.creep.filter(x => !x.dead);
+
 		this.camera.update();
+	}
+
+	renderWaterballons(gl: WebGL2RenderingContext){
+		this.waterballonTexture.bind(gl);
+		for (const p of this.waterballons){
+			const m = Matrix.Translation(p.position);
+			this.ShaderService.uploadModel(gl, m);
+			this.quad.render(gl);
+		}
 	}
 
 	render(){
@@ -479,6 +570,8 @@ export class MainController extends CanvasController {
 			this.texture.bind(gl);
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(gl);
+
+			this.renderWaterballons(gl);
 
 			if (this.selected && this.currentlyBuilding){
 				const i = this.selected[1] * this.map.width + this.selected[0];

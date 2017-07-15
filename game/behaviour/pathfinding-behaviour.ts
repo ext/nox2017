@@ -8,6 +8,7 @@ import { AABB } from 'math';
 import { Model } from 'model';
 import { Texture } from 'texture';
 import { Shader } from 'shader';
+import { MainController } from '../main.controller';
 
 interface RouteEntry {
 	aabb: AABB;
@@ -37,14 +38,16 @@ export class PathfindingBehaviour extends Behaviour {
 	dynamicMap: Uint32Array;
 	map: Map;
 	white: Texture;
+	game: MainController;
 
-	constructor(map: Map, precalculated: TileData[], dynamicMap: Uint32Array, waypoints: Waypoint[]){
+	constructor(map: Map, precalculated: TileData[], dynamicMap: Uint32Array, waypoints: Waypoint[], game: MainController){
 		super();
 		this.precalculated = precalculated;
 		this.dynamicMap = dynamicMap;
 		this.waypoints = waypoints;
 		this.map = map;
 		this.white = null;
+		this.game = game;
 	}
 
 	createData(entity: Entity): EntityData { // eslint-disable-line no-unused-vars
@@ -79,7 +82,7 @@ export class PathfindingBehaviour extends Behaviour {
 			nextPoint = { index: 0, aabb: current.aabb };
 		} else if(this.isDynamicBlocked(nextPoint.index)) {
 			if(data.route.killBuildings) {
-				this.dynamicMap[nextPoint.index] = 0;
+				this.game.destroyBuilding(nextPoint.index);
 			}
 
 			data.route = null;

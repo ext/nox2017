@@ -135,6 +135,10 @@ export class MainController extends CanvasController {
 		});
 	}
 
+  destroyBuilding(tileIndex: number) {
+    this.buildingMap[tileIndex] = 0;
+  }
+
 	setupWorld(){
 		const promises = [];
 		const gl = this.context;
@@ -443,7 +447,7 @@ export class MainController extends CanvasController {
 			const route = spawn.route;
 			const waypoints = this.routes[route].waypoints;
 			const precalculateMap = this.routes[route].precalculateMap;
-			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.buildingMap, waypoints);
+			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.buildingMap, waypoints, this);
 			Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
 				behaviour.white = texture;
 			});

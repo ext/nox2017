@@ -1,9 +1,8 @@
 /* eslint-disable angular/no-controller */
 
 /* eslint-disable no-unused-vars */
-import { PathfindingBehaviour } from 'behaviour';
-import { Waypoint } from 'behaviour/pathfinding-behaviour';
-import { Waypoint as WaypointItem } from './items/waypoint';
+import { PathfindingBehaviour } from './behaviour';
+import { Waypoint } from './items/waypoint';
 import { Area } from './items/area';
 import { Spawn } from './items/spawn';
 import { Camera, PerspectiveCamera } from 'camera';
@@ -33,6 +32,7 @@ const PLAYER_SPEED = 15;
 interface Route {
 	areas: AABB[];
 	waypoints: Waypoint[];
+	staticMap: Uint32Array;
 }
 
 interface Wave {
@@ -122,21 +122,18 @@ class MainController extends CanvasController {
 			/* find all routes */
 			this.routes = {};
 
-			const waypoints = map.object.filter(item => item instanceof WaypointItem);
-			waypoints.forEach((item: WaypointItem) => {
+			const waypoints = map.object.filter(item => item instanceof Waypoint);
+			waypoints.forEach((item: Waypoint) => {
 				if (!(item.route in this.routes)){
 					this.routes[item.route] = {
 						areas: [],
 						waypoints: [],
+						staticMap: null,
 					};
 				}
 
 				const route = this.routes[item.route];
-				route.waypoints.push({
-					aabb: AABB.fromItem(item),
-					name: item.name,
-					next: item.next,
-				});
+				route.waypoints.push(item);
 			});
 
 			const areas = map.object.filter(item => item instanceof Area);
@@ -145,6 +142,7 @@ class MainController extends CanvasController {
 					this.routes[item.route] = {
 						areas: [],
 						waypoints: [],
+						staticMap: null,
 					};
 				}
 
@@ -153,6 +151,12 @@ class MainController extends CanvasController {
 					AABB.fromItem(item),
 				);
 			});
+
+			for (const [key, route] of Object.entries(this.routes)) {
+				console.log(key);
+				//route.staticMap = new Uint32Array(this.map.width * this.map.height);
+			}
+
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {

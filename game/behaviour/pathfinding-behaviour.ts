@@ -1,18 +1,12 @@
 import { AABB } from 'math';
-import { Behaviour } from './behaviour';
+import { Behaviour } from 'behaviour';
 import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector } from 'sylvester';
+import { Waypoint } from '../items/waypoint';
 
 interface EntityData {
 	current?: number;
 }
-
-export interface Waypoint {
-	aabb: AABB;
-	name: string;
-	next: string;
-}
-
 
 export class PathfindingBehaviour extends Behaviour {
 	waypoints: Waypoint[];

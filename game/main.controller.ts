@@ -69,6 +69,7 @@ export class MainController extends CanvasController {
 	selectionModel: Model;
 	buildingMap: Uint32Array;
 	currentlyBuilding: IEntityProperty;
+	buildingModel: Model;
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -114,6 +115,7 @@ export class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.quad = this.ModelService.quad(gl);
+		this.buildingModel = this.ModelService.fromFile(gl, '/data/cube-pseudo-shaded.yml');
 		this.selectionModel = this.ModelService.quad(gl);
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
@@ -237,6 +239,7 @@ export class MainController extends CanvasController {
 		const gl = this.context;
 		this.map.spawn('Building', gl, Object.assign({}, obj, {
 			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
+			model: this.buildingModel,
 		}));
 	}
 

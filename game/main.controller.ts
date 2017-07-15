@@ -231,11 +231,13 @@ export class MainController extends CanvasController {
 	 * Actually construct building.
 	 */
 	constructBuilding(obj: IEntityProperty): void {
-		if (!obj){
+		if (!(obj && this.selected)){
 			return;
 		}
 		const gl = this.context;
-		this.map.spawn('Building', gl, obj);
+		this.map.spawn('Building', gl, Object.assign({}, obj, {
+			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
+		}));
 	}
 
 	/**

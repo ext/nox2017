@@ -5,6 +5,7 @@ preload:
   texture:
     - /textures/default.jpg
     - /textures/beaver.png
+    - /textures/tiles.png
 
 constants:
   # How long before first wave spawns
@@ -29,6 +30,7 @@ buildings:
   - name: Building C
     cost: 300
     icon: /textures/building_c.jpg
+    texture: /textures/beaver.png
 
 wave:
   - entities:

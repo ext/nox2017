@@ -31,19 +31,11 @@ export class Creep extends Item {
 
 	updateModelMatrix(){
 		if (!this.model) return;
-		const p = this.position.add(Vector.create([0.5, 0.5, 0.5]));
+		const p = this.position.add(Vector.create([0.5, 0.5, 0]));
 		const t = Matrix.Translation(p).ensure4x4();
 		if (this.rotation){
-			const c = Math.cos(Math.PI / 2)
-			const s = Math.sin(Math.PI / 2)
-			const r1 = Matrix.create([
-				[ c,  0,  s,  0],
-				[ 0,  1,  0,  0],
-				[-s,  0,  c,  0],
-				[ 0,  0,  0,  1],
-			]);
-			const r2 = rotationFromDirection(this.rotation).ensure4x4();
-			this.modelMatrix = t.x(r2.x(r1));
+			const r = rotationFromDirection(this.rotation).ensure4x4();
+			this.modelMatrix = t.x(r);
 		} else {
 			this.modelMatrix = t;
 		}

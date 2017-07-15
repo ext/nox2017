@@ -16,10 +16,10 @@ constants:
   spawnInitial: 8000
 
   # How long between waves
-  spawnNextWave: 5000
+  spawnNextWave: 3000
 
   # How long between waves (before notice is show)
-  spawnCooldown: 5000
+  spawnCooldown: 7000
 
   # How long between each group of creeps
   spawnDelay: 800
@@ -57,4 +57,13 @@ wave:
         hp: 1
         speed: 5
         value: 10
-        texture: textures/beaver.png
+  - entities:
+      - count: 12
+        hp: 1
+        speed: 6
+        value: 15
+  - entities:
+      - count: 5
+        hp: 3
+        speed: 5
+        value: 20

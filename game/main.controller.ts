@@ -354,6 +354,7 @@ export class MainController extends CanvasController {
 		const game = this.$scope.game; /* angular parent controller */
 		this.$scope.$apply(() => {
 			game.next = timeout / 1000;
+			game.wave = index + 1;
 		});
 
 		this.addTimeout(timeout, () => {
@@ -368,8 +369,21 @@ export class MainController extends CanvasController {
 
 	spawnWave(index: number){
 		const gl = this.context;
-		const wave = this.wave[index];
+		let wave = this.wave[index];
 		const allSpawnPoints: Spawn[] = [];
+
+		if (typeof(wave) === 'undefined'){
+			wave = {
+				entities: [
+					{
+						count: Math.floor(5 + 0.5 * index),
+						hp: 4 + 0.2 * index,
+						speed: Math.min(5 + 0.3 * index, 9),
+						value: 25 + index,
+					},
+				],
+			};
+		}
 
 		this.map.object.forEach(entity => {
 			if (entity instanceof Spawn){
@@ -395,6 +409,10 @@ export class MainController extends CanvasController {
 				}
 			}
 		}
+
+		this.addTimeout(this.constants.spawnCooldown, () => {
+			this.startWave(index+1, this.constants.spawnNextWave);
+		});
 	}
 
 	resize(width: number, height: number){

@@ -4,6 +4,7 @@ import { Texture } from 'texture';
 
 const defaults: IEntityProperty = {
 	value: 1,
+	texture: '/textures/beaver.png',
 };
 
 export class Creep extends Item {

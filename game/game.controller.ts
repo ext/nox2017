@@ -22,6 +22,7 @@ class GameController {
 	money: number;
 	lives: number;
 	hasLost: boolean;
+	wave: number;
 
 	constructor($interval: ng.IIntervalService){
 		this.running = true;
@@ -29,6 +30,7 @@ class GameController {
 		this.money = 0;
 		this.lives = 0;
 		this.hasLost = false;
+		this.wave = 0;
 
 		$interval(() => {}, 800);
 	}

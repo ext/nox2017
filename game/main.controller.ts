@@ -67,6 +67,7 @@ export class MainController extends CanvasController {
 	wave: Wave[];
 	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
 	selectionModel: Model;
+	selectionTexture: Texture;
 	buildingMap: Uint32Array;
 	currentlyBuilding: IEntityProperty;
 	buildingModel: Model;
@@ -116,7 +117,7 @@ export class MainController extends CanvasController {
 
 		this.quad = this.ModelService.quad(gl);
 		this.buildingModel = this.ModelService.fromFile(gl, '/data/cube-pseudo-shaded.yml');
-		this.selectionModel = this.ModelService.quad(gl);
+		this.selectionModel = this.buildingModel;
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
@@ -159,6 +160,10 @@ export class MainController extends CanvasController {
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
 			this.texture = texture;
+		}));
+
+		promises.push(Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
+			this.selectionTexture = texture;
 		}));
 
 		return Promise.all(promises);
@@ -408,6 +413,7 @@ export class MainController extends CanvasController {
 					0,
 				]));
 				this.ShaderService.uploadModel(gl, selectionMatrix);
+				this.selectionTexture.bind(gl);
 				this.selectionModel.render(gl);
 			}
 		});

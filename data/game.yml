@@ -6,6 +6,7 @@ preload:
     - /textures/default.jpg
     - /textures/beaver.png
     - /textures/tiles.png
+    - /textures/white.jpg
 
 constants:
   # How long before first wave spawns

@@ -63,7 +63,7 @@ export class PathfindingBehaviour extends Behaviour {
 
 		/* detect if current waypoint is reached */
 		const p = entity.position.elements;
-		if (current.aabb.pointInside(p[0], p[1]+1)){
+		if (current.aabb.pointInside(p[0], p[1])){
 			console.log("Reached waypoint. Next: " + current.next);
 			data.current = this.findWaypointByName(current.next);
 			console.log("Next is " + data.current);
@@ -75,11 +75,10 @@ export class PathfindingBehaviour extends Behaviour {
 			data.route = this.calculateRoute(entity, data, data.current);
 		}
 
-		if(data.route.path.length === 0 || data.route.current == data.route.path.length) {
-			return;
+		let nextPoint = data.route.path[data.route.current];
+		if(!nextPoint) {
+			nextPoint = { index: 0, aabb: current.aabb};
 		}
-
-		const nextPoint = data.route.path[data.route.current];
 		if(nextPoint.aabb.pointInside(p[0], p[1])) {
 			++data.route.current;
 		}

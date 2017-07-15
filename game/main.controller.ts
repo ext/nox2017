@@ -203,7 +203,7 @@ export class MainController extends CanvasController {
 						const xworld = x;
 
 						if (this.map.tileCollidable(this.map.grid[index])) {
-							staticMap[index] = 0;
+							staticMap[index] = 1;
 							continue;
 						}
 
@@ -215,7 +215,7 @@ export class MainController extends CanvasController {
 							}
 						}
 
-						staticMap[index] = insideArea ? 1 : 0;
+						staticMap[index] = insideArea ? 0 : 1;
 					}
 				}
 				route.precalculateMap = PathfindingBehaviour.precalculateMap(staticMap, this.map, route.waypoints);

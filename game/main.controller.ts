@@ -2,6 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 import { PathfindingBehaviour } from './behaviour';
+import { TileData } from './behaviour/pathfinding-behaviour';
 import { Waypoint } from './items/waypoint';
 import { Area } from './items/area';
 import { Spawn } from './items/spawn';
@@ -32,7 +33,7 @@ const PLAYER_SPEED = 15;
 interface Route {
 	areas: AABB[];
 	waypoints: Waypoint[];
-	staticMap: Uint32Array;
+	precalculateMap: TileData[];
 }
 
 interface Wave {
@@ -58,7 +59,7 @@ class MainController extends CanvasController {
 	postshader: Shader;
 	camera: PerspectiveCamera;
 	map: Map;
-	routes: { [key:number]: Route };
+	routes: Route[];
 	entity: Entity;
 	texture: Texture;
 	constants: Constants;
@@ -71,7 +72,7 @@ class MainController extends CanvasController {
 		this.ModelService = ModelService;
 		this.fbo = undefined;
 		this.ortho = null;
-		this.routes = {};
+		this.routes = [];
 		this.dynamicMap = null;
 
 		registerItems();
@@ -122,7 +123,7 @@ class MainController extends CanvasController {
 
 
 			/* find all routes */
-			this.routes = {};
+			this.routes = [];
 
 			const waypoints = map.object.filter(item => item instanceof Waypoint);
 			waypoints.forEach((item: Waypoint) => {
@@ -130,7 +131,7 @@ class MainController extends CanvasController {
 					this.routes[item.route] = {
 						areas: [],
 						waypoints: [],
-						staticMap: null,
+						precalculateMap: [],
 					};
 				}
 
@@ -144,7 +145,7 @@ class MainController extends CanvasController {
 					this.routes[item.route] = {
 						areas: [],
 						waypoints: [],
-						staticMap: null,
+						precalculateMap: [],
 					};
 				}
 
@@ -154,10 +155,32 @@ class MainController extends CanvasController {
 				);
 			});
 
-			for (const [key, route] of Object.entries(this.routes)) {
-				console.log(key);
-				//route.staticMap = new Uint32Array(this.map.width * this.map.height);
-			}
+			this.routes.forEach((route: Route) => {
+				const staticMap = new Uint32Array(this.map.width * this.map.height);
+				for (let y=0; y < this.map.height; ++y) {
+					const yworld = (-y - 1);
+					for (let x=0; x < this.map.width; ++x) {
+						const index = y * this.map.width + x;
+						const xworld = x;
+
+						if (!this.map.tileCollidable(this.map.grid[index])) {
+							staticMap[index] = 0;
+							continue;
+						}
+
+						let insideArea = false;
+						for (let area of route.areas) {
+							if (area.pointInside(xworld, yworld)) {
+								insideArea = true;
+								break;
+							}
+						}
+
+						staticMap[index] = insideArea ? 1 : 0;
+					}
+				}
+				route.precalculateMap = PathfindingBehaviour.precalculateMap(staticMap, this.map, route.waypoints);
+			});
 
 		}));
 
@@ -210,8 +233,8 @@ class MainController extends CanvasController {
 		for (const spawn of allSpawnPoints){
 			const route = spawn.route;
 			const waypoints = this.routes[route].waypoints;
-			const staticMap = this.routes[route].staticMap;
-			const behaviour = new PathfindingBehaviour(this.map, staticMap, this.dynamicMap, waypoints);
+			const precalculateMap = this.routes[route].precalculateMap;
+			const behaviour = new PathfindingBehaviour(this.map, precalculateMap, this.dynamicMap, waypoints);
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
 					setTimeout(() => {

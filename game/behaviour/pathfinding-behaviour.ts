@@ -1,4 +1,3 @@
-import { AABB } from 'math';
 import { Behaviour } from 'behaviour';
 import { Entity } from 'entity'; // eslint-disable-line no-unused-vars
 import { Vector } from 'sylvester';
@@ -9,15 +8,20 @@ interface EntityData {
 	current?: number;
 }
 
+export interface TileData {
+	staticMapValue: number;
+	perWaypointCost: number[];
+}
+
 export class PathfindingBehaviour extends Behaviour {
 	waypoints: Waypoint[];
-	staticMap: Uint32Array;
+	precalculated: TileData[];
 	dynamicMap: Uint32Array;
 	map: Map;
 
-	constructor(map: Map, staticMap: Uint32Array, dynamicMap: Uint32Array, waypoints: Waypoint[]){
+	constructor(map: Map, precalculated: TileData[], dynamicMap: Uint32Array, waypoints: Waypoint[]){
 		super();
-		this.staticMap = staticMap;
+		this.precalculated = precalculated;
 		this.dynamicMap = dynamicMap;
 		this.waypoints = waypoints;
 		this.map = map;
@@ -55,5 +59,30 @@ export class PathfindingBehaviour extends Behaviour {
 	findWaypointByName(name: string){
 		const index = this.waypoints.findIndex(cur => cur.name === name);
 		return index >= 0 ? index : null;
+	}
+
+	static precalculateMap(staticMap: Uint32Array, map: Map, waypoints: Waypoint[]) : TileData[]{
+		const result: TileData[] = [];
+		for (let y = 0; y < map.height; ++y) {
+			const yworld = (-y - 1);
+			for (let x = 0; x < map.width; ++x) {
+				const xworld = x;
+				const index = y * map.width + x;
+				result[index] = {
+					staticMapValue: staticMap[index],
+					perWaypointCost: [],
+				};
+
+				for (let i = 0; i<waypoints.length; ++i) {
+					const waypoint = waypoints[i];
+					const center = waypoint.aabb.center();
+					const delta = [center[0] - xworld, center[1] - yworld];
+					result[index].perWaypointCost[i] = Math.sqrt(Math.pow(delta[0], 2) + Math.pow(delta[1], 2));
+				}
+
+			}
+		}
+
+		return result;
 	}
 }

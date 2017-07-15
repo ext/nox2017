@@ -64,9 +64,7 @@ export class PathfindingBehaviour extends Behaviour {
 		/* detect if current waypoint is reached */
 		const p = entity.position.elements;
 		if (current.aabb.pointInside(p[0], p[1])){
-			console.log("Reached waypoint. Next: " + current.next);
 			data.current = this.findWaypointByName(current.next);
-			console.log("Next is " + data.current);
 			data.route = null;
 			return;
 		}

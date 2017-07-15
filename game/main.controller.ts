@@ -1,9 +1,10 @@
 /* eslint-disable angular/no-controller */
 
 /* eslint-disable no-unused-vars */
-import { WaypointBehaviour } from 'behaviour';
-import { Waypoint } from 'behaviour/waypoint-behaviour';
+import { PathfindingBehaviour } from 'behaviour';
+import { Waypoint } from 'behaviour/pathfinding-behaviour';
 import { Waypoint as WaypointItem } from './items/waypoint';
+import { Area } from './items/area';
 import { Spawn } from './items/spawn';
 import { Camera, PerspectiveCamera } from 'camera';
 import { CanvasController } from 'canvas';
@@ -30,7 +31,8 @@ const KEY_DOWN = "KeyS";
 const PLAYER_SPEED = 15;
 
 interface Route {
-	waypoint: Waypoint[];
+	areas: AABB[];
+	waypoints: Waypoint[];
 }
 
 interface Wave {
@@ -116,21 +118,40 @@ class MainController extends CanvasController {
 		promises.push(this.loadMap('/data/map.json').then((map: Map) => {
 			this.map = map;
 
+
 			/* find all routes */
 			this.routes = {};
+
 			const waypoints = map.object.filter(item => item instanceof WaypointItem);
 			waypoints.forEach((item: WaypointItem) => {
 				if (!(item.route in this.routes)){
 					this.routes[item.route] = {
-						waypoint: [],
+						areas: [],
+						waypoints: [],
 					};
 				}
+
 				const route = this.routes[item.route];
-				route.waypoint.push({
-					name: item.name,
+				route.waypoints.push({
 					aabb: AABB.fromItem(item),
+					name: item.name,
 					next: item.next,
 				});
+			});
+
+			const areas = map.object.filter(item => item instanceof Area);
+			areas.forEach((item: Area) => {
+				if (!(item.route in this.routes)){
+					this.routes[item.route] = {
+						areas: [],
+						waypoints: [],
+					};
+				}
+
+				const route = this.routes[item.route];
+				route.areas.push(
+					AABB.fromItem(item),
+				);
 			});
 		}));
 
@@ -182,8 +203,9 @@ class MainController extends CanvasController {
 
 		for (const spawn of allSpawnPoints){
 			const route = spawn.route;
-			const waypoints = this.routes[route].waypoint;
-			const behaviour = new WaypointBehaviour(waypoints);
+			const waypoints = this.routes[route].waypoints;
+			const areas = this.routes[route].areas;
+			const behaviour = new PathfindingBehaviour(waypoints, areas);
 			for (const it of wave.entities){
 				for (let i=0; i < it.count; i++){
 					setTimeout(() => {

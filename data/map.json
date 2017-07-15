@@ -12,13 +12,128 @@
          "y":0
         }, 
         {
-         "color":"#ff00c8",
+         "color":"#ff00ff",
          "draworder":"topdown",
-         "name":"Zone route 1",
+         "name":"Area1",
          "objects":[
                 {
-                 "height":8.25,
-                 "id":23,
+                 "height":126.5,
+                 "id":47,
+                 "name":"",
+                 "properties":
+                    {
+                     "route":"1"
+                    },
+                 "propertytypes":
+                    {
+                     "route":"string"
+                    },
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":71,
+                 "x":368.5,
+                 "y":248
+                }, 
+                {
+                 "height":40.3333333333333,
+                 "id":52,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":250.333333333333,
+                 "x":119.333333333333,
+                 "y":247.666666666667
+                }, 
+                {
+                 "height":87.6666666666667,
+                 "id":53,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":41,
+                 "x":119.666666666667,
+                 "y":160.333333333333
+                }, 
+                {
+                 "height":40.3333333333333,
+                 "id":54,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":248.333333333333,
+                 "x":119.666666666667,
+                 "y":119.666666666667
+                }, 
+                {
+                 "height":160,
+                 "id":55,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":74.3333333333333,
+                 "x":367,
+                 "y":0
+                }],
+         "opacity":1,
+         "properties":
+            {
+             "route":1,
+             "type":"Area"
+            },
+         "propertytypes":
+            {
+             "route":"int",
+             "type":"string"
+            },
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"Area2",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "color":"#ff00c8",
+         "draworder":"topdown",
+         "name":"Waypoint 2",
+         "objects":[
+                {
+                 "height":21.6666666666666,
+                 "id":27,
+                 "name":"Spawner 1",
+                 "properties":
+                    {
+                     "next":"Waypoint 1",
+                     "route":1
+                    },
+                 "propertytypes":
+                    {
+                     "next":"string",
+                     "route":"int"
+                    },
+                 "rotation":0,
+                 "type":"Spawn",
+                 "visible":true,
+                 "width":35.875,
+                 "x":368.416666666667,
+                 "y":352.166666666667
+                }, 
+                {
+                 "height":7.87499999999999,
+                 "id":29,
                  "name":"Waypoint 1",
                  "properties":
                     {
@@ -32,179 +147,8 @@
                  "type":"",
                  "visible":true,
                  "width":8.5,
-                 "x":399.371212121212,
-                 "y":255.75
-                }, 
-                {
-                 "height":8.125,
-                 "id":24,
-                 "name":"Waypoint 2",
-                 "properties":
-                    {
-                     "next":"Waypoint 3"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.25,
-                 "x":135.875,
-                 "y":263.9375
-                }, 
-                {
-                 "height":7.75,
-                 "id":25,
-                 "name":"Waypoint 3",
-                 "properties":
-                    {
-                     "next":"Waypoint 4"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":136.125,
-                 "y":136
-                }, 
-                {
-                 "height":21.6666666666666,
-                 "id":27,
-                 "name":"Spawner 1",
-                 "properties":
-                    {
-                     "next":"Waypoint 1"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"Spawn",
-                 "visible":true,
-                 "width":35.875,
-                 "x":368.416666666667,
-                 "y":352.166666666667
-                }, 
-                {
-                 "height":8.04545454545453,
-                 "id":28,
-                 "name":"Waypoint 4",
-                 "properties":
-                    {
-                     "next":"Waypoint 5"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":7.59090909090907,
-                 "x":400.090909090909,
-                 "y":136.090909090909
-                }, 
-                {
-                 "height":7.87499999999999,
-                 "id":29,
-                 "name":"Waypoint 5",
-                 "properties":
-                    {
-                     "next":"Waypoint 6"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.5,
                  "x":399.768939393939,
                  "y":24.1780303030303
-                }, 
-                {
-                 "height":8.04545454545453,
-                 "id":42,
-                 "name":"Waypoint 6",
-                 "properties":
-                    {
-                     "next":"Waypoint 7"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":7.59090909090907,
-                 "x":400.090909090909,
-                 "y":136.090909090909
-                }, 
-                {
-                 "height":7.75,
-                 "id":43,
-                 "name":"Waypoint 7",
-                 "properties":
-                    {
-                     "next":"Waypoint 8"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8,
-                 "x":136.125,
-                 "y":136
-                }, 
-                {
-                 "height":8.125,
-                 "id":44,
-                 "name":"Waypoint 8",
-                 "properties":
-                    {
-                     "next":"Waypoint 9"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.25,
-                 "x":135.875,
-                 "y":263.9375
-                }, 
-                {
-                 "height":8.25,
-                 "id":45,
-                 "name":"Waypoint 9",
-                 "properties":
-                    {
-                     "next":"Waypoint 10"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.5,
-                 "x":399.371212121212,
-                 "y":255.75
                 }, 
                 {
                  "height":15.75,
@@ -239,88 +183,12 @@
          "name":"Zone route 2",
          "objects":[
                 {
-                 "height":8.25,
-                 "id":30,
+                 "height":8.41666666666666,
+                 "id":35,
                  "name":"Waypoint 1",
                  "properties":
                     {
                      "next":"Waypoint 2"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.25,
-                 "x":399.537878787879,
-                 "y":255.734848484848
-                }, 
-                {
-                 "height":8.375,
-                 "id":32,
-                 "name":"Waypoint 2",
-                 "properties":
-                    {
-                     "next":"Waypoint 3"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.04166666666663,
-                 "x":655.916666666667,
-                 "y":263.791666666667
-                }, 
-                {
-                 "height":8.16666666666666,
-                 "id":33,
-                 "name":"Waypoint 3",
-                 "properties":
-                    {
-                     "next":"Waypoint 4"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.04166666666663,
-                 "x":655.916666666667,
-                 "y":135.916666666667
-                }, 
-                {
-                 "height":8.12121212121212,
-                 "id":34,
-                 "name":"Waypoint 4",
-                 "properties":
-                    {
-                     "next":"Waypoint 5"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.24242424242425,
-                 "x":399.818181818182,
-                 "y":135.909090909091
-                }, 
-                {
-                 "height":8.41666666666666,
-                 "id":35,
-                 "name":"Waypoint 5",
-                 "properties":
-                    {
-                     "next":"Waypoint 6"
                     },
                  "propertytypes":
                     {
@@ -339,10 +207,12 @@
                  "name":"Spawner 2",
                  "properties":
                     {
+                     "area":"Area1",
                      "next":"Waypoint 1"
                     },
                  "propertytypes":
                     {
+                     "area":"string",
                      "next":"string"
                     },
                  "rotation":0,
@@ -353,85 +223,9 @@
                  "y":352.166666666667
                 }, 
                 {
-                 "height":8.12121212121212,
-                 "id":37,
-                 "name":"Waypoint 6",
-                 "properties":
-                    {
-                     "next":"Waypoint 7"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.24242424242425,
-                 "x":399.818181818182,
-                 "y":135.909090909091
-                }, 
-                {
-                 "height":8.16666666666666,
-                 "id":38,
-                 "name":"Waypoint 7",
-                 "properties":
-                    {
-                     "next":"Waypoint 8"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.04166666666663,
-                 "x":655.916666666667,
-                 "y":135.916666666667
-                }, 
-                {
-                 "height":8.375,
-                 "id":39,
-                 "name":"Waypoint 8",
-                 "properties":
-                    {
-                     "next":"Waypoint 9"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.04166666666663,
-                 "x":655.916666666667,
-                 "y":263.791666666667
-                }, 
-                {
-                 "height":8.25,
-                 "id":40,
-                 "name":"Waypoint 9",
-                 "properties":
-                    {
-                     "next":"Waypoint 10"
-                    },
-                 "propertytypes":
-                    {
-                     "next":"string"
-                    },
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":8.25,
-                 "x":399.537878787879,
-                 "y":255.734848484848
-                }, 
-                {
                  "height":15.75,
                  "id":41,
-                 "name":"Waypoint 10",
+                 "name":"Waypoint 2",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -455,7 +249,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":47,
+ "nextobjectid":58,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.0.2",

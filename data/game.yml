@@ -6,6 +6,7 @@ preload:
     - /textures/default.jpg
     - /textures/beaver.png
     - /textures/tiles.png
+    - /textures/red.jpg
     - /textures/white.jpg
 
 constants:

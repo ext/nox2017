@@ -67,7 +67,7 @@ export class MainController extends CanvasController {
 	wave: Wave[];
 	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
 	selectionModel: Model;
-	selectionTexture: Texture;
+	selectionTexture: [Texture, Texture];
 	buildingMap: Uint32Array;
 	currentlyBuilding: IEntityProperty;
 	buildingModel: Model;
@@ -80,6 +80,7 @@ export class MainController extends CanvasController {
 		this.ortho = null;
 		this.routes = {};
 		this.selected = null;
+		this.selectionTexture = [null, null];
 
 		registerItems();
 
@@ -101,7 +102,10 @@ export class MainController extends CanvasController {
 			const game = this.$scope.game; /* angular parent controller */
 			this.wave = config.wave;
 			this.constants = config.constants;
-			game.buildings = config.buildings;
+			game.buildings = config.buildings.map((x: any, index: number) => {
+				x.index = index + 1;
+				return x;
+			});
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
@@ -163,7 +167,11 @@ export class MainController extends CanvasController {
 		}));
 
 		promises.push(Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
-			this.selectionTexture = texture;
+			this.selectionTexture[0] = texture;
+		}));
+
+		promises.push(Texture.load(gl, '/textures/red.jpg').then((texture: Texture) => {
+			this.selectionTexture[1] = texture;
 		}));
 
 		return Promise.all(promises);
@@ -241,11 +249,22 @@ export class MainController extends CanvasController {
 		if (!(obj && this.selected)){
 			return;
 		}
+
+		/* validate that no other building exists on this position */
+		const i = this.selected[1] * this.map.width + this.selected[0];
+		if (this.buildingMap[i] !== 0){
+			return;
+		}
+
+		/* spawn entity */
 		const gl = this.context;
 		this.map.spawn('Building', gl, Object.assign({}, obj, {
 			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
 			model: this.buildingModel,
 		}));
+
+		/* record that something exists on this position */
+		this.buildingMap[i] = obj.index;
 	}
 
 	/**
@@ -407,13 +426,15 @@ export class MainController extends CanvasController {
 			this.entity.render(gl);
 
 			if (this.selected && this.currentlyBuilding){
+				const i = this.selected[1] * this.map.width + this.selected[0];
+				const q = this.buildingMap[i] > 0 ? 1 : 0;
 				const selectionMatrix = Matrix.Translation(Vector.create([
 					this.selected[0],
 					-1 - this.selected[1],
 					0,
 				]));
 				this.ShaderService.uploadModel(gl, selectionMatrix);
-				this.selectionTexture.bind(gl);
+				this.selectionTexture[q].bind(gl);
 				this.selectionModel.render(gl);
 			}
 		});

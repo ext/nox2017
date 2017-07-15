@@ -76,8 +76,9 @@ export class PathfindingBehaviour extends Behaviour {
 				for (let i = 0; i<waypoints.length; ++i) {
 					const waypoint = waypoints[i];
 					const center = waypoint.aabb.center();
-					const delta = [center[0] - xworld, center[1] - yworld];
-					result[index].perWaypointCost[i] = Math.sqrt(Math.pow(delta[0], 2) + Math.pow(delta[1], 2));
+					const delta = [Math.abs(center[0] - xworld), Math.abs(center[1] - yworld)];
+					result[index].perWaypointCost[i] = delta[0] + delta[1];
+					// todo: do bfs here instead of manhatan distance
 				}
 
 			}

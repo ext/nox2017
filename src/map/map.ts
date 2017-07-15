@@ -10,11 +10,11 @@ const NO_TILE = -1;
 
 export class Map {
 	context: WebGL2RenderingContext;
-	width: number;
-	height: number;
-	tileWidth: number;
-	tileHeight: number;
-	grid: any;
+	width: number;                           // number of tiles
+	height: number;                          // number of tiles
+	tileWidth: number;                       // width of a single tile in pixels
+	tileHeight: number;                      // height of a single tile in pixels
+	grid: any;                               // tile data as 1D (as regular JS array)
 	texture: Texture;
 	model: Model[];
 	object: Entity[];
@@ -68,6 +68,16 @@ export class Map {
 		return this.namedObject[name];
 	}
 
+	isInsideMap(x: number, y: number): boolean {
+		if (x < 0 || x >= this.width){
+			return false;
+		}
+		if (y < 0 || y >= this.height){
+			return false;
+		}
+		return true;
+	}
+
 	tileAt(pos: [number, number]){
 		const x = pos[0];
 		const y = -pos[1];
@@ -78,9 +88,15 @@ export class Map {
 		return this.grid[i] || NO_TILE;
 	}
 
+	/**
+	 * Tell if a tile index is collidable or just decorative.
+	 */
 	tileCollidable(i: number){
-		/* Tell if a tile index is collidable or just decorative */
-		return i > 0 && i < 96;
+		// TODO hardcoded tilemap size
+		const tx = i % 16;
+		const ty = Math.floor(i / 16);
+		const passable = tx > 7 && tx < 13 && ty < 5;
+		return !passable;
 	}
 
 	tileCollisionAt(pos: [number, number]){

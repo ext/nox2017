@@ -10,7 +10,7 @@ export class Spawn extends Waypoint {
 	aabb: AABB;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
-		options = Object.assign(defaults, options);
+		options = Object.assign({}, defaults, options);
 		super(gl, options);
 		this.aabb = AABB.fromItem(this);
 	}

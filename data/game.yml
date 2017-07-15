@@ -3,8 +3,11 @@ preload:
     - /shaders/default.yml
     - /shaders/post.yml
   texture:
-    - textures/default.jpg
-    - textures/beaver.png
+    - /textures/default.jpg
+    - /textures/beaver.png
+    - /textures/tiles.png
+    - /textures/red.jpg
+    - /textures/white.jpg
 
 constants:
   # How long before first wave spawns
@@ -18,6 +21,18 @@ constants:
 
   # How long between each group of creeps
   spawnDelay: 800
+
+buildings:
+  - name: Building A
+    cost: 100
+    icon: /textures/building_a.jpg
+  - name: Building B
+    cost: 200
+    icon: /textures/building_b.jpg
+  - name: Building C
+    cost: 300
+    icon: /textures/building_c.jpg
+    texture: /textures/beaver.png
 
 wave:
   - entities:

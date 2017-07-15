@@ -175,9 +175,6 @@ export class PathfindingBehaviour extends Behaviour {
 
 		const targetWaypoint = this.waypoints[waypoint];
 
-		const targetCenterNonFluff = targetWaypoint.aabb.center();
-		const targetIndex = this.map.fluffSpaceToIndex([targetCenterNonFluff[0], -targetCenterNonFluff[1] - 1]);
-
 		let currentIndex = this.map.fluffSpaceToIndex([entity.position.elements[0], -entity.position.elements[1]]);
 
 		if (currentIndex < 0 || currentIndex >= nodeInfo.length) {
@@ -220,7 +217,9 @@ export class PathfindingBehaviour extends Behaviour {
 				}
 			}
 
-			if(currentIndex == targetIndex) {
+			let curPos = this.precalculated[currentIndex].aabb.center();
+
+			if(targetWaypoint.aabb.pointInside(curPos[0], curPos[1])) {
 				route.path = build_path(currentIndex);
 				return route;
 			}

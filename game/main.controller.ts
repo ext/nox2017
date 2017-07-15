@@ -26,6 +26,10 @@ const KEY_LEFT = "KeyA";
 const KEY_RIGHT = "KeyD";
 const KEY_UP = "KeyW";
 const KEY_DOWN = "KeyS";
+const KEY_ESCAPE = "Escape";
+
+const MOUSE_LEFT = 0;
+const MOUSE_RIGHT = 2;
 
 const PLAYER_SPEED = 15;
 
@@ -44,7 +48,7 @@ interface Constants {
 	spawnDelay: number;
 }
 
-class MainController extends CanvasController {
+export class MainController extends CanvasController {
 	$scope: ng.IScope;
 	ModelService: ModelService;
 	static $$ngIsClass: boolean;
@@ -61,6 +65,12 @@ class MainController extends CanvasController {
 	texture: Texture;
 	constants: Constants;
 	wave: Wave[];
+	selected?: [number, number]; /* selected tile, coordinates in tile space as integers */
+	selectionModel: Model;
+	selectionTexture: [Texture, Texture];
+	buildingMap: Uint32Array;
+	currentlyBuilding: IEntityProperty;
+	buildingModel: Model;
 
 	constructor($scope: ng.IScope, $element: any, $injector: angular.auto.IInjectorService, ModelService: ModelService){
 		super($element, $injector);
@@ -69,8 +79,15 @@ class MainController extends CanvasController {
 		this.fbo = undefined;
 		this.ortho = null;
 		this.routes = {};
+		this.selected = null;
+		this.selectionTexture = [null, null];
 
 		registerItems();
+
+		/* Register this controller onto the parent controller so the GUI can call
+		 * stuff on this one. */
+		const game = this.$scope.game; /* angular parent controller */
+		game.registerCanvasController(this);
 
 		this.init('/data/game.yml').then(() => {
 			this.start();
@@ -82,8 +99,13 @@ class MainController extends CanvasController {
 
 	init(filename: string): Promise<any> {
 		return super.init(filename).then((config) => {
+			const game = this.$scope.game; /* angular parent controller */
 			this.wave = config.wave;
 			this.constants = config.constants;
+			game.buildings = config.buildings.map((x: any, index: number) => {
+				x.index = index + 1;
+				return x;
+			});
 			return Promise.all([
 				this.setupEventHandlers(),
 				this.setupWorld(),
@@ -98,6 +120,8 @@ class MainController extends CanvasController {
 		const gl = this.context;
 
 		this.quad = this.ModelService.quad(gl);
+		this.buildingModel = this.ModelService.fromFile(gl, '/data/cube-pseudo-shaded.yml');
+		this.selectionModel = this.buildingModel;
 		this.shader = this.loadShader('/shaders/default.yml');
 		this.postshader = this.loadShader('/shaders/post.yml');
 		this.entity = new Entity({
@@ -132,16 +156,63 @@ class MainController extends CanvasController {
 					next: item.next,
 				});
 			});
+
+			/* fill building map */
+			this.buildingMap = new Uint32Array(map.width * map.height);
+			this.buildingMap.fill(0);
+			this.map.grid.forEach((tile: number, i: number) => {
+				this.buildingMap[i] = this.map.tileCollidable(tile) ? 9999 : 0;
+			});
 		}));
 
 		promises.push(Texture.load(gl, '/textures/uvgrid.jpg').then((texture: Texture) => {
 			this.texture = texture;
 		}));
 
+		promises.push(Texture.load(gl, '/textures/white.jpg').then((texture: Texture) => {
+			this.selectionTexture[0] = texture;
+		}));
+
+		promises.push(Texture.load(gl, '/textures/red.jpg').then((texture: Texture) => {
+			this.selectionTexture[1] = texture;
+		}));
+
 		return Promise.all(promises);
 	}
 
 	setupEventHandlers(){
+		this.$window.addEventListener('keydown', event => {
+			switch (event.code){
+			case KEY_ESCAPE:
+				this.currentlyBuilding = null;
+				break;
+			}
+		});
+
+		this.$window.addEventListener('mousedown', event => {
+			event.preventDefault();
+			switch (event.button){
+			case MOUSE_LEFT:
+				this.constructBuilding(this.currentlyBuilding);
+				this.currentlyBuilding = null;
+				break;
+			case MOUSE_RIGHT:
+				this.currentlyBuilding = null;
+				break;
+			}
+		});
+
+		/* disable rightclick context menu */
+		document.addEventListener('contextmenu', event => event.preventDefault());
+
+		this.element.addEventListener('mousemove', event => {
+			this.setSelection(event.clientX, event.clientY);
+		});
+
+		// this.element.addEventListener('mousemove', event => {
+		// 	this.setSelection(event.clientX, event.clientY);
+		// });
+
 		this.$scope.$watchGroup([
 			'cam.x',
 			'cam.y',
@@ -151,6 +222,87 @@ class MainController extends CanvasController {
 			this.render();
 		});
 		return Promise.resolve();
+	}
+
+	setSelection(x: number, y: number){
+		if (!this.map) return;
+
+		const intersect = this.unprojectMap(x, y);
+		const tx = Math.floor(intersect.elements[0]);
+		const ty = -Math.floor(intersect.elements[1]) - 1;
+
+		if (this.map.isInsideMap(tx, ty)){
+			this.selected = [tx, ty];
+		} else {
+			this.selected = null;
+		}
+	}
+
+	/**
+	 * Set the current building player wants to build.
+	 */
+	setBuilding(building: IEntityProperty): void {
+		this.currentlyBuilding = building;
+	}
+
+	/**
+	 * Actually construct building.
+	 */
+	constructBuilding(obj: IEntityProperty): void {
+		if (!(obj && this.selected)){
+			return;
+		}
+
+		/* validate that no other building exists on this position */
+		const i = this.selected[1] * this.map.width + this.selected[0];
+		if (this.buildingMap[i] !== 0){
+			return;
+		}
+
+		/* spawn entity */
+		const gl = this.context;
+		this.map.spawn('Building', gl, Object.assign({}, obj, {
+			position: Vector.create([this.selected[0], -this.selected[1] - 1, 0]),
+			model: this.buildingModel,
+		}));
+
+		/* record that something exists on this position */
+		this.buildingMap[i] = obj.index;
+	}
+
+	/**
+	 * Takes two screenspace coordinates, unprojects and intersects with map-plane
+	 * to get coordinate of where on the tilemap the point is.
+	 */
+	unprojectMap(x: number, y: number): Vector {
+		const w = this.element.width;
+		const h = this.element.height;
+		y = h - y;
+
+		const pv = this.camera.getProjectionMatrix().x(this.camera.getViewMatrix());
+		const inv = pv.inverse();
+		const winClip = Vector.create([
+			2 * x / w - 1.0,
+			2 * y / h - 1.0,
+			-1.0,
+			1.0,
+		]);
+
+		let near = inv.x(winClip);
+		near = near.x(1.0 / near.elements[3]);
+
+		winClip.elements[2] = 1.0;
+		let far = inv.x(winClip);
+		far = far.x(1.0 / far.elements[3]);
+
+		const near3 = Vector.create(near.elements.slice(0, 3));
+		const far3 = Vector.create(far.elements.slice(0, 3));
+		const dir = far3.subtract(near3).toUnitVector();
+		const plane = Vector.create([0, 0, 1]);
+		const t = -plane.dot(near3) / plane.dot(dir);
+		const intersect = near3.add(dir.x(t));
+
+		return intersect;
 	}
 
 	startWave(index: number, timeout: number){
@@ -275,6 +427,19 @@ class MainController extends CanvasController {
 			this.texture.bind(gl);
 			this.ShaderService.uploadModel(gl, this.entity.modelMatrix);
 			this.entity.render(gl);
+
+			if (this.selected && this.currentlyBuilding){
+				const i = this.selected[1] * this.map.width + this.selected[0];
+				const q = this.buildingMap[i] > 0 ? 1 : 0;
+				const selectionMatrix = Matrix.Translation(Vector.create([
+					this.selected[0],
+					-1 - this.selected[1],
+					0,
+				]));
+				this.ShaderService.uploadModel(gl, selectionMatrix);
+				this.selectionTexture[q].bind(gl);
+				this.selectionModel.render(gl);
+			}
 		});
 
 		const scale = Matrix.create([

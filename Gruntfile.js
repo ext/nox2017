@@ -29,7 +29,7 @@ module.exports = function(grunt){
 	]);
 
 	grunt.registerTask('build:js', [
-		'eslint', 'karma:default', 'browserify',
+		'eslint', 'browserify',
 	]);
 
 	grunt.registerTask('manifest', 'Create deploy manifest', manifest);
@@ -269,7 +269,7 @@ module.exports = function(grunt){
 			},
 			js: {
 				files: ['<%=eslint.default.src%>', 'src/**/*.d.ts'],
-				tasks: ['eslint', 'karma:default', 'browserify'],
+				tasks: ['eslint', 'browserify'],
 			},
 			scss: {
 				files: ['scss/**/*.scss', 'src/**/*.scss'],

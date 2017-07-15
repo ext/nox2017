@@ -28,7 +28,7 @@ export class Entity {
 		this.id = id++;
 		this.model = options.model;
 		this.position = Vector.create(options.position);
-		this.rotation = Vector.create([0.0, 1.0, 0.0]);
+		this.rotation = null;
 		this.modelMatrix = Matrix.I(4);
 		this.speed = options.speed;
 		this.updateModelMatrix();
@@ -42,8 +42,12 @@ export class Entity {
 	updateModelMatrix(){
 		if (!this.model) return;
 		const t = Matrix.Translation(this.position).ensure4x4();
-		const r = rotationFromDirection(this.rotation).ensure4x4();
-		this.modelMatrix = t.x(r);
+		if (this.rotation){
+			const r = rotationFromDirection(this.rotation).ensure4x4();
+			this.modelMatrix = t.x(r);
+		} else {
+			this.modelMatrix = t;
+		}
 	}
 
 	render(gl: WebGL2RenderingContext){

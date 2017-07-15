@@ -15,7 +15,7 @@
 			<canvas ng-controller="MainController"></canvas>
 		</main>
 
-		<aside>
+		<aside ng-cloak>
 			<fieldset>
 				<legend>Game</legend>
 				<div class="button-group">
@@ -23,6 +23,19 @@
 					<button class="button" type="button" ng-show="!game.running" ng-click="game.pause()"><span class="fa fa-play"></span> Continue</button>
 					<button class="button" type="button" ng-show="!game.running" ng-click="game.stepFrame()"><span class="fa fa-step-forward"></span> Step</button>
 				</div>
+			</fieldset>
+			<fieldset>
+				{% raw %}
+				<legend>Build</legend>
+				<ul class="building-grid">
+					<li ng-repeat="building in ::game.buildings">
+						<div class="building" ng-attr-title="{{ ::building.name }}" ng-click="game.setBuilding($index)">
+							<img ng-src="assets/{{ ::building.icon }}"/>
+							<p ng-bind="::building.cost"></p>
+						</div>
+					</li>
+				</ul>
+				{% endraw %}
 			</fieldset>
 		</aside>
 

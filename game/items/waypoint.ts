@@ -12,7 +12,7 @@ export class Waypoint extends Item {
 	next: string;
 
 	constructor(gl: WebGL2RenderingContext, options?: IEntityProperty){
-		options = Object.assign(defaults, options);
+		options = Object.assign({}, defaults, options);
 		super(gl, options);
 
 		this.route = options.route;
